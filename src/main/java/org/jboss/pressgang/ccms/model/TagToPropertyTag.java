@@ -21,9 +21,8 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.envers.query.AuditQueryCreator;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.ToPropertyTag;
 
 @Audited
@@ -76,7 +75,7 @@ public class TagToPropertyTag extends ToPropertyTag<TagToPropertyTag> implements
 
     @Override
     @Column(name = "Value", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getValue() {
         return value;
     }

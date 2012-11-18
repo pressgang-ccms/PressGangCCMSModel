@@ -1,5 +1,11 @@
 package org.jboss.pressgang.ccms.model;
 
+import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
+import static javax.persistence.GenerationType.IDENTITY;
+import static org.hamcrest.Matchers.equalTo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,13 +25,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
-
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.on;
-import static javax.persistence.GenerationType.IDENTITY;
-import static org.hamcrest.Matchers.equalTo;
-
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -35,9 +34,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToTag;
 import org.jboss.pressgang.ccms.model.sort.CategoryIDComparator;
@@ -145,7 +143,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
 
     @Column(name = "TagName", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getTagName() {
         return this.tagName;
     }
@@ -154,9 +152,8 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
         this.tagName = tagName;
     }
 
-    // @Column(name = "TagDescription", length = 65535)
     @Column(name = "TagDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getTagDescription() {
         return this.tagDescription;
     }

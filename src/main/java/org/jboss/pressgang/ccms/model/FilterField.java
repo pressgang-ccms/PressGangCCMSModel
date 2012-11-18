@@ -1,7 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Jun 14, 2011 8:42:43 AM by Hibernate Tools 3.4.0.CR1
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,9 +16,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -73,7 +70,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
 
     @Column(name = "Field", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getField() {
         return this.field;
     }
@@ -84,7 +81,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
 
     @Column(name = "Value", nullable = false, columnDefinition = "TEXT")
     @NotNull
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getValue() {
         return this.value;
     }
@@ -94,7 +91,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     }
 
     @Column(name = "Description", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getDescription() {
         return this.description;
     }

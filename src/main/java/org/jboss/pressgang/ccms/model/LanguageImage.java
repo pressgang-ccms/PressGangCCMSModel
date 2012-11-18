@@ -30,9 +30,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.utils.SVGIcon;
@@ -86,7 +85,7 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
     }
 
     @Column(name = "OriginalFileName", length = 255)
-    @Size(max = 255)
+    @Length(max = 255)
     public String getOriginalFileName() {
         return this.originalFileName;
     }

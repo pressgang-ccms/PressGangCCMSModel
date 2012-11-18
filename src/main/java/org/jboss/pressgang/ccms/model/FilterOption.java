@@ -1,6 +1,6 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Oct 21, 2011 10:43:30 AM by Hibernate Tools 3.4.0.CR1
+import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -19,9 +18,8 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -73,7 +71,7 @@ public class FilterOption extends AuditedEntity<FilterOption> implements java.io
 
     @Column(name = "FilterOptionName", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getFilterOptionName() {
         return this.filterOptionName;
     }
@@ -84,7 +82,7 @@ public class FilterOption extends AuditedEntity<FilterOption> implements java.io
 
     @Column(name = "FilterOptionValue", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getFilterOptionValue() {
         return this.filterOptionValue;
     }

@@ -1,5 +1,7 @@
 package org.jboss.pressgang.ccms.model;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,8 +18,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.PreRemove;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -26,9 +26,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.constants.Constants;
@@ -74,7 +73,7 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
 
     @Column(name = "ProjectName", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getProjectName() {
         return this.projectName;
     }
@@ -84,7 +83,7 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
     }
 
     @Column(name = "ProjectDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getProjectDescription() {
         return this.projectDescription;
     }

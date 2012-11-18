@@ -1,22 +1,21 @@
 package org.jboss.pressgang.ccms.model;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-
 import javax.persistence.Id;
 import javax.persistence.Table;
-import static javax.persistence.GenerationType.IDENTITY;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Entity
@@ -45,7 +44,7 @@ public class RelationshipTag extends AuditedEntity<RelationshipTag> implements j
 
     @Column(name = "RelationshipTagName", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getRelationshipTagName() {
         return this.relationshipTagName;
     }
@@ -55,7 +54,7 @@ public class RelationshipTag extends AuditedEntity<RelationshipTag> implements j
     }
 
     @Column(name = "RelationshipTagDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getRelationshipTagDescription() {
         return this.relationshipTagDescription;
     }

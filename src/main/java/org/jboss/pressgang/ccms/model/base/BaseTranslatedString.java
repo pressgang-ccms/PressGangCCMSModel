@@ -2,8 +2,8 @@ package org.jboss.pressgang.ccms.model.base;
 
 import javax.persistence.Column;
 
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 public abstract class BaseTranslatedString<T extends AuditedEntity<T>> extends AuditedEntity<T> {
     private String originalString;
@@ -11,7 +11,7 @@ public abstract class BaseTranslatedString<T extends AuditedEntity<T>> extends A
     private Boolean fuzzyTranslation = false;
 
     @Column(name = "OriginalString", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getOriginalString() {
         return originalString;
     }
@@ -21,7 +21,7 @@ public abstract class BaseTranslatedString<T extends AuditedEntity<T>> extends A
     }
 
     @Column(name = "TranslatedString", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getTranslatedString() {
         return translatedString;
     }

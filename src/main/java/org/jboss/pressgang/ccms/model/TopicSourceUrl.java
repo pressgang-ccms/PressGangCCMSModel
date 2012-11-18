@@ -1,6 +1,6 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Aug 12, 2011 11:10:16 AM by Hibernate Tools 3.4.0.CR1
+import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,8 +17,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -27,8 +25,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
@@ -81,7 +79,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
 
     @Column(name = "SourceURL", nullable = false, length = 2048)
     @NotNull
-    @Size(max = 2048)
+    @Length(max = 2048)
     public String getSourceUrl() {
         return this.sourceUrl;
     }
@@ -92,7 +90,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
 
     @Column(name = "Title", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getTitle() {
         return this.title;
     }
@@ -102,7 +100,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     }
 
     @Column(name = "Description", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getDescription() {
         return this.description;
     }

@@ -1,6 +1,6 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Jul 14, 2011 1:47:13 PM by Hibernate Tools 3.4.0.CR1
+import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -8,15 +8,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Transient;
 
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -60,7 +59,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
 
     @Column(name = "ConstantName", nullable = false, length = 45)
     @NotNull
-    @Size(max = 45)
+    @Length(max = 45)
     public String getConstantName() {
         return this.constantName;
     }

@@ -1,6 +1,6 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Aug 11, 2011 2:31:45 PM by Hibernate Tools 3.4.0.CR1
+import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,8 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -21,8 +19,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-
+import org.hibernate.validator.Length;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -60,9 +57,8 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
         this.roleToRoleRelationshipId = roleToRoleRelationshipId;
     }
 
-    // @Column(name = "Description", length = 65535)
     @Column(name = "Description", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getDescription() {
         return this.description;
     }

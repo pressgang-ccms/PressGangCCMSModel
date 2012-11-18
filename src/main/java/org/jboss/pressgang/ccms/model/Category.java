@@ -30,9 +30,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
@@ -102,7 +101,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
 
     @Column(name = "CategoryName", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getCategoryName() {
         return this.categoryName;
     }
@@ -112,7 +111,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     }
 
     @Column(name = "CategoryDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getCategoryDescription() {
         return this.categoryDescription;
     }

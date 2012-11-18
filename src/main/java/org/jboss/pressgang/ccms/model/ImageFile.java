@@ -24,8 +24,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-
+import org.hibernate.validator.Length;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
@@ -68,7 +67,7 @@ public class ImageFile extends AuditedEntity<ImageFile> implements java.io.Seria
     }
 
     @Column(name = "Description", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getDescription() {
         return this.description;
     }

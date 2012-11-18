@@ -13,8 +13,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-
+import org.hibernate.validator.Length;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Audited
@@ -48,7 +47,7 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     }
 
     @Column(name = "TopicHTMLView", columnDefinition = "MEDIUMTEXT")
-    @Size(max = 16777215)
+    @Length(max = 16777215)
     public String getTopicHTMLView() {
         return this.topicHTMLView;
     }
@@ -58,7 +57,7 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     }
 
     @Column(name = "TopicXMLErrors", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getTopicXMLErrors() {
         return this.topicXMLErrors;
     }

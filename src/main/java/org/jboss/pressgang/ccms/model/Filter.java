@@ -18,13 +18,13 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.utils.constants.CommonFilterConstants;
@@ -79,7 +79,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
 
     @Column(name = "FilterName", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getFilterName() {
         return this.filterName;
     }
@@ -88,9 +88,8 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
         this.filterName = filterName;
     }
 
-    // @Column(name = "FilterDescription", length = 65535)
     @Column(name = "FilterDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getFilterDescription() {
         return this.filterDescription;
     }

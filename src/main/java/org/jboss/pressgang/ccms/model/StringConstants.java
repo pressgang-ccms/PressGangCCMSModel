@@ -1,23 +1,20 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Jun 8, 2011 12:08:27 PM by Hibernate Tools 3.4.0.CR1
+import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -61,7 +58,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
 
     @Column(name = "ConstantName", nullable = false, length = 45)
     @NotNull
-    @Size(max = 45)
+    @Length(max = 45)
     public String getConstantName() {
         return this.constantName;
     }
@@ -71,7 +68,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     }
 
     @Column(name = "ConstantValue", columnDefinition = "MEDIUMTEXT")
-    @Size(max = 16777215)
+    @Length(max = 16777215)
     public String getConstantValue() {
         return this.constantValue;
     }

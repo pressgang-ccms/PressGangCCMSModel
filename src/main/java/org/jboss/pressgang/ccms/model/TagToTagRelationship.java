@@ -1,7 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Aug 8, 2011 11:54:01 AM by Hibernate Tools 3.4.0.CR1
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,8 +16,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-
+import org.hibernate.validator.Length;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -60,7 +57,7 @@ public class TagToTagRelationship extends AuditedEntity<TagToTagRelationship> im
     }
 
     @Column(name = "TagToTagRelationshipDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getTagToTagRelationshipDescription() {
         return this.tagToTagRelationshipDescription;
     }

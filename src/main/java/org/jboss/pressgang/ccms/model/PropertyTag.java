@@ -24,9 +24,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.contentspec.CSNodeToPropertyTag;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToPropertyTag;
@@ -67,7 +66,7 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
 
     @Column(name = "PropertyTagName", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getPropertyTagName() {
         return propertyTagName;
     }
@@ -77,7 +76,7 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
     }
 
     @Column(name = "PropertyTagDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getPropertyTagDescription() {
         return propertyTagDescription;
     }
@@ -88,7 +87,7 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
 
     @Column(name = "PropertyTagRegex", columnDefinition = "TEXT")
     @NotNull
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getPropertyTagRegex() {
         return propertyTagRegex;
     }

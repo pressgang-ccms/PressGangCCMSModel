@@ -31,8 +31,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
 
 import net.htmlparser.jericho.Source;
 
@@ -41,11 +39,12 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicIDComparator;
@@ -100,7 +99,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Column(name = "TopicLocale", length = 45)
     @NotNull
-    @Size(max = 45)
+    @Length(max = 45)
     public String getTopicLocale() {
         return this.topicLocale == null ? CommonConstants.DEFAULT_LOCALE : this.topicLocale;
     }
@@ -143,7 +142,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Column(name = "TopicText", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getTopicText() {
         return this.topicText;
     }
@@ -165,7 +164,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Column(name = "TopicTitle", nullable = false, length = 255)
     @NotNull
-    @Size(max = 255)
+    @Length(max = 255)
     public String getTopicTitle() {
         return this.topicTitle;
     }
@@ -197,7 +196,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Column(name = "TopicXML", columnDefinition = "MEDIUMTEXT")
-    @Size(max = 16777215)
+    @Length(max = 16777215)
     public String getTopicXML() {
         return this.topicXML;
     }
@@ -233,7 +232,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
      * Hibernate Search. The text extraction uses Jericho - http://jericho.htmlparser.net/
      */
     @Transient
-    @Field(name = "TopicSearchText", index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+    @Field(name = "TopicSearchText", index = Index.TOKENIZED, store = Store.YES)
     public String getTopicSearchText() {
         if (this.topicXML == null)
             return "";

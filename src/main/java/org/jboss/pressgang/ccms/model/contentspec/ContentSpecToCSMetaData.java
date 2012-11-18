@@ -25,9 +25,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.base.ToCSMetaData;
 
@@ -86,7 +85,7 @@ public class ContentSpecToCSMetaData extends ToCSMetaData<ContentSpecToCSMetaDat
 
     @Override
     @Column(name = "Value", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getValue() {
         return this.value;
     }

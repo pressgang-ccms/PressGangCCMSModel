@@ -8,6 +8,7 @@ import javax.persistence.Transient;
  */
 public abstract class AuditedEntity<T extends AuditedEntity<T>> {
     private Date lastModified;
+    private Number revision;
 
     /**
      * @return The ID of the database entity
@@ -27,5 +28,13 @@ public abstract class AuditedEntity<T extends AuditedEntity<T>> {
      */
     public void setLastModifiedDate(final Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public Number getRevision() {
+        return revision;
+    }
+
+    public void setRevision(Number revision) {
+        this.revision = revision;
     }
 }

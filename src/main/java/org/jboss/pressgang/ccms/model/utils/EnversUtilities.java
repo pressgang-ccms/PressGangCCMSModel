@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.query.AuditEntity;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 public class EnversUtilities {

@@ -79,11 +79,7 @@ public class EnversUtilities {
         final Date revisionLastModified = reader.getRevisionDate(revision);
         revEntity.setLastModifiedDate(revisionLastModified);
         
-        // Find the actual revision
-        final Number closestRevision = (Number) reader.createQuery().forRevisionsOfEntity(entity.getClass(), false, true)
-                .addProjection(AuditEntity.revisionNumber().max()).add(AuditEntity.id().eq(entity.getId()))
-                .add(AuditEntity.revisionNumber().le(revision)).getSingleResult();
-        revEntity.setRevision(closestRevision);
+        revEntity.setRevision(revision);
 
         return entity;
     }

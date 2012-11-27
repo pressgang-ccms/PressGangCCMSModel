@@ -57,7 +57,7 @@ public class CSMetaData extends AuditedEntity<CSMetaData> implements Serializabl
         this.csMetaDataId = csMetaDataId;
     }
 
-    @Column(name = "ContentSpecMetaDataTitle", nullable = false, length = 255)
+    @Column(name = "MetaDataTitle", nullable = false, length = 255)
     public String getCSMetaDataTitle() {
         return csMetaDataTitle;
     }
@@ -66,7 +66,7 @@ public class CSMetaData extends AuditedEntity<CSMetaData> implements Serializabl
         this.csMetaDataTitle = csMetaDataTitle;
     }
 
-    @Column(name = "ContentSpecMetaDataDescription", columnDefinition = "TEXT")
+    @Column(name = "MetaDataDescription", columnDefinition = "TEXT")
     public String getCSMetaDataDescription() {
         return csMetaDataDescription;
     }

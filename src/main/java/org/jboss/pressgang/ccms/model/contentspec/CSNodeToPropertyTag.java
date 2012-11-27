@@ -30,7 +30,7 @@ import org.jboss.pressgang.ccms.model.base.ToPropertyTag;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "ContentSpecNodeToPropertyTag")
+@Table(name = "CSNodeToPropertyTag")
 public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> implements java.io.Serializable {
     private static final long serialVersionUID = 2778607056935737000L;
     public static String SELECT_ALL_QUERY = "SELECT csNodeToPropertyTag FROM CSNodeToPropertyTag AS csNodeToPropertyTag";
@@ -54,7 +54,7 @@ public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> impl
     }
 
     @ManyToOne
-    @JoinColumn(name = "ContentSpecNodeID", nullable = false)
+    @JoinColumn(name = "CSNodeID", nullable = false)
     @NotNull
     public CSNode getCSNode() {
         return csNode;

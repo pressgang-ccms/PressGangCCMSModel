@@ -70,7 +70,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private String topicText;
     private Date topicTimeStamp;
     private String topicTitle;
-    private Integer xmlDoctype = null;
+    private Integer xmlDoctype = Constants.DOCBOOK_45;
     private Set<TopicToTag> topicToTags = new HashSet<TopicToTag>(0);
     private Set<TopicToTopic> parentTopicToTopics = new HashSet<TopicToTopic>(0);
     private Set<TopicToTopic> childTopicToTopics = new HashSet<TopicToTopic>(0);

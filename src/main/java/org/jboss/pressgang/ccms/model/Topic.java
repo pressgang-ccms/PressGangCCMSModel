@@ -70,6 +70,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private String topicText;
     private Date topicTimeStamp;
     private String topicTitle;
+    private Integer xmlDoctype = null;
     private Set<TopicToTag> topicToTags = new HashSet<TopicToTag>(0);
     private Set<TopicToTopic> parentTopicToTopics = new HashSet<TopicToTopic>(0);
     private Set<TopicToTopic> childTopicToTopics = new HashSet<TopicToTopic>(0);
@@ -106,6 +107,15 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     public void setTopicLocale(final String topicLocale) {
         this.topicLocale = topicLocale;
+    }
+
+    @Column(name = "TopicXMLDoctype")
+    public Integer getXmlDoctype() {
+        return xmlDoctype;
+    }
+
+    public void setXmlDoctype(Integer xmlDoctype) {
+        this.xmlDoctype = xmlDoctype;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "relatedTopic")

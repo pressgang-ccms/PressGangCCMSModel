@@ -43,7 +43,7 @@ public class CSNodeToCSNode extends AuditedEntity<CSNodeToCSNode> implements Ser
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "ContentSpecNodeToContentSpecNodeID", unique = true, nullable = false)
+    @Column(name = "CSNodeToCSNodeID", unique = true, nullable = false)
     public Integer getCSNodeToCSNodeId() {
         return csNodeToCSNodeId;
     }

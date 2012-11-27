@@ -42,7 +42,7 @@ public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslat
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "TopicToTagID", unique = true, nullable = false)
+    @Column(name = "CSNodeToCSTranslatedStringID", unique = true, nullable = false)
     public Integer getTopicToTagId() {
         return this.topicToTagId;
     }
@@ -63,7 +63,7 @@ public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslat
     }
 
     @ManyToOne
-    @JoinColumn(name = "ContentSpecTranslatedStringID", nullable = false)
+    @JoinColumn(name = "CSTranslatedStringID", nullable = false)
     @NotNull
     public CSTranslatedString getCSTranslatedString() {
         return this.csTranslatedString;

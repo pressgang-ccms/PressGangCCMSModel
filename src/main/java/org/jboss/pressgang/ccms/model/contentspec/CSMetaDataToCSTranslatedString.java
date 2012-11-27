@@ -24,8 +24,8 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "CSMetaDataToCSTranslatedString", uniqueConstraints = @UniqueConstraint(columnNames = { "ContentSpecMetaDataID",
-        "ContentSpecTranslatedStringID" }))
+@Table(name = "CSMetaDataToCSTranslatedString", uniqueConstraints = @UniqueConstraint(columnNames = { "ContentSpecToCSMetaDataID",
+        "CSTranslatedStringID" }))
 public class CSMetaDataToCSTranslatedString extends AuditedEntity<CSMetaDataToCSTranslatedString> implements
         java.io.Serializable {
     private static final long serialVersionUID = -7516063608506037594L;

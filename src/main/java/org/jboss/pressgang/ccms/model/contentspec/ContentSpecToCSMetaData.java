@@ -35,7 +35,7 @@ import org.jboss.pressgang.ccms.model.contentspec.base.ToCSMetaData;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "ContentSpecToContentSpecMetaData")
+@Table(name = "ContentSpecToCSMetaData")
 public class ContentSpecToCSMetaData extends ToCSMetaData<ContentSpecToCSMetaData> implements Serializable {
     private static final long serialVersionUID = -6739315876639954128L;
 

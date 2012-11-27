@@ -29,7 +29,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "ContentSpecTranslatedString")
+@Table(name = "CSTranslatedString")
 public class CSTranslatedString extends AuditedEntity<CSTranslatedString> implements java.io.Serializable {
     private static final long serialVersionUID = 5185674451816385008L;
 
@@ -48,7 +48,7 @@ public class CSTranslatedString extends AuditedEntity<CSTranslatedString> implem
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "ContentSpecTranslatedStringID", unique = true, nullable = false)
+    @Column(name = "CSTranslatedStringID", unique = true, nullable = false)
     public Integer getCSTranslatedStringID() {
         return contentspecTranslatedStringID;
     }
@@ -87,7 +87,7 @@ public class CSTranslatedString extends AuditedEntity<CSTranslatedString> implem
     public void setCSMetaDataToCSTranslatedStrings(final Set<CSMetaDataToCSTranslatedString> csMetaDataToCSTranslatedStrings) {
         this.csMetaDataToCSTranslatedStrings = csMetaDataToCSTranslatedStrings;
     }
-    
+
     @Column(name = "OriginalString", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getOriginalString() {

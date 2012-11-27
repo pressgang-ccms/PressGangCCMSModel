@@ -24,8 +24,8 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "CSNodeToCSTranslatedString", uniqueConstraints = @UniqueConstraint(columnNames = { "ContentSpecNodeID",
-        "ContentSpecTranslatedStringID" }))
+@Table(name = "CSNodeToCSTranslatedString", uniqueConstraints = @UniqueConstraint(columnNames = { "CSNodeID",
+        "CSTranslatedStringID" }))
 public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslatedString> implements java.io.Serializable {
     private static final long serialVersionUID = -7516063608506037594L;
 
@@ -53,7 +53,7 @@ public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslat
     }
 
     @ManyToOne
-    @JoinColumn(name = "ContentSpecNodeID", nullable = false)
+    @JoinColumn(name = "CSNodeID", nullable = false)
     @NotNull
     public CSNode getCSNode() {
         return this.csNode;

@@ -45,7 +45,7 @@ public class CSMetaDataToCSTranslatedString extends AuditedEntity<CSMetaDataToCS
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "ContentSpecMetaDataID", unique = true, nullable = false)
+    @Column(name = "CSMetaDataToCSTranslatedStringID", unique = true, nullable = false)
     public Integer getCSMetaDataToCSTranslatedStringId() {
         return this.csMetaDataToCSTranslatedStringId;
     }
@@ -66,7 +66,7 @@ public class CSMetaDataToCSTranslatedString extends AuditedEntity<CSMetaDataToCS
     }
 
     @ManyToOne
-    @JoinColumn(name = "ContentSpecTranslatedStringID", nullable = false)
+    @JoinColumn(name = "CSTranslatedStringID", nullable = false)
     @NotNull
     public CSTranslatedString getCSTranslatedString() {
         return this.csTranslatedString;

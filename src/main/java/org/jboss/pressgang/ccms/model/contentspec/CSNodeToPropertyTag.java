@@ -45,7 +45,7 @@ public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> impl
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "ContentSpecNodeToPropertyTagID", unique = true, nullable = false)
+    @Column(name = "CSNodeToPropertyTagID", unique = true, nullable = false)
     public Integer getCSNodeToPropertyTagID() {
         return csNodeToPropertyTagID;
     }

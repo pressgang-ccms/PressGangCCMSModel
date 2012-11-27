@@ -51,7 +51,7 @@ public class ContentSpecToCSMetaData extends ToCSMetaData<ContentSpecToCSMetaDat
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "ContentSpecToContentSpecMetaDataID", unique = true, nullable = false)
+    @Column(name = "ContentSpecToCSMetaDataID", unique = true, nullable = false)
     public Integer getContentSpecToCSMetaDataId() {
         return contentSpecToCSMetaDataId;
     }

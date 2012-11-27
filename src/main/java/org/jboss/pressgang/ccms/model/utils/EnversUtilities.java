@@ -80,7 +80,7 @@ public class EnversUtilities {
         
         revEntity.setRevision(revision);
 
-        return entity;
+        return revEntity;
     }
 
     public static <T extends AuditedEntity<T>> Number getLatestRevision(final EntityManager entityManager, final T entity) {

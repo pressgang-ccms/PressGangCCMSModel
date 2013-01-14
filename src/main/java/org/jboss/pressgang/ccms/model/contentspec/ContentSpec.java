@@ -3,8 +3,19 @@ package org.jboss.pressgang.ccms.model.contentspec;
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
+import static javax.persistence.GenerationType.IDENTITY;
 import static org.hamcrest.Matchers.equalTo;
 
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,20 +23,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -35,9 +32,9 @@ import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
-import org.jboss.pressgang.ccms.model.constants.Constants;
 
 @Entity
 @Audited
@@ -50,6 +47,8 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
 
     private Integer contentSpecId = null;
     private String contentSpecTitle = null;
+    private String contentSpecProduct = null;
+    private String contentSpecVersion = null;
     private Integer contentSpecType = Constants.CS_BOOK;
     private String locale = null;
     private Date lastPublished = null;
@@ -84,6 +83,24 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
         this.contentSpecTitle = contentSpecTitle;
     }
 
+    @Column(name = "ContentSpecProduct", nullable = false, length = 255)
+    public String getContentSpecProduct() {
+        return contentSpecProduct;
+    }
+
+    public void setContentSpecProduct(String contentSpecProduct) {
+        this.contentSpecProduct = contentSpecProduct;
+    }
+
+    @Column(name = "ContentSpecVersion", nullable = false, length = 255)
+    public String getContentSpecVersion() {
+        return contentSpecVersion;
+    }
+
+    public void setContentSpecVersion(String contentSpecVersion) {
+        this.contentSpecVersion = contentSpecVersion;
+    }
+
     @Column(name = "Locale", nullable = false, length = 255)
     public String getLocale() {
         return locale;
@@ -93,7 +110,6 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
         this.locale = locale;
     }
 
-    @Enumerated
     @Column(name = "ContentSpecType", nullable = false)
     public Integer getContentSpecType() {
         return contentSpecType;
@@ -147,6 +163,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
         this.contentSpecToTags = contentSpecToTags;
     }
 
+    @Column(name = "LastPublished")
     public Date getLastPublished() {
         return lastPublished;
     }
@@ -270,8 +287,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
 
             // remove any excluded tags
             for (final Tag excludeTag : tag.getExcludedTags()) {
-                if (excludeTag.equals(tag))
-                    continue;
+                if (excludeTag.equals(tag)) continue;
 
                 this.removeTag(excludeTag);
             }
@@ -280,14 +296,14 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
             for (final TagToCategory category : tag.getTagToCategories()) {
                 if (category.getCategory().isMutuallyExclusive()) {
                     for (final Tag categoryTag : category.getCategory().getTags()) {
-                        if (categoryTag.equals(tag))
-                            continue;
+                        if (categoryTag.equals(tag)) continue;
 
                         // Check if the Category Tag exists in this topic
                         if (filter(having(on(ContentSpecToTag.class).getTag(), equalTo(categoryTag)),
                                 this.getContentSpecToTags()).size() != 0) {
-                            throw new CustomConstraintViolationException("Adding Tag " + tag.getTagName() + " (" + tag.getId()
-                                    + ") failed due to a mutually exclusive constraint violation.");
+                            throw new CustomConstraintViolationException(
+                                    "Adding Tag " + tag.getTagName() + " (" + tag.getId() + ") failed due to a mutually exclusive " +
+                                            "constraint violation.");
                         }
                     }
                 }

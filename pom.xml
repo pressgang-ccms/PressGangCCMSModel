@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>pressgang-parent</artifactId>
@@ -39,7 +39,7 @@
                                             jacoco-maven-plugin
                                         </artifactId>
                                         <versionRange>
-                                            [0${jacoco.version},)
+                                            [${jacoco.version},)
                                         </versionRange>
                                         <goals>
                                             <goal>prepare-agent</goal>
@@ -76,7 +76,7 @@
             <artifactId>pressgang-ccms-utils</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        
+
         <!-- Hibernate Dependencies -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -98,14 +98,14 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
-        
+
         <!-- Logging Libraries -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        
+
         <!-- Other Dependencies -->
         <dependency>
             <groupId>batik</groupId>

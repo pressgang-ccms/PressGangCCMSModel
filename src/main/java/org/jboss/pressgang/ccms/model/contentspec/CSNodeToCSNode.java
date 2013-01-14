@@ -2,12 +2,9 @@ package org.jboss.pressgang.ccms.model.contentspec;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.io.Serializable;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -74,7 +72,6 @@ public class CSNodeToCSNode extends AuditedEntity<CSNodeToCSNode> implements Ser
         this.relatedNode = relatedNode;
     }
 
-    @Enumerated
     @Column(name = "RelationshipType", nullable = false)
     public Integer getRelationshipType() {
         return relationshipType;

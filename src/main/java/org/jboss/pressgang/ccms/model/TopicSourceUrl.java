@@ -2,24 +2,23 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Transient;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -46,7 +45,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     private static final Logger log = LoggerFactory.getLogger(TopicSourceUrl.class);
     private static final long serialVersionUID = 1923828486173137768L;
 
-    private Integer topicSourceUrlid;
+    private Integer topicSourceUrlId;
     private String sourceUrl;
     private String title;
     private String description;
@@ -59,8 +58,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
         this.sourceUrl = sourceUrl;
     }
 
-    public TopicSourceUrl(final String sourceUrl, final String description,
-            final Set<TopicToTopicSourceUrl> topicToTopicSourceUrls) {
+    public TopicSourceUrl(final String sourceUrl, final String description, final Set<TopicToTopicSourceUrl> topicToTopicSourceUrls) {
         this.sourceUrl = sourceUrl;
         this.description = description;
         this.topicToTopicSourceUrls = topicToTopicSourceUrls;
@@ -69,12 +67,12 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicSourceURLID", unique = true, nullable = false)
-    public Integer getTopicSourceUrlid() {
-        return this.topicSourceUrlid;
+    public Integer getTopicSourceUrlId() {
+        return this.topicSourceUrlId;
     }
 
-    public void setTopicSourceUrlid(final Integer topicSourceUrlid) {
-        this.topicSourceUrlid = topicSourceUrlid;
+    public void setTopicSourceUrlId(final Integer topicSourceUrlId) {
+        this.topicSourceUrlId = topicSourceUrlId;
     }
 
     @Column(name = "SourceURL", nullable = false, length = 2048)
@@ -128,8 +126,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @PreUpdate
     private void setTitle() {
         try {
-            if (this.title == null || this.title.trim().length() == 0
-                    && (this.sourceUrl != null && !this.sourceUrl.trim().isEmpty())) {
+            if (this.title == null || this.title.trim().length() == 0 && (this.sourceUrl != null && !this.sourceUrl.trim().isEmpty())) {
                 /* Some common string replacements to make in the titles */
                 final Map<String, String> replaceList = new HashMap<String, String>();
                 replaceList.put("&nbsp;", " ");
@@ -164,7 +161,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @Override
     @Transient
     public Integer getId() {
-        return this.topicSourceUrlid;
+        return this.topicSourceUrlId;
     }
 
 }

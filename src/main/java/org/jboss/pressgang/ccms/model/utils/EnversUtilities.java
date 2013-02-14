@@ -1,12 +1,11 @@
 package org.jboss.pressgang.ccms.model.utils;
 
+import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.EntityManager;
 
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
@@ -17,13 +16,13 @@ public class EnversUtilities {
     /**
      * When returning a collection of entity revisions, the lastModified property is set automatically (in the getRevision
      * method). For entities returned from a database query, the last modified date needs to be found manually.
-     * 
+     *
      * @return either the date saved in the lastModified property, or the latest revision date if lastModified is null
      */
     public static <T extends AuditedEntity<T>> Date getFixedLastModifiedDate(final EntityManager entityManager, final T entity) {
         return entity.getLastModifiedDate() != null ? entity.getLastModifiedDate() : getLatestRevisionDate(entityManager, entity);
     }
-    
+
     /**
      * @return Returns the latest Envers revision number
      */
@@ -31,7 +30,7 @@ public class EnversUtilities {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
         return reader.getRevisionDate(getLatestRevision(entityManager, entity));
     }
-    
+
     /**
      * @return Returns a collection of revisions
      */
@@ -51,7 +50,7 @@ public class EnversUtilities {
     /**
      * @return Returns the list of revision numbers for this entity, as maintained by Envers
      */
-    public static <T extends AuditedEntity<T>>  List<Number> getRevisions(final EntityManager entityManager, final T entity) {
+    public static <T extends AuditedEntity<T>> List<Number> getRevisions(final EntityManager entityManager, final T entity) {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
         final List<Number> retValue = reader.getRevisions(entity.getClass(), entity.getId());
         Collections.sort(retValue, Collections.reverseOrder());
@@ -59,7 +58,6 @@ public class EnversUtilities {
     }
 
     /**
-     * 
      * @param entityManager
      * @param revision
      * @return
@@ -68,16 +66,15 @@ public class EnversUtilities {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
         return getRevision(reader, entity, revision);
     }
-    
+
     @SuppressWarnings("unchecked")
     private static <T extends AuditedEntity<T>> T getRevision(final AuditReader reader, final T entity, final Number revision) {
         final T revEntity = (T) reader.find(entity.getClass(), entity.getId(), revision);
-        if (revEntity == null)
-            return null;
+        if (revEntity == null) return null;
 
         final Date revisionLastModified = reader.getRevisionDate(revision);
         revEntity.setLastModifiedDate(revisionLastModified);
-        
+
         revEntity.setRevision(revision);
 
         return revEntity;

@@ -31,17 +31,18 @@ import org.hibernate.envers.Audited;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
-import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
+import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ContentSpec")
-public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializable {
+public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToPropertyTag> implements Serializable {
     private static final long serialVersionUID = 5229054857631287690L;
     public static final String SELECT_ALL_QUERY = "select contentSpec from ContentSpec as contentSpec";
 
@@ -49,7 +50,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
     private String contentSpecTitle = null;
     private String contentSpecProduct = null;
     private String contentSpecVersion = null;
-    private Integer contentSpecType = Constants.CS_BOOK;
+    private Integer contentSpecType = CommonConstants.CS_BOOK;
     private String locale = null;
     private Date lastPublished = null;
     private Set<ContentSpecToPropertyTag> contentSpecToPropertyTags = new HashSet<ContentSpecToPropertyTag>(0);
@@ -202,6 +203,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
 
         for (final CSNode removeNode : removeNodes) {
             this.csNodes.remove(removeNode);
+            removeNode.setParent(null);
             removeNode.setContentSpec(null);
         }
     }
@@ -215,6 +217,12 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
     @Transient
     public List<ContentSpecToPropertyTag> getContentSpecToPropertyTagsList() {
         return new ArrayList<ContentSpecToPropertyTag>(this.contentSpecToPropertyTags);
+    }
+
+    @Override
+    @Transient
+    protected Set<ContentSpecToPropertyTag> getPropertyTags() {
+        return this.contentSpecToPropertyTags;
     }
 
     public void addPropertyTag(final PropertyTag propertyTag, final String value) {
@@ -267,6 +275,16 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
             this.contentSpecToCSMetaData.remove(mapping);
             mapping.getCSMetaData().getContentSpecToCSMetaData().remove(mapping);
         }
+    }
+
+    public void addMetaData(final ContentSpecToCSMetaData contentSpecToCSMetaData) {
+        this.contentSpecToCSMetaData.add(contentSpecToCSMetaData);
+        contentSpecToCSMetaData.getCSMetaData().getContentSpecToCSMetaData().add(contentSpecToCSMetaData);
+    }
+
+    public void removeMetaData(final ContentSpecToCSMetaData contentSpecToCSMetaData) {
+        this.contentSpecToCSMetaData.remove(contentSpecToCSMetaData);
+        contentSpecToCSMetaData.getCSMetaData().getContentSpecToCSMetaData().remove(contentSpecToCSMetaData);
     }
 
     @Transient
@@ -324,5 +342,25 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
                 mapping.getTag().getContentSpecToTags().remove(mapping);
             }
         }
+    }
+
+    public void addTag(final ContentSpecToTag contentSpecToTag) {
+        this.contentSpecToTags.add(contentSpecToTag);
+        contentSpecToTag.getTag().getContentSpecToTags().add(contentSpecToTag);
+    }
+
+    public void removeTag(final ContentSpecToTag contentSpecToTag) {
+        this.contentSpecToTags.remove(contentSpecToTag);
+        contentSpecToTag.getTag().getContentSpecToTags().remove(contentSpecToTag);
+    }
+
+    public void addPropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
+        this.contentSpecToPropertyTags.add(contentSpecToPropertyTag);
+        contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().add(contentSpecToPropertyTag);
+    }
+
+    public void removePropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
+        this.contentSpecToPropertyTags.remove(contentSpecToPropertyTag);
+        contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().remove(contentSpecToPropertyTag);
     }
 }

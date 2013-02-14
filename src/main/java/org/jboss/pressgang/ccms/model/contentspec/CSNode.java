@@ -297,6 +297,84 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
     }
 
     @Transient
+    public void removeRelatedTo(final CSNode node, Integer relationshipTypeId) {
+        final List<CSNodeToCSNode> removeNodes = new ArrayList<CSNodeToCSNode>();
+
+        for (final CSNodeToCSNode nodeToNode : this.relatedToNodes) {
+            if (nodeToNode.getRelatedNode().equals(node) && nodeToNode.getRelationshipType().equals(relationshipTypeId)) {
+                removeNodes.add(nodeToNode);
+            }
+        }
+
+        for (final CSNodeToCSNode removeNode : removeNodes) {
+            this.relatedToNodes.remove(removeNode);
+            removeNode.getRelatedNode().getRelatedFromNodes().remove(removeNode);
+        }
+    }
+
+    @Transient
+    public void addRelatedTo(final CSNode relatedNode, Integer relationshipTypeId) {
+        final CSNodeToCSNode nodeToNode = new CSNodeToCSNode();
+        nodeToNode.setMainNode(this);
+        nodeToNode.setRelatedNode(relatedNode);
+        nodeToNode.setRelationshipType(relationshipTypeId);
+
+        this.getRelatedToNodes().add(nodeToNode);
+        relatedNode.getRelatedFromNodes().add(nodeToNode);
+    }
+
+    @Transient
+    public void addRelatedTo(final CSNodeToCSNode relatedNode) {
+        this.getRelatedToNodes().add(relatedNode);
+        relatedNode.getRelatedNode().getRelatedFromNodes().add(relatedNode);
+    }
+
+    @Transient
+    public void removeRelatedTo(final CSNodeToCSNode relatedNode) {
+        this.getRelatedToNodes().remove(relatedNode);
+        relatedNode.getRelatedNode().getRelatedFromNodes().remove(relatedNode);
+    }
+
+    @Transient
+    public void removeRelatedFrom(final CSNode node, Integer relationshipTypeId) {
+        final List<CSNodeToCSNode> removeNodes = new ArrayList<CSNodeToCSNode>();
+
+        for (final CSNodeToCSNode nodeFromNode : this.relatedFromNodes) {
+            if (nodeFromNode.getRelatedNode().equals(node) && nodeFromNode.getRelationshipType().equals(relationshipTypeId)) {
+                removeNodes.add(nodeFromNode);
+            }
+        }
+
+        for (final CSNodeToCSNode removeNode : removeNodes) {
+            this.relatedFromNodes.remove(removeNode);
+            removeNode.getRelatedNode().getRelatedToNodes().remove(removeNode);
+        }
+    }
+
+    @Transient
+    public void addRelatedFrom(final CSNode relatedNode, Integer relationshipTypeId) {
+        final CSNodeToCSNode nodeFromNode = new CSNodeToCSNode();
+        nodeFromNode.setMainNode(this);
+        nodeFromNode.setRelatedNode(relatedNode);
+        nodeFromNode.setRelationshipType(relationshipTypeId);
+
+        this.getRelatedFromNodes().add(nodeFromNode);
+        relatedNode.getRelatedToNodes().add(nodeFromNode);
+    }
+
+    @Transient
+    public void addRelatedFrom(final CSNodeToCSNode relatedNode) {
+        this.getRelatedFromNodes().add(relatedNode);
+        relatedNode.getRelatedNode().getRelatedToNodes().add(relatedNode);
+    }
+
+    @Transient
+    public void removeRelatedFrom(final CSNodeToCSNode relatedNode) {
+        this.getRelatedFromNodes().remove(relatedNode);
+        relatedNode.getRelatedNode().getRelatedToNodes().remove(relatedNode);
+    }
+
+    @Transient
     public List<CSNodeToPropertyTag> getCSNodeToPropertyTagsList() {
         return new ArrayList<CSNodeToPropertyTag>(this.csNodeToPropertyTags);
     }

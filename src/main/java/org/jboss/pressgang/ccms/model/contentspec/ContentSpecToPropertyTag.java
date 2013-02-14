@@ -2,8 +2,6 @@ package org.jboss.pressgang.ccms.model.contentspec;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.io.Serializable;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -37,7 +36,8 @@ import org.jboss.pressgang.ccms.model.base.ToPropertyTag;
 public class ContentSpecToPropertyTag extends ToPropertyTag<ContentSpecToPropertyTag> implements Serializable {
     private static final long serialVersionUID = 7567494908179498295L;
     public static String SELECT_ALL_QUERY = "SELECT contentSpecToPropertyTag FROM ContentSpecToPropertyTag AS contentSpecToPropertyTag";
-    public static String SELECT_SIZE_QUERY = "SELECT COUNT(contentSpecToPropertyTag) FROM ContentSpecToPropertyTag AS contentSpecToPropertyTag";
+    public static String SELECT_SIZE_QUERY = "SELECT COUNT(contentSpecToPropertyTag) FROM ContentSpecToPropertyTag AS " +
+            "contentSpecToPropertyTag";
 
     private Integer contentSpecToPropertyTagId = null;
     private ContentSpec contentSpec = null;
@@ -103,23 +103,21 @@ public class ContentSpecToPropertyTag extends ToPropertyTag<ContentSpecToPropert
              */
             final Long count;
             if (revision == null) {
-                final String query = ContentSpecToPropertyTag.SELECT_SIZE_QUERY
-                        + " WHERE contentSpecToPropertyTag.propertyTag = " + this.propertyTag.getId()
-                        + " AND contentSpecToPropertyTag.value = '" + this.getValue() + "'";
+                final String query = ContentSpecToPropertyTag.SELECT_SIZE_QUERY + " WHERE contentSpecToPropertyTag.propertyTag = " + this
+                        .propertyTag.getId() + " AND contentSpecToPropertyTag.value = '" + this.getValue() + "'";
                 count = (Long) entityManager.createQuery(query).getSingleResult();
             } else {
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
                 final AuditQueryCreator queryCreator = reader.createQuery();
-                final AuditQuery query = queryCreator.forEntitiesAtRevision(TopicToPropertyTag.class, revision)
-                        .addProjection(AuditEntity.id().count("contentSpecToPropertyTagId"))
-                        .add(AuditEntity.relatedId("propertyTag").eq(this.propertyTag.getId()))
-                        .add(AuditEntity.property("value").eq(this.getValue()));
+                final AuditQuery query = queryCreator.forEntitiesAtRevision(TopicToPropertyTag.class, revision).addProjection(
+                        AuditEntity.id().count("contentSpecToPropertyTagId")).add(
+                        AuditEntity.relatedId("propertyTag").eq(this.propertyTag.getId())).add(
+                        AuditEntity.property("value").eq(this.getValue()));
                 query.setCacheable(true);
                 count = (Long) query.getSingleResult();
             }
 
-            if (count > 1)
-                return false;
+            if (count > 1) return false;
         }
 
         return true;

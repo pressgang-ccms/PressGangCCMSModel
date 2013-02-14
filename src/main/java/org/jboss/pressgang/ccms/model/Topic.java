@@ -5,12 +5,7 @@ import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.hamcrest.Matchers.equalTo;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
@@ -31,9 +25,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import net.htmlparser.jericho.Source;
-
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -46,12 +49,14 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
+import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.contentspec.CSNode;
+import org.jboss.pressgang.ccms.model.contentspec.ContentSpec;
+import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicToTopicMainTopicIDSort;
 import org.jboss.pressgang.ccms.model.sort.TopicToTopicRelatedTopicIDSort;
-import org.jboss.pressgang.ccms.model.constants.Constants;
-import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.utils.TopicUtilities;
 import org.jboss.pressgang.ccms.utils.common.CollectionUtilities;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
@@ -70,7 +75,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private String topicText;
     private Date topicTimeStamp;
     private String topicTitle;
-    private Integer xmlDoctype = Constants.DOCBOOK_45;
+    private Integer xmlDoctype = CommonConstants.DOCBOOK_45;
     private Set<TopicToTag> topicToTags = new HashSet<TopicToTag>(0);
     private Set<TopicToTopic> parentTopicToTopics = new HashSet<TopicToTopic>(0);
     private Set<TopicToTopic> childTopicToTopics = new HashSet<TopicToTopic>(0);
@@ -141,7 +146,8 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "TopicToTopicSecondOrderData", joinColumns = { @JoinColumn(name = "TopicID", unique = true) }, inverseJoinColumns = { @JoinColumn(name = "TopicSecondOrderDataID") })
+    @JoinTable(name = "TopicToTopicSecondOrderData", joinColumns = {@JoinColumn(name = "TopicID", unique = true)},
+            inverseJoinColumns = {@JoinColumn(name = "TopicSecondOrderDataID")})
     @NotAudited
     public TopicSecondOrderData getTopicSecondOrderData() {
         return topicSecondOrderData;
@@ -244,8 +250,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     @Field(name = "TopicSearchText", index = Index.TOKENIZED, store = Store.YES)
     public String getTopicSearchText() {
-        if (this.topicXML == null)
-            return "";
+        if (this.topicXML == null) return "";
 
         final Source source = new Source(this.topicXML);
         source.fullSequentialParse();
@@ -254,23 +259,20 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Transient
     public String getTopicRendered() {
-        if (this.topicSecondOrderData == null)
-            return null;
+        if (this.topicSecondOrderData == null) return null;
 
         return topicSecondOrderData.getTopicHTMLView();
     }
 
     public void setTopicRendered(final String value) {
-        if (this.topicSecondOrderData == null)
-            this.topicSecondOrderData = new TopicSecondOrderData();
+        if (this.topicSecondOrderData == null) this.topicSecondOrderData = new TopicSecondOrderData();
 
         this.topicSecondOrderData.setTopicHTMLView(value);
     }
 
     @Transient
     public String getTopicXMLErrors() {
-        if (this.topicSecondOrderData == null)
-            return null;
+        if (this.topicSecondOrderData == null) return null;
 
         return topicSecondOrderData.getTopicXMLErrors();
     }
@@ -301,8 +303,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public boolean isRelatedTo(final Integer relatedTopicId) {
         for (final TopicToTopic topicToTopic : this.getParentTopicToTopics())
-            if (topicToTopic.getRelatedTopic().topicId.equals(relatedTopicId))
-                return true;
+            if (topicToTopic.getRelatedTopic().topicId.equals(relatedTopicId)) return true;
 
         return false;
     }
@@ -310,8 +311,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public boolean isRelatedTo(final Topic relatedTopic, final RelationshipTag relationshipTag) {
         for (final TopicToTopic topicToTopic : this.getParentTopicToTopics())
-            if (topicToTopic.getRelatedTopic().equals(relatedTopic)
-                    && topicToTopic.getRelationshipTag().equals(relationshipTag))
+            if (topicToTopic.getRelatedTopic().equals(relatedTopic) && topicToTopic.getRelationshipTag().equals(relationshipTag))
                 return true;
 
         return false;
@@ -320,8 +320,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public boolean isRelatedTo(final Topic relatedTopic) {
         for (final TopicToTopic topicToTopic : this.getParentTopicToTopics())
-            if (topicToTopic.getRelatedTopic().equals(relatedTopic))
-                return true;
+            if (topicToTopic.getRelatedTopic().equals(relatedTopic)) return true;
 
         return false;
     }
@@ -329,8 +328,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public boolean isTaggedWith(final Integer tagId) {
         for (final TopicToTag topicToTag : this.getTopicToTags())
-            if (topicToTag.getTag().getTagId().equals(tagId))
-                return true;
+            if (topicToTag.getTag().getTagId().equals(tagId)) return true;
 
         return false;
     }
@@ -338,8 +336,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public boolean isTaggedWith(final Tag tag) {
         for (final TopicToTag topicToTag : this.getTopicToTags())
-            if (topicToTag.getTag().equals(tag))
-                return true;
+            if (topicToTag.getTag().equals(tag)) return true;
 
         return false;
     }
@@ -398,8 +395,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
             // remove any excluded tags
             for (final Tag excludeTag : tag.getExcludedTags()) {
-                if (excludeTag.equals(tag))
-                    continue;
+                if (excludeTag.equals(tag)) continue;
 
                 this.removeTag(excludeTag);
             }
@@ -408,13 +404,13 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
             for (final TagToCategory category : tag.getTagToCategories()) {
                 if (category.getCategory().isMutuallyExclusive()) {
                     for (final Tag categoryTag : category.getCategory().getTags()) {
-                        if (categoryTag.equals(tag))
-                            continue;
+                        if (categoryTag.equals(tag)) continue;
 
                         // Check if the Category Tag exists in this topic
                         if (filter(having(on(TopicToTag.class).getTag(), equalTo(categoryTag)), this.getTopicToTags()).size() != 0) {
-                            throw new CustomConstraintViolationException("Adding Tag " + tag.getTagName() + " (" + tag.getId()
-                                    + ") failed due to a mutually exclusive constraint violation.");
+                            throw new CustomConstraintViolationException(
+                                    "Adding Tag " + tag.getTagName() + " (" + tag.getId() + ") failed due to a mutually exclusive " +
+                                            "constraint violation.");
                         }
                     }
                 }
@@ -472,8 +468,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public Topic getRelatedTopicByID(final Integer id) {
         for (final Topic topic : this.getOutgoingRelatedTopicsArray())
-            if (topic.getTopicId().equals(id))
-                return topic;
+            if (topic.getTopicId().equals(id)) return topic;
         return null;
     }
 
@@ -537,8 +532,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
                 final Tag tag = topicToTag.getTag();
 
                 if (topicToTag.getTag().isInCategory(categoryId)) {
-                    if (!retValue.contains(tag))
-                        retValue.add(tag);
+                    if (!retValue.contains(tag)) retValue.add(tag);
                 }
             }
         }
@@ -555,8 +549,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
             final Topic relatedTopic = topicToTopic.getRelatedTopic();
             final RelationshipTag relationshipTag = topicToTopic.getRelationshipTag();
 
-            if (relatedTopic.getTopicId().equals(relatedTopicId)
-                    && relationshipTag.getRelationshipTagId().equals(relationshipTagId)) {
+            if (relatedTopic.getTopicId().equals(relatedTopicId) && relationshipTag.getRelationshipTagId().equals(relationshipTagId)) {
                 /* remove the relationship from this topic */
                 this.getParentTopicToTopics().remove(topicToTopic);
 
@@ -564,6 +557,34 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
                 for (final TopicToTopic childTopicToTopic : relatedTopic.getChildTopicToTopics()) {
                     if (childTopicToTopic.getMainTopic().equals(this)) {
                         relatedTopic.getChildTopicToTopics().remove(childTopicToTopic);
+                        break;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean removeRelationshipFrom(final Topic topic, final RelationshipTag relationshipTag) {
+        return removeRelationshipFrom(topic.getTopicId(), relationshipTag.getRelationshipTagId());
+    }
+
+    public boolean removeRelationshipFrom(final Integer relatedTopicId, final Integer relationshipTagId) {
+        for (final TopicToTopic topicToTopic : this.getChildTopicToTopics()) {
+            final Topic relatedTopic = topicToTopic.getRelatedTopic();
+            final RelationshipTag relationshipTag = topicToTopic.getRelationshipTag();
+
+            if (relatedTopic.getTopicId().equals(relatedTopicId) && relationshipTag.getRelationshipTagId().equals(relationshipTagId)) {
+                /* remove the relationship from this topic */
+                this.getChildTopicToTopics().remove(topicToTopic);
+
+                /* now remove the relationship from the other topic */
+                for (final TopicToTopic parentTopicToTopic : relatedTopic.getParentTopicToTopics()) {
+                    if (parentTopicToTopic.getMainTopic().equals(this)) {
+                        relatedTopic.getParentTopicToTopics().remove(parentTopicToTopic);
                         break;
                     }
                 }
@@ -592,7 +613,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     public void removeTopicSourceUrl(final int id) {
         final List<TopicToTopicSourceUrl> mappingEntities = filter(
-                having(on(TopicToTopicSourceUrl.class).getTopicSourceUrl().getTopicSourceUrlid(), equalTo(id)),
+                having(on(TopicToTopicSourceUrl.class).getTopicSourceUrl().getTopicSourceUrlId(), equalTo(id)),
                 this.getTopicToTopicSourceUrls());
         if (mappingEntities.size() != 0) {
             for (final TopicToTopicSourceUrl mapping : mappingEntities) {
@@ -629,8 +650,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     public void changeTopicToTopicRelationshipTag(final RelationshipTag relationshipTag, final Topic existingTopic,
             final RelationshipTag existingRelationshipTag) {
         for (final TopicToTopic topicToTopic : this.parentTopicToTopics) {
-            if (topicToTopic.getRelatedTopic().equals(existingTopic)
-                    && topicToTopic.getRelationshipTag().equals(existingRelationshipTag)) {
+            if (topicToTopic.getRelatedTopic().equals(existingTopic) && topicToTopic.getRelationshipTag().equals(existingRelationshipTag)) {
                 topicToTopic.setRelationshipTag(relationshipTag);
                 break;
             }
@@ -752,25 +772,33 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     public List<TranslatedTopicData> getTranslatedTopics(final EntityManager entityManager, final Number revision) {
         final List<TranslatedTopicData> translatedTopicDatas = new ArrayList<TranslatedTopicData>();
 
-        try {
-            /*
-             * We have to do a query here as a @OneToMany won't work with hibernate envers since the TranslatedTopic entity is
-             * audited and we need the latest results. This is because the translated topic will never exist for its matching
-             * audited topic.
-             */
-            final String translatedTopicQuery = TranslatedTopic.SELECT_ALL_QUERY + " WHERE translatedTopic.topicId = "
-                    + this.topicId + (revision == null ? "" : (" AND translatedTopic.topicRevision <= " + revision));
-            final List<TranslatedTopic> translatedTopics = entityManager.createQuery(translatedTopicQuery).getResultList();
+        /*
+         * We have to do a query here as a @OneToMany won't work with hibernate envers since the TranslatedTopic entity is
+         * audited and we need the latest results. This is because the translated topic will never exist for its matching
+         * audited topic.
+         */
+        final String translatedTopicQuery = TranslatedTopic.SELECT_ALL_QUERY + " WHERE translatedTopic.topicId = " + this.topicId +
+                (revision == null ? "" : (" AND translatedTopic.topicRevision <= " + revision));
+        final List<TranslatedTopic> translatedTopics = entityManager.createQuery(translatedTopicQuery).getResultList();
 
-            for (final TranslatedTopic translatedTopic : translatedTopics) {
-                translatedTopicDatas.addAll(translatedTopic.getTranslatedTopicDatas());
-            }
-        } catch (final PersistenceException ex) {
-            // Increase the prepared-statement-cache-size if an exception is
-            // being thrown here
-            throw ex;
+        for (final TranslatedTopic translatedTopic : translatedTopics) {
+            translatedTopicDatas.addAll(translatedTopic.getTranslatedTopicDatas());
         }
 
         return translatedTopicDatas;
+    }
+
+    @Transient
+    public List<ContentSpec> getContentSpecs(final EntityManager entityManager) {
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ContentSpec> query = criteriaBuilder.createQuery(ContentSpec.class);
+        final Root<CSNode> root = query.from(CSNode.class);
+        query.select(root.get("contentSpec").as(ContentSpec.class));
+
+        final Predicate topicIdMatches = criteriaBuilder.equal(root.get("topicId"), this.getTopicId());
+        query.where(topicIdMatches);
+
+        final List<ContentSpec> results = entityManager.createQuery(query).getResultList();
+        return results;
     }
 }

@@ -2,11 +2,6 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,25 +14,28 @@ import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.CSNodeToPropertyTag;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToPropertyTag;
-import org.jboss.pressgang.ccms.model.constants.Constants;
 
 @Entity
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "PropertyTag", uniqueConstraints = @UniqueConstraint(columnNames = { "PropertyTagName" }))
-public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.Serializable {
+@Table(name = "PropertyTag", uniqueConstraints = @UniqueConstraint(columnNames = {"PropertyTagName"}))
+public class PropertyTag extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -9064491060913710869L;
     public static final String SELECT_ALL_QUERY = "select propertyTag from PropertyTag propertyTag";
 
@@ -50,8 +48,7 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
     private Set<TopicToPropertyTag> topicToPropertyTags = new HashSet<TopicToPropertyTag>(0);
     private Set<ContentSpecToPropertyTag> contentSpecToPropertyTags = new HashSet<ContentSpecToPropertyTag>(0);
     private Set<CSNodeToPropertyTag> csNodeToPropertyTags = new HashSet<CSNodeToPropertyTag>(0);
-    private Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories = new HashSet<PropertyTagToPropertyTagCategory>(
-            0);
+    private Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories = new HashSet<PropertyTagToPropertyTagCategory>(0);
     private Boolean propertyTagIsUnique;
 
     @Id
@@ -158,32 +155,28 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
         return propertyTagToPropertyTagCategories;
     }
 
-    public void setPropertyTagToPropertyTagCategories(
-            final Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories) {
+    public void setPropertyTagToPropertyTagCategories(final Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories) {
         this.propertyTagToPropertyTagCategories = propertyTagToPropertyTagCategories;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
-        this.propertyTagToPropertyTagCategories.clear();
-        this.tagToPropertyTags.clear();
+        propertyTagToPropertyTagCategories.clear();
+        tagToPropertyTags.clear();
     }
 
     @Transient
     public boolean isInCategory(final PropertyTagCategory propertyTagCategory) {
-        for (final PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory : this.propertyTagToPropertyTagCategories)
-            if (propertyTagToPropertyTagCategory.getPropertyTagCategory().equals(propertyTagCategory))
-                return true;
+        for (final PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory : propertyTagToPropertyTagCategories)
+            if (propertyTagToPropertyTagCategory.getPropertyTagCategory().equals(propertyTagCategory)) return true;
 
         return false;
     }
 
     @Transient
     public PropertyTagToPropertyTagCategory getCategory(final Integer categoryId) {
-        for (final PropertyTagToPropertyTagCategory category : this.propertyTagToPropertyTagCategories)
-            if (categoryId.equals(category.getPropertyTagCategory().getPropertyTagCategoryId()))
-                return category;
+        for (final PropertyTagToPropertyTagCategory category : propertyTagToPropertyTagCategories)
+            if (categoryId.equals(category.getPropertyTagCategory().getPropertyTagCategoryId())) return category;
 
         return null;
     }
@@ -191,7 +184,7 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
     @Override
     @Transient
     public Integer getId() {
-        return this.propertyTagId;
+        return propertyTagId;
     }
 
     @Column(name = "PropertyTagIsUnique", nullable = false, columnDefinition = "BIT", length = 1)
@@ -200,30 +193,30 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
     }
 
     public void setPropertyTagIsUnique(final Boolean isUnique) {
-        this.propertyTagIsUnique = isUnique;
+        propertyTagIsUnique = isUnique;
     }
 
     @Transient
     public void removeTag(final TagToPropertyTag tagToPropertyTag) {
         tagToPropertyTag.getTag().getTagToPropertyTags().remove(tagToPropertyTag);
-        this.tagToPropertyTags.remove(tagToPropertyTag);
+        tagToPropertyTags.remove(tagToPropertyTag);
     }
 
     @Transient
     public void addTag(final TagToPropertyTag tagToPropertyTag) {
-        this.tagToPropertyTags.add(tagToPropertyTag);
+        tagToPropertyTags.add(tagToPropertyTag);
         tagToPropertyTag.getTag().getTagToPropertyTags().add(tagToPropertyTag);
     }
 
     @Transient
     public void removeTopic(final TopicToPropertyTag topicToPropertyTag) {
         topicToPropertyTag.getTopic().getTopicToPropertyTags().remove(topicToPropertyTag);
-        this.topicToPropertyTags.remove(topicToPropertyTag);
+        topicToPropertyTags.remove(topicToPropertyTag);
     }
 
     @Transient
     public void addTopic(final TopicToPropertyTag topicToPropertyTag) {
-        this.topicToPropertyTags.add(topicToPropertyTag);
+        topicToPropertyTags.add(topicToPropertyTag);
         topicToPropertyTag.getTopic().getTopicToPropertyTags().add(topicToPropertyTag);
     }
 
@@ -250,8 +243,8 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
 
     public boolean addPropertyTagCategory(final PropertyTagCategory propertyTagCategory) {
         boolean found = false;
-        for (final PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory : propertyTagToPropertyTagCategories) {
-            if (propertyTagToPropertyTagCategory.getPropertyTag().equals(propertyTagCategory)) {
+        for (final PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory : getPropertyTagToPropertyTagCategories()) {
+            if (propertyTagToPropertyTagCategory.getPropertyTagCategory().equals(propertyTagCategory)) {
                 found = true;
                 break;
             }
@@ -271,12 +264,12 @@ public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.S
     @Transient
     public void removeCSNode(final CSNodeToPropertyTag csNodeToPropertyTag) {
         csNodeToPropertyTag.getCSNode().getCSNodeToPropertyTags().remove(csNodeToPropertyTag);
-        this.csNodeToPropertyTags.remove(csNodeToPropertyTag);
+        csNodeToPropertyTags.remove(csNodeToPropertyTag);
     }
 
     @Transient
     public void addCSNode(final CSNodeToPropertyTag csNodeToPropertyTag) {
-        this.csNodeToPropertyTags.add(csNodeToPropertyTag);
+        csNodeToPropertyTags.add(csNodeToPropertyTag);
         csNodeToPropertyTag.getCSNode().getCSNodeToPropertyTags().add(csNodeToPropertyTag);
     }
 }

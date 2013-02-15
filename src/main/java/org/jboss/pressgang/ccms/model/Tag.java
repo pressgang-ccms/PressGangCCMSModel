@@ -1,10 +1,10 @@
 package org.jboss.pressgang.ccms.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
+import static javax.persistence.GenerationType.IDENTITY;
+import static org.hamcrest.Matchers.equalTo;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -12,45 +12,42 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
-import javax.persistence.UniqueConstraint;
-
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.on;
-import static javax.persistence.GenerationType.IDENTITY;
-import static org.hamcrest.Matchers.equalTo;
-
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
+import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToTag;
 import org.jboss.pressgang.ccms.model.sort.CategoryIDComparator;
 import org.jboss.pressgang.ccms.model.sort.ProjectIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
-import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.utils.common.CollectionUtilities;
 
 @Entity
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "Tag", uniqueConstraints = @UniqueConstraint(columnNames = { "TagName" }))
+@Table(name = "Tag", uniqueConstraints = @UniqueConstraint(columnNames = {"TagName"}))
 public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "select tag from Tag tag";
     private static final long serialVersionUID = 2841080567638275194L;
@@ -85,14 +82,14 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Override
     @Transient
     public Integer getId() {
-        return this.tagId;
+        return tagId;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TagToProject> getTagToProjects() {
-        return this.tagToProjects;
+        return tagToProjects;
     }
 
     public void setTagToProjects(final Set<TagToProject> tagToProjects) {
@@ -103,7 +100,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TagToTag> getParentTagToTags() {
-        return this.parentTagToTags;
+        return parentTagToTags;
     }
 
     public void setParentTagToTags(final Set<TagToTag> parentTagToTags) {
@@ -114,7 +111,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TagToTag> getChildrenTagToTags() {
-        return this.childrenTagToTags;
+        return childrenTagToTags;
     }
 
     public void setChildrenTagToTags(final Set<TagToTag> childrenTagToTags) {
@@ -125,7 +122,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TagToCategory> getTagToCategories() {
-        return this.tagToCategories;
+        return tagToCategories;
     }
 
     public void setTagToCategories(final Set<TagToCategory> tagToCategories) {
@@ -136,7 +133,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TagID", unique = true, nullable = false)
     public Integer getTagId() {
-        return this.tagId;
+        return tagId;
     }
 
     public void setTagId(Integer tagId) {
@@ -147,7 +144,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @NotNull
     @Size(max = 255)
     public String getTagName() {
-        return this.tagName;
+        return tagName;
     }
 
     public void setTagName(String tagName) {
@@ -158,7 +155,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Column(name = "TagDescription", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getTagDescription() {
-        return this.tagDescription;
+        return tagDescription;
     }
 
     public void setTagDescription(String tagDescription) {
@@ -169,7 +166,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TopicToTag> getTopicToTags() {
-        return this.topicToTags;
+        return topicToTags;
     }
 
     public void setTopicToTags(final Set<TopicToTag> topicToTags) {
@@ -180,7 +177,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<ContentSpecToTag> getContentSpecToTags() {
-        return this.contentSpecToTags;
+        return contentSpecToTags;
     }
 
     public void setContentSpecToTags(final Set<ContentSpecToTag> contentSpecToTags) {
@@ -190,9 +187,8 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public String getCategoriesList() {
         String categoriesList = "";
-        for (final TagToCategory category : this.getTagToCategories()) {
-            if (categoriesList.length() != 0)
-                categoriesList += " ";
+        for (final TagToCategory category : getTagToCategories()) {
+            if (categoriesList.length() != 0) categoriesList += " ";
             categoriesList += category.getCategory().getCategoryName();
         }
         return categoriesList;
@@ -201,7 +197,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public List<Category> getCategories() {
         final List<Category> retValue = new ArrayList<Category>();
-        for (final TagToCategory category : this.getTagToCategories())
+        for (final TagToCategory category : getTagToCategories())
             retValue.add(category.getCategory());
 
         Collections.sort(retValue, new CategoryIDComparator());
@@ -212,7 +208,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public List<Project> getProjects() {
         final List<Project> retValue = new ArrayList<Project>();
-        for (final TagToProject mapping : this.tagToProjects)
+        for (final TagToProject mapping : tagToProjects)
             retValue.add(mapping.getProject());
 
         Collections.sort(retValue, new ProjectIDComparator());
@@ -223,9 +219,8 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public String getProjectsList() {
         String retValue = "";
-        for (final TagToProject mapping : this.tagToProjects) {
-            if (retValue.length() != 0)
-                retValue += " ";
+        for (final TagToProject mapping : tagToProjects) {
+            if (retValue.length() != 0) retValue += " ";
             retValue += mapping.getProject().getProjectName();
         }
         return retValue;
@@ -234,7 +229,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public List<Tag> getParentTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final TagToTag mapping : this.getParentTagToTags())
+        for (final TagToTag mapping : getParentTagToTags())
             retValue.add(mapping.getPrimaryTag());
 
         Collections.sort(retValue, new TagIDComparator());
@@ -245,7 +240,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public List<Tag> getChildTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final TagToTag mapping : this.getParentTagToTags())
+        for (final TagToTag mapping : getParentTagToTags())
             retValue.add(mapping.getSecondaryTag());
 
         Collections.sort(retValue, new TagIDComparator());
@@ -256,9 +251,8 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public String getChildrenList() {
         String retValue = "";
-        for (final TagToTag tag : this.getChildrenTagToTags()) {
-            if (retValue.length() != 0)
-                retValue += ", ";
+        for (final TagToTag tag : getChildrenTagToTags()) {
+            if (retValue.length() != 0) retValue += ", ";
             retValue += tag.getSecondaryTag().getTagName();
         }
         return retValue;
@@ -267,9 +261,8 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public String getParentList() {
         String retValue = "";
-        for (final TagToTag tag : this.getParentTagToTags()) {
-            if (retValue.length() != 0)
-                retValue += ", ";
+        for (final TagToTag tag : getParentTagToTags()) {
+            if (retValue.length() != 0) retValue += ", ";
             retValue += tag.getPrimaryTag().getTagName();
         }
         return retValue;
@@ -278,7 +271,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public ArrayList<Integer> getCategoriesIDList() {
         ArrayList<Integer> categoriesList = new ArrayList<Integer>();
-        for (final TagToCategory category : this.getTagToCategories())
+        for (final TagToCategory category : getTagToCategories())
             categoriesList.add(category.getCategory().getCategoryId());
         return categoriesList;
     }
@@ -286,44 +279,42 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public ArrayList<Integer> getExclusionTagIDs() {
         ArrayList<Integer> tagList = new ArrayList<Integer>();
-        for (final Tag tag : this.getExcludedTags())
+        for (final Tag tag : getExcludedTags())
             tagList.add(tag.getTagId());
         return tagList;
     }
 
     @Transient
     public boolean isInCategory(final Integer categoryId) {
-        for (final TagToCategory category : this.getTagToCategories())
-            if (categoryId.equals(category.getCategory().getCategoryId()))
-                return true;
+        for (final TagToCategory category : getTagToCategories())
+            if (categoryId.equals(category.getCategory().getCategoryId())) return true;
 
         return false;
     }
 
     @Transient
     public boolean isInCategory(final Category category) {
-        for (final TagToCategory myCategory : this.getTagToCategories())
-            if (myCategory.getCategory().equals(category))
-                return true;
+        for (final TagToCategory myCategory : getTagToCategories())
+            if (myCategory.getCategory().equals(category)) return true;
 
         return false;
     }
 
     @Transient
     public TagToCategory getCategory(final Integer categoryId) {
-        for (final TagToCategory category : this.getTagToCategories())
-            if (categoryId.equals(category.getCategory().getCategoryId()))
-                return category;
+        for (final TagToCategory category : getTagToCategories())
+            if (categoryId.equals(category.getCategory().getCategoryId())) return category;
 
         return null;
     }
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "TagExclusion", joinColumns = { @JoinColumn(name = "Tag1ID", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "Tag2ID", nullable = false, updatable = false) })
+    @JoinTable(name = "TagExclusion", joinColumns = {@JoinColumn(name = "Tag1ID", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "Tag2ID", nullable = false, updatable = false)})
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<Tag> getExcludedTags() {
-        return this.excludedTags;
+        return excludedTags;
     }
 
     public void setExcludedTags(Set<Tag> excludedTags) {
@@ -346,15 +337,13 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
 
     protected void validate() {
         // a tag can be a parent, or be a child, but not both
-        if (this.getChildrenTagToTags().size() != 0)
-            this.getParentTagToTags().clear();
+        if (getChildrenTagToTags().size() != 0) getParentTagToTags().clear();
     }
 
     public boolean removeTagRelationship(final Tag childTag) {
-        final List<TagToTag> children = filter(having(on(TagToTag.class).getSecondaryTag(), equalTo(childTag)),
-                this.getChildrenTagToTags());
+        final List<TagToTag> children = filter(having(on(TagToTag.class).getSecondaryTag(), equalTo(childTag)), getChildrenTagToTags());
         for (final TagToTag child : children) {
-            this.getChildrenTagToTags().remove(child);
+            getChildrenTagToTags().remove(child);
             childTag.getParentTagToTags().remove(child);
         }
 
@@ -362,11 +351,10 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     }
 
     public boolean addTagRelationship(final Tag childTag) {
-        final List<TagToTag> children = filter(having(on(TagToTag.class).getSecondaryTag(), equalTo(childTag)),
-                this.getChildrenTagToTags());
+        final List<TagToTag> children = filter(having(on(TagToTag.class).getSecondaryTag(), equalTo(childTag)), getChildrenTagToTags());
         if (children.size() == 0) {
             final TagToTag tagToTag = new TagToTag(new TagToTagRelationship(1), this, childTag);
-            this.getChildrenTagToTags().add(tagToTag);
+            getChildrenTagToTags().add(tagToTag);
             childTag.getParentTagToTags().add(tagToTag);
             return true;
         }
@@ -375,10 +363,9 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     }
 
     public boolean removeProjectRelationship(final Project project) {
-        final List<TagToProject> children = filter(having(on(TagToProject.class).getProject(), equalTo(project)),
-                this.getTagToProjects());
+        final List<TagToProject> children = filter(having(on(TagToProject.class).getProject(), equalTo(project)), getTagToProjects());
         for (final TagToProject child : children) {
-            this.getTagToProjects().remove(child);
+            getTagToProjects().remove(child);
             child.getProject().getTagToProjects().remove(child);
         }
 
@@ -386,11 +373,10 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     }
 
     public boolean addProjectRelationship(final Project project) {
-        final List<TagToProject> children = filter(having(on(TagToProject.class).getProject(), equalTo(project)),
-                this.getTagToProjects());
+        final List<TagToProject> children = filter(having(on(TagToProject.class).getProject(), equalTo(project)), getTagToProjects());
         if (children.size() == 0) {
             final TagToProject tagToProject = new TagToProject(project, this);
-            this.getTagToProjects().add(tagToProject);
+            getTagToProjects().add(tagToProject);
             project.getTagToProjects().add(tagToProject);
             return true;
         }
@@ -406,12 +392,10 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
      * @return true if this tag has been assigned to the project, and false otherwise
      */
     public boolean isInProject(final Project project) {
-        if (this.tagToProjects.size() == 0 && project == null)
-            return true;
+        if (tagToProjects.size() == 0 && project == null) return true;
 
-        for (final TagToProject tagToProject : this.tagToProjects) {
-            if (tagToProject.getProject().equals(project))
-                return true;
+        for (final TagToProject tagToProject : tagToProjects) {
+            if (tagToProject.getProject().equals(project)) return true;
         }
 
         return false;
@@ -420,13 +404,12 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final TagToTag tag : this.childrenTagToTags)
+        for (final TagToTag tag : childrenTagToTags)
             retValue.add(tag.getSecondaryTag());
 
         return retValue;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
         for (final TopicToTag topicToTag : topicToTags)
@@ -471,14 +454,14 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     }
 
     public void removePropertyTag(final TagToPropertyTag tagToPropertyTag) {
-        this.tagToPropertyTags.remove(tagToPropertyTag);
+        tagToPropertyTags.remove(tagToPropertyTag);
         tagToPropertyTag.getPropertyTag().getTagToPropertyTags().remove(tagToPropertyTag);
     }
 
     public void removePropertyTag(final PropertyTag propertyTag, final String value) {
         final List<TagToPropertyTag> removeList = new ArrayList<TagToPropertyTag>();
 
-        for (final TagToPropertyTag mapping : this.tagToPropertyTags) {
+        for (final TagToPropertyTag mapping : tagToPropertyTags) {
             final PropertyTag myPropertyTag = mapping.getPropertyTag();
             if (myPropertyTag.equals(propertyTag) && mapping.getValue().equals(value)) {
                 removeList.add(mapping);
@@ -486,13 +469,13 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
         }
 
         for (final TagToPropertyTag mapping : removeList) {
-            this.tagToPropertyTags.remove(mapping);
+            tagToPropertyTags.remove(mapping);
             mapping.getPropertyTag().getTagToPropertyTags().remove(mapping);
         }
     }
 
     public void addPropertyTag(final TagToPropertyTag tagToPropertyTag) {
-        this.tagToPropertyTags.add(tagToPropertyTag);
+        tagToPropertyTags.add(tagToPropertyTag);
         tagToPropertyTag.getPropertyTag().getTagToPropertyTags().add(tagToPropertyTag);
     }
 
@@ -502,20 +485,20 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
         mapping.setPropertyTag(propertyTag);
         mapping.setValue(value);
 
-        this.tagToPropertyTags.add(mapping);
+        tagToPropertyTags.add(mapping);
         propertyTag.getTagToPropertyTags().add(mapping);
     }
 
     @Override
     @Transient
     protected Set<TagToPropertyTag> getPropertyTags() {
-        return this.tagToPropertyTags;
+        return tagToPropertyTags;
     }
 
     @Transient
     public List<PropertyTag> getPropertyTagsArray() {
         final List<PropertyTag> retValue = new ArrayList<PropertyTag>();
-        for (final TagToPropertyTag mapping : this.tagToPropertyTags) {
+        for (final TagToPropertyTag mapping : tagToPropertyTags) {
             final PropertyTag entity = mapping.getPropertyTag();
             retValue.add(entity);
         }
@@ -531,20 +514,20 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Transient
     public void addCategoryRelationship(final TagToCategory tagToCategory) {
         tagToCategory.getCategory().getTagToCategories().add(tagToCategory);
-        this.tagToCategories.add(tagToCategory);
+        tagToCategories.add(tagToCategory);
     }
 
     @Transient
     public void removeCategoryRelationship(final TagToCategory tagToCategory) {
         tagToCategory.getCategory().getTagToCategories().remove(tagToCategory);
-        this.tagToCategories.remove(tagToCategory);
+        tagToCategories.remove(tagToCategory);
     }
 
     @Transient
     public List<TagToCategory> getTagToCategoriesArray() {
         final List<TagToCategory> retValue = new ArrayList<TagToCategory>();
 
-        for (final TagToCategory tagToCategory : this.tagToCategories) {
+        for (final TagToCategory tagToCategory : tagToCategories) {
             retValue.add(tagToCategory);
         }
 

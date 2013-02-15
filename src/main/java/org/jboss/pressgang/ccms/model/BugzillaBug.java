@@ -2,9 +2,6 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,14 +13,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -32,7 +30,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "BugzillaBug")
-public class BugzillaBug extends AuditedEntity<BugzillaBug> implements java.io.Serializable {
+public class BugzillaBug extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -2421128855519132960L;
     public static final String SELECT_ALL_QUERY = "select bugzillaBug from BugzillaBug bugzillaBug";
 
@@ -45,7 +43,7 @@ public class BugzillaBug extends AuditedEntity<BugzillaBug> implements java.io.S
     @Override
     @Transient
     public Integer getId() {
-        return this.bugzillaBugId;
+        return bugzillaBugId;
     }
 
     @Id
@@ -92,18 +90,17 @@ public class BugzillaBug extends AuditedEntity<BugzillaBug> implements java.io.S
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TopicToBugzillaBug> getTopicToBugzillaBugs() {
-        return this.topicToBugzillaBugs;
+        return topicToBugzillaBugs;
     }
 
     public void setTopicToBugzillaBugs(final Set<TopicToBugzillaBug> topicToBugzillaBugs) {
         this.topicToBugzillaBugs = topicToBugzillaBugs;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
-        for (final TopicToBugzillaBug mapping : this.topicToBugzillaBugs)
+        for (final TopicToBugzillaBug mapping : topicToBugzillaBugs)
             mapping.getTopic().getTopicToBugzillaBugs().remove(mapping);
-        this.topicToBugzillaBugs.clear();
+        topicToBugzillaBugs.clear();
     }
 }

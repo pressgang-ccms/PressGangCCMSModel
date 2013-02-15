@@ -5,12 +5,7 @@ import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.hamcrest.Matchers.equalTo;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
@@ -31,11 +25,20 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import net.htmlparser.jericho.Source;
-
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -47,12 +50,14 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
+import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.contentspec.CSNode;
+import org.jboss.pressgang.ccms.model.contentspec.ContentSpec;
+import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicToTopicMainTopicIDSort;
 import org.jboss.pressgang.ccms.model.sort.TopicToTopicRelatedTopicIDSort;
-import org.jboss.pressgang.ccms.model.constants.Constants;
-import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.utils.TopicUtilities;
 import org.jboss.pressgang.ccms.utils.common.CollectionUtilities;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
@@ -71,7 +76,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private String topicText;
     private Date topicTimeStamp;
     private String topicTitle;
-    private Integer xmlDoctype = Constants.DOCBOOK_45;
+    private Integer xmlDoctype = CommonConstants.DOCBOOK_45;
     private Set<TopicToTag> topicToTags = new HashSet<TopicToTag>(0);
     private Set<TopicToTopic> parentTopicToTopics = new HashSet<TopicToTopic>(0);
     private Set<TopicToTopic> childTopicToTopics = new HashSet<TopicToTopic>(0);
@@ -85,14 +90,14 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Override
     @Transient
     public Integer getId() {
-        return this.topicId;
+        return topicId;
     }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicID", unique = true, nullable = false)
     public Integer getTopicId() {
-        return this.topicId;
+        return topicId;
     }
 
     public void setTopicId(final Integer topicId) {
@@ -103,7 +108,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @NotNull
     @Size(max = 45)
     public String getTopicLocale() {
-        return this.topicLocale == null ? CommonConstants.DEFAULT_LOCALE : this.topicLocale;
+        return topicLocale == null ? CommonConstants.DEFAULT_LOCALE : topicLocale;
     }
 
     public void setTopicLocale(final String topicLocale) {
@@ -142,7 +147,8 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "TopicToTopicSecondOrderData", joinColumns = { @JoinColumn(name = "TopicID", unique = true) }, inverseJoinColumns = { @JoinColumn(name = "TopicSecondOrderDataID") })
+    @JoinTable(name = "TopicToTopicSecondOrderData", joinColumns = {@JoinColumn(name = "TopicID", unique = true)},
+            inverseJoinColumns = {@JoinColumn(name = "TopicSecondOrderDataID")})
     @NotAudited
     public TopicSecondOrderData getTopicSecondOrderData() {
         return topicSecondOrderData;
@@ -155,7 +161,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Column(name = "TopicText", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getTopicText() {
-        return this.topicText;
+        return topicText;
     }
 
     public void setTopicText(final String topicText) {
@@ -166,7 +172,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Column(name = "TopicTimeStamp", nullable = false, length = 0)
     @NotNull
     public Date getTopicTimeStamp() {
-        return this.topicTimeStamp;
+        return topicTimeStamp;
     }
 
     public void setTopicTimeStamp(final Date topicTimeStamp) {
@@ -177,7 +183,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @NotNull
     @Size(max = 255)
     public String getTopicTitle() {
-        return this.topicTitle;
+        return topicTitle;
     }
 
     public void setTopicTitle(final String topicTitle) {
@@ -188,7 +194,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TopicToTag> getTopicToTags() {
-        return this.topicToTags;
+        return topicToTags;
     }
 
     public void setTopicToTags(final Set<TopicToTag> topicToTags) {
@@ -199,7 +205,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TopicToTopicSourceUrl> getTopicToTopicSourceUrls() {
-        return this.topicToTopicSourceUrls;
+        return topicToTopicSourceUrls;
     }
 
     public void setTopicToTopicSourceUrls(final Set<TopicToTopicSourceUrl> topicToTopicSourceUrls) {
@@ -209,7 +215,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Column(name = "TopicXML", columnDefinition = "MEDIUMTEXT")
     @Size(max = 16777215)
     public String getTopicXML() {
-        return this.topicXML;
+        return topicXML;
     }
 
     public void setTopicXML(final String topicXML) {
@@ -231,7 +237,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TopicToBugzillaBug> getTopicToBugzillaBugs() {
-        return this.topicToBugzillaBugs;
+        return topicToBugzillaBugs;
     }
 
     public void setTopicToBugzillaBugs(final Set<TopicToBugzillaBug> topicToBugzillaBugs) {
@@ -245,54 +251,48 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     @Field(name = "TopicSearchText", index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     public String getTopicSearchText() {
-        if (this.topicXML == null)
-            return "";
+        if (topicXML == null) return "";
 
-        final Source source = new Source(this.topicXML);
+        final Source source = new Source(topicXML);
         source.fullSequentialParse();
         return source.getTextExtractor().toString();
     }
 
     @Transient
     public String getTopicRendered() {
-        if (this.topicSecondOrderData == null)
-            return null;
+        if (topicSecondOrderData == null) return null;
 
         return topicSecondOrderData.getTopicHTMLView();
     }
 
     public void setTopicRendered(final String value) {
-        if (this.topicSecondOrderData == null)
-            this.topicSecondOrderData = new TopicSecondOrderData();
+        if (topicSecondOrderData == null) topicSecondOrderData = new TopicSecondOrderData();
 
-        this.topicSecondOrderData.setTopicHTMLView(value);
+        topicSecondOrderData.setTopicHTMLView(value);
     }
 
     @Transient
     public String getTopicXMLErrors() {
-        if (this.topicSecondOrderData == null)
-            return null;
+        if (topicSecondOrderData == null) return null;
 
         return topicSecondOrderData.getTopicXMLErrors();
     }
 
     public void setTopicXMLErrors(final String value) {
-        if (this.topicSecondOrderData == null) {
-            this.topicSecondOrderData = new TopicSecondOrderData();
+        if (topicSecondOrderData == null) {
+            topicSecondOrderData = new TopicSecondOrderData();
         }
 
-        this.topicSecondOrderData.setTopicXMLErrors(value);
+        topicSecondOrderData.setTopicXMLErrors(value);
     }
 
-    @SuppressWarnings("unused")
     @PrePersist
     private void onPrePresist() {
-        this.topicTimeStamp = new Date();
+        topicTimeStamp = new Date();
         TopicUtilities.validateAndFixTags(this);
         TopicUtilities.validateAndFixRelationships(this);
     }
 
-    @SuppressWarnings("unused")
     @PreUpdate
     private void onPreUpdate() {
         TopicUtilities.validateAndFixTags(this);
@@ -301,18 +301,16 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Transient
     public boolean isRelatedTo(final Integer relatedTopicId) {
-        for (final TopicToTopic topicToTopic : this.getParentTopicToTopics())
-            if (topicToTopic.getRelatedTopic().topicId.equals(relatedTopicId))
-                return true;
+        for (final TopicToTopic topicToTopic : getParentTopicToTopics())
+            if (topicToTopic.getRelatedTopic().topicId.equals(relatedTopicId)) return true;
 
         return false;
     }
 
     @Transient
     public boolean isRelatedTo(final Topic relatedTopic, final RelationshipTag relationshipTag) {
-        for (final TopicToTopic topicToTopic : this.getParentTopicToTopics())
-            if (topicToTopic.getRelatedTopic().equals(relatedTopic)
-                    && topicToTopic.getRelationshipTag().equals(relationshipTag))
+        for (final TopicToTopic topicToTopic : getParentTopicToTopics())
+            if (topicToTopic.getRelatedTopic().equals(relatedTopic) && topicToTopic.getRelationshipTag().equals(relationshipTag))
                 return true;
 
         return false;
@@ -320,27 +318,24 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Transient
     public boolean isRelatedTo(final Topic relatedTopic) {
-        for (final TopicToTopic topicToTopic : this.getParentTopicToTopics())
-            if (topicToTopic.getRelatedTopic().equals(relatedTopic))
-                return true;
+        for (final TopicToTopic topicToTopic : getParentTopicToTopics())
+            if (topicToTopic.getRelatedTopic().equals(relatedTopic)) return true;
 
         return false;
     }
 
     @Transient
     public boolean isTaggedWith(final Integer tagId) {
-        for (final TopicToTag topicToTag : this.getTopicToTags())
-            if (topicToTag.getTag().getTagId().equals(tagId))
-                return true;
+        for (final TopicToTag topicToTag : getTopicToTags())
+            if (topicToTag.getTag().getTagId().equals(tagId)) return true;
 
         return false;
     }
 
     @Transient
     public boolean isTaggedWith(final Tag tag) {
-        for (final TopicToTag topicToTag : this.getTopicToTags())
-            if (topicToTag.getTag().equals(tag))
-                return true;
+        for (final TopicToTag topicToTag : getTopicToTags())
+            if (topicToTag.getTag().equals(tag)) return true;
 
         return false;
     }
@@ -357,9 +352,9 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     public boolean addRelationshipFrom(final Topic relatedTopic, final RelationshipTag relationshipTag) {
-        if (!this.isRelatedTo(relatedTopic, relationshipTag)) {
+        if (!isRelatedTo(relatedTopic, relationshipTag)) {
             final TopicToTopic topicToTopic = new TopicToTopic(relatedTopic, this, relationshipTag);
-            this.getChildTopicToTopics().add(topicToTopic);
+            getChildTopicToTopics().add(topicToTopic);
             relatedTopic.getParentTopicToTopics().add(topicToTopic);
             return true;
         }
@@ -379,9 +374,9 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     public boolean addRelationshipTo(final Topic relatedTopic, final RelationshipTag relationshipTag) {
-        if (!this.isRelatedTo(relatedTopic, relationshipTag)) {
+        if (!isRelatedTo(relatedTopic, relationshipTag)) {
             final TopicToTopic topicToTopic = new TopicToTopic(this, relatedTopic, relationshipTag);
-            this.getParentTopicToTopics().add(topicToTopic);
+            getParentTopicToTopics().add(topicToTopic);
             relatedTopic.getChildTopicToTopics().add(topicToTopic);
             return true;
         }
@@ -395,49 +390,48 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     public void addTag(final Tag tag) throws CustomConstraintViolationException {
-        if (filter(having(on(TopicToTag.class).getTag(), equalTo(tag)), this.getTopicToTags()).size() == 0) {
+        if (filter(having(on(TopicToTag.class).getTag(), equalTo(tag)), getTopicToTags()).size() == 0) {
 
             // remove any excluded tags
             for (final Tag excludeTag : tag.getExcludedTags()) {
-                if (excludeTag.equals(tag))
-                    continue;
+                if (excludeTag.equals(tag)) continue;
 
-                this.removeTag(excludeTag);
+                removeTag(excludeTag);
             }
 
             // Remove other tags if the category is mutually exclusive
             for (final TagToCategory category : tag.getTagToCategories()) {
                 if (category.getCategory().isMutuallyExclusive()) {
                     for (final Tag categoryTag : category.getCategory().getTags()) {
-                        if (categoryTag.equals(tag))
-                            continue;
+                        if (categoryTag.equals(tag)) continue;
 
                         // Check if the Category Tag exists in this topic
-                        if (filter(having(on(TopicToTag.class).getTag(), equalTo(categoryTag)), this.getTopicToTags()).size() != 0) {
-                            throw new CustomConstraintViolationException("Adding Tag " + tag.getTagName() + " (" + tag.getId()
-                                    + ") failed due to a mutually exclusive constraint violation.");
+                        if (filter(having(on(TopicToTag.class).getTag(), equalTo(categoryTag)), getTopicToTags()).size() != 0) {
+                            throw new CustomConstraintViolationException(
+                                    "Adding Tag " + tag.getTagName() + " (" + tag.getId() + ") failed due to a mutually exclusive " +
+                                            "constraint violation.");
                         }
                     }
                 }
             }
 
             final TopicToTag mapping = new TopicToTag(this, tag);
-            this.topicToTags.add(mapping);
+            topicToTags.add(mapping);
             tag.getTopicToTags().add(mapping);
         }
     }
 
     public void addTopicSourceUrl(final TopicSourceUrl topicSourceUrl) {
         if (filter(having(on(TopicToTopicSourceUrl.class).getTopicSourceUrl(), equalTo(topicSourceUrl)),
-                this.getTopicToTopicSourceUrls()).size() == 0) {
-            this.topicToTopicSourceUrls.add(new TopicToTopicSourceUrl(topicSourceUrl, this));
+                getTopicToTopicSourceUrls()).size() == 0) {
+            topicToTopicSourceUrls.add(new TopicToTopicSourceUrl(topicSourceUrl, this));
         }
     }
 
     public void addBugzillaBug(final BugzillaBug entity) {
-        if (filter(having(on(TopicToBugzillaBug.class).getBugzillaBug(), equalTo(entity)), this.topicToBugzillaBugs).size() == 0) {
+        if (filter(having(on(TopicToBugzillaBug.class).getBugzillaBug(), equalTo(entity)), topicToBugzillaBugs).size() == 0) {
             final TopicToBugzillaBug mapping = new TopicToBugzillaBug(entity, this);
-            this.topicToBugzillaBugs.add(mapping);
+            topicToBugzillaBugs.add(mapping);
             entity.getTopicToBugzillaBugs().add(mapping);
         }
     }
@@ -445,7 +439,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public List<Integer> getIncomingRelatedTopicIDs() {
         final List<Integer> retValue = new ArrayList<Integer>();
-        for (final TopicToTopic topicToTopic : this.getChildTopicToTopics())
+        for (final TopicToTopic topicToTopic : getChildTopicToTopics())
             retValue.add(topicToTopic.getMainTopic().getTopicId());
         return retValue;
     }
@@ -453,7 +447,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public List<Topic> getOutgoingRelatedTopicsArray() {
         final ArrayList<Topic> retValue = new ArrayList<Topic>();
-        for (final TopicToTopic topicToTopic : this.getParentTopicToTopics()) {
+        for (final TopicToTopic topicToTopic : getParentTopicToTopics()) {
             retValue.add(topicToTopic.getRelatedTopic());
         }
         return retValue;
@@ -462,7 +456,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public List<Topic> getIncomingRelatedTopicsArray() {
         final ArrayList<Topic> retValue = new ArrayList<Topic>();
-        for (final TopicToTopic topicToTopic : this.getChildTopicToTopics())
+        for (final TopicToTopic topicToTopic : getChildTopicToTopics())
             retValue.add(topicToTopic.getMainTopic());
 
         Collections.sort(retValue, new TopicIDComparator());
@@ -472,16 +466,15 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Transient
     public Topic getRelatedTopicByID(final Integer id) {
-        for (final Topic topic : this.getOutgoingRelatedTopicsArray())
-            if (topic.getTopicId().equals(id))
-                return topic;
+        for (final Topic topic : getOutgoingRelatedTopicsArray())
+            if (topic.getTopicId().equals(id)) return topic;
         return null;
     }
 
     @Transient
     public List<Integer> getRelatedTopicIDs() {
         final List<Integer> retValue = new ArrayList<Integer>();
-        for (final TopicToTopic topicToTopic : this.getParentTopicToTopics())
+        for (final TopicToTopic topicToTopic : getParentTopicToTopics())
             retValue.add(topicToTopic.getRelatedTopic().getTopicId());
         return retValue;
     }
@@ -489,7 +482,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public List<Integer> getTagIDs() {
         final List<Integer> retValue = new ArrayList<Integer>();
-        for (final TopicToTag topicToTag : this.topicToTags) {
+        for (final TopicToTag topicToTag : topicToTags) {
             final Integer tagId = topicToTag.getTag().getTagId();
             retValue.add(tagId);
         }
@@ -500,7 +493,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final TopicToTag topicToTag : this.topicToTags) {
+        for (final TopicToTag topicToTag : topicToTags) {
             final Tag tag = topicToTag.getTag();
             retValue.add(tag);
         }
@@ -516,7 +509,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public ArrayList<Tag> getTagsArray() {
         final ArrayList<Tag> retValue = new ArrayList<Tag>();
-        for (final TopicToTag topicToTag : this.topicToTags)
+        for (final TopicToTag topicToTag : topicToTags)
             retValue.add(topicToTag.getTag());
         return retValue;
     }
@@ -534,12 +527,11 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         final List<Tag> retValue = new ArrayList<Tag>();
 
         for (final Integer categoryId : categories) {
-            for (final TopicToTag topicToTag : this.topicToTags) {
+            for (final TopicToTag topicToTag : topicToTags) {
                 final Tag tag = topicToTag.getTag();
 
                 if (topicToTag.getTag().isInCategory(categoryId)) {
-                    if (!retValue.contains(tag))
-                        retValue.add(tag);
+                    if (!retValue.contains(tag)) retValue.add(tag);
                 }
             }
         }
@@ -552,14 +544,13 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     public boolean removeRelationshipTo(final Integer relatedTopicId, final Integer relationshipTagId) {
-        for (final TopicToTopic topicToTopic : this.getParentTopicToTopics()) {
+        for (final TopicToTopic topicToTopic : getParentTopicToTopics()) {
             final Topic relatedTopic = topicToTopic.getRelatedTopic();
             final RelationshipTag relationshipTag = topicToTopic.getRelationshipTag();
 
-            if (relatedTopic.getTopicId().equals(relatedTopicId)
-                    && relationshipTag.getRelationshipTagId().equals(relationshipTagId)) {
+            if (relatedTopic.getTopicId().equals(relatedTopicId) && relationshipTag.getRelationshipTagId().equals(relationshipTagId)) {
                 /* remove the relationship from this topic */
-                this.getParentTopicToTopics().remove(topicToTopic);
+                getParentTopicToTopics().remove(topicToTopic);
 
                 /* now remove the relationship from the other topic */
                 for (final TopicToTopic childTopicToTopic : relatedTopic.getChildTopicToTopics()) {
@@ -576,12 +567,39 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         return false;
     }
 
+    public boolean removeRelationshipFrom(final Topic topic, final RelationshipTag relationshipTag) {
+        return removeRelationshipFrom(topic.getTopicId(), relationshipTag.getRelationshipTagId());
+    }
+
+    public boolean removeRelationshipFrom(final Integer relatedTopicId, final Integer relationshipTagId) {
+        for (final TopicToTopic topicToTopic : getChildTopicToTopics()) {
+            final Topic relatedTopic = topicToTopic.getRelatedTopic();
+            final RelationshipTag relationshipTag = topicToTopic.getRelationshipTag();
+
+            if (relatedTopic.getTopicId().equals(relatedTopicId) && relationshipTag.getRelationshipTagId().equals(relationshipTagId)) {
+                /* remove the relationship from this topic */
+                getChildTopicToTopics().remove(topicToTopic);
+
+                /* now remove the relationship from the other topic */
+                for (final TopicToTopic parentTopicToTopic : relatedTopic.getParentTopicToTopics()) {
+                    if (parentTopicToTopic.getMainTopic().equals(this)) {
+                        relatedTopic.getParentTopicToTopics().remove(parentTopicToTopic);
+                        break;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void removeTag(final int tagID) {
-        final List<TopicToTag> mappingEntities = filter(having(on(TopicToTag.class).getTag().getTagId(), equalTo(tagID)),
-                this.getTopicToTags());
+        final List<TopicToTag> mappingEntities = filter(having(on(TopicToTag.class).getTag().getTagId(), equalTo(tagID)), getTopicToTags());
         if (mappingEntities.size() != 0) {
             for (final TopicToTag mapping : mappingEntities) {
-                this.topicToTags.remove(mapping);
+                topicToTags.remove(mapping);
                 mapping.getTag().getTopicToTags().remove(mapping);
             }
         }
@@ -593,21 +611,21 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     public void removeTopicSourceUrl(final int id) {
         final List<TopicToTopicSourceUrl> mappingEntities = filter(
-                having(on(TopicToTopicSourceUrl.class).getTopicSourceUrl().getTopicSourceUrlid(), equalTo(id)),
-                this.getTopicToTopicSourceUrls());
+                having(on(TopicToTopicSourceUrl.class).getTopicSourceUrl().getTopicSourceUrlId(), equalTo(id)),
+                getTopicToTopicSourceUrls());
         if (mappingEntities.size() != 0) {
             for (final TopicToTopicSourceUrl mapping : mappingEntities) {
-                this.topicToTopicSourceUrls.remove(mapping);
+                topicToTopicSourceUrls.remove(mapping);
             }
         }
     }
 
     public void removeBugzillaBug(final int id) {
         final List<TopicToBugzillaBug> mappingEntities = filter(
-                having(on(TopicToBugzillaBug.class).getBugzillaBug().getBugzillaBugId(), equalTo(id)), this.topicToBugzillaBugs);
+                having(on(TopicToBugzillaBug.class).getBugzillaBug().getBugzillaBugId(), equalTo(id)), topicToBugzillaBugs);
         if (mappingEntities.size() != 0) {
             for (final TopicToBugzillaBug mapping : mappingEntities) {
-                this.topicToBugzillaBugs.remove(mapping);
+                topicToBugzillaBugs.remove(mapping);
                 mapping.getBugzillaBug().getTopicToBugzillaBugs().remove(mapping);
             }
         }
@@ -629,9 +647,8 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     public void changeTopicToTopicRelationshipTag(final RelationshipTag relationshipTag, final Topic existingTopic,
             final RelationshipTag existingRelationshipTag) {
-        for (final TopicToTopic topicToTopic : this.parentTopicToTopics) {
-            if (topicToTopic.getRelatedTopic().equals(existingTopic)
-                    && topicToTopic.getRelationshipTag().equals(existingRelationshipTag)) {
+        for (final TopicToTopic topicToTopic : parentTopicToTopics) {
+            if (topicToTopic.getRelatedTopic().equals(existingTopic) && topicToTopic.getRelationshipTag().equals(existingRelationshipTag)) {
                 topicToTopic.setRelationshipTag(relationshipTag);
                 break;
             }
@@ -647,7 +664,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public List<PropertyTag> getPropertyTagsArray() {
         final List<PropertyTag> retValue = new ArrayList<PropertyTag>();
-        for (final TopicToPropertyTag mapping : this.topicToPropertyTags) {
+        for (final TopicToPropertyTag mapping : topicToPropertyTags) {
             final PropertyTag entity = mapping.getPropertyTag();
             retValue.add(entity);
         }
@@ -658,7 +675,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public List<TopicSourceUrl> getTopicSourceUrls() {
         final List<TopicSourceUrl> retValue = new ArrayList<TopicSourceUrl>();
-        for (final TopicToTopicSourceUrl mapping : this.topicToTopicSourceUrls) {
+        for (final TopicToTopicSourceUrl mapping : topicToTopicSourceUrls) {
             final TopicSourceUrl entity = mapping.getTopicSourceUrl();
             retValue.add(entity);
         }
@@ -669,7 +686,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Transient
     public List<BugzillaBug> getBugzillaBugs() {
         final List<BugzillaBug> retValue = new ArrayList<BugzillaBug>();
-        for (final TopicToBugzillaBug mapping : this.topicToBugzillaBugs) {
+        for (final TopicToBugzillaBug mapping : topicToBugzillaBugs) {
             final BugzillaBug entity = mapping.getBugzillaBug();
             retValue.add(entity);
         }
@@ -680,20 +697,19 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Override
     @Transient
     protected Set<TopicToPropertyTag> getPropertyTags() {
-        return this.topicToPropertyTags;
+        return topicToPropertyTags;
     }
 
     public void removePropertyTag(final TopicToPropertyTag topicToPropertyTag) {
-        this.topicToPropertyTags.remove(topicToPropertyTag);
+        topicToPropertyTags.remove(topicToPropertyTag);
         topicToPropertyTag.getPropertyTag().getTopicToPropertyTags().remove(topicToPropertyTag);
     }
 
     public void addPropertyTag(final TopicToPropertyTag topicToPropertyTag) {
-        this.topicToPropertyTags.add(topicToPropertyTag);
+        topicToPropertyTags.add(topicToPropertyTag);
         topicToPropertyTag.getPropertyTag().getTopicToPropertyTags().add(topicToPropertyTag);
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
         for (final TopicToTag mapping : topicToTags)
@@ -711,15 +727,15 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         for (final TopicToTopicSourceUrl mapping : topicToTopicSourceUrls)
             mapping.getTopicSourceUrl().getTopicToTopicSourceUrls().remove(mapping);
 
-        for (final TopicToBugzillaBug mapping : this.topicToBugzillaBugs)
+        for (final TopicToBugzillaBug mapping : topicToBugzillaBugs)
             mapping.getBugzillaBug().getTopicToBugzillaBugs().remove(mapping);
 
-        this.topicToTags.clear();
-        this.childTopicToTopics.clear();
-        this.parentTopicToTopics.clear();
-        this.topicToPropertyTags.clear();
-        this.topicToTopicSourceUrls.clear();
-        this.topicToBugzillaBugs.clear();
+        topicToTags.clear();
+        childTopicToTopics.clear();
+        parentTopicToTopics.clear();
+        topicToPropertyTags.clear();
+        topicToTopicSourceUrls.clear();
+        topicToBugzillaBugs.clear();
     }
 
     public void addPropertyTag(final PropertyTag propertyTag, final String value) {
@@ -728,14 +744,14 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         mapping.setPropertyTag(propertyTag);
         mapping.setValue(value);
 
-        this.topicToPropertyTags.add(mapping);
+        topicToPropertyTags.add(mapping);
         propertyTag.getTopicToPropertyTags().add(mapping);
     }
 
     public void removePropertyTag(final PropertyTag propertyTag, final String value) {
         final List<TopicToPropertyTag> removeList = new ArrayList<TopicToPropertyTag>();
 
-        for (final TopicToPropertyTag mapping : this.topicToPropertyTags) {
+        for (final TopicToPropertyTag mapping : topicToPropertyTags) {
             final PropertyTag myPropertyTag = mapping.getPropertyTag();
             if (myPropertyTag.equals(propertyTag) && mapping.getValue().equals(value)) {
                 removeList.add(mapping);
@@ -743,7 +759,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         }
 
         for (final TopicToPropertyTag mapping : removeList) {
-            this.topicToPropertyTags.remove(mapping);
+            topicToPropertyTags.remove(mapping);
             mapping.getPropertyTag().getTopicToPropertyTags().remove(mapping);
         }
     }
@@ -753,25 +769,33 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     public List<TranslatedTopicData> getTranslatedTopics(final EntityManager entityManager, final Number revision) {
         final List<TranslatedTopicData> translatedTopicDatas = new ArrayList<TranslatedTopicData>();
 
-        try {
-            /*
-             * We have to do a query here as a @OneToMany won't work with hibernate envers since the TranslatedTopic entity is
-             * audited and we need the latest results. This is because the translated topic will never exist for its matching
-             * audited topic.
-             */
-            final String translatedTopicQuery = TranslatedTopic.SELECT_ALL_QUERY + " WHERE translatedTopic.topicId = "
-                    + this.topicId + (revision == null ? "" : (" AND translatedTopic.topicRevision <= " + revision));
-            final List<TranslatedTopic> translatedTopics = entityManager.createQuery(translatedTopicQuery).getResultList();
+        /*
+         * We have to do a query here as a @OneToMany won't work with hibernate envers since the TranslatedTopic entity is
+         * audited and we need the latest results. This is because the translated topic will never exist for its matching
+         * audited topic.
+         */
+        final String translatedTopicQuery = TranslatedTopic.SELECT_ALL_QUERY + " WHERE translatedTopic.topicId = " + topicId +
+                (revision == null ? "" : (" AND translatedTopic.topicRevision <= " + revision));
+        final List<TranslatedTopic> translatedTopics = entityManager.createQuery(translatedTopicQuery).getResultList();
 
-            for (final TranslatedTopic translatedTopic : translatedTopics) {
-                translatedTopicDatas.addAll(translatedTopic.getTranslatedTopicDatas());
-            }
-        } catch (final PersistenceException ex) {
-            // Increase the prepared-statement-cache-size if an exception is
-            // being thrown here
-            throw ex;
+        for (final TranslatedTopic translatedTopic : translatedTopics) {
+            translatedTopicDatas.addAll(translatedTopic.getTranslatedTopicDatas());
         }
 
         return translatedTopicDatas;
+    }
+
+    @Transient
+    public List<ContentSpec> getContentSpecs(final EntityManager entityManager) {
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ContentSpec> query = criteriaBuilder.createQuery(ContentSpec.class);
+        final Root<CSNode> root = query.from(CSNode.class);
+        query.select(root.get("contentSpec").as(ContentSpec.class));
+
+        final Predicate topicIdMatches = criteriaBuilder.equal(root.get("topicId"), getTopicId());
+        query.where(topicIdMatches);
+
+        final List<ContentSpec> results = entityManager.createQuery(query).getResultList();
+        return results;
     }
 }

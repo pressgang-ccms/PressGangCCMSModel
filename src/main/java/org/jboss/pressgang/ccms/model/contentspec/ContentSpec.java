@@ -31,17 +31,18 @@ import org.hibernate.envers.Audited;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
-import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
+import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ContentSpec")
-public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializable {
+public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToPropertyTag> implements Serializable {
     private static final long serialVersionUID = 5229054857631287690L;
     public static final String SELECT_ALL_QUERY = "select contentSpec from ContentSpec as contentSpec";
 
@@ -49,7 +50,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
     private String contentSpecTitle = null;
     private String contentSpecProduct = null;
     private String contentSpecVersion = null;
-    private Integer contentSpecType = Constants.CS_BOOK;
+    private Integer contentSpecType = CommonConstants.CS_BOOK;
     private String locale = null;
     private Date lastPublished = null;
     private Set<ContentSpecToPropertyTag> contentSpecToPropertyTags = new HashSet<ContentSpecToPropertyTag>(0);
@@ -60,7 +61,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
     @Override
     @Transient
     public Integer getId() {
-        return this.contentSpecId;
+        return contentSpecId;
     }
 
     @Id
@@ -156,7 +157,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<ContentSpecToTag> getContentSpecToTags() {
-        return this.contentSpecToTags;
+        return contentSpecToTags;
     }
 
     public void setContentSpecToTags(Set<ContentSpecToTag> contentSpecToTags) {
@@ -176,7 +177,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
     public List<CSNode> getTopCSNodes() {
         final List<CSNode> nodes = new ArrayList<CSNode>();
 
-        for (final CSNode node : csNodes) {
+        for (final CSNode node : getCSNodes()) {
             if (node.getParent() == null) {
                 nodes.add(node);
             }
@@ -187,34 +188,41 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
 
     @Transient
     public List<ContentSpecToCSMetaData> getContentSpecMetaDataList() {
-        return new ArrayList<ContentSpecToCSMetaData>(this.contentSpecToCSMetaData);
+        return new ArrayList<ContentSpecToCSMetaData>(getContentSpecToCSMetaData());
     }
 
     @Transient
     public void removeChild(final CSNode child) {
         final List<CSNode> removeNodes = new ArrayList<CSNode>();
 
-        for (final CSNode childNode : this.csNodes) {
+        for (final CSNode childNode : getCSNodes()) {
             if (childNode.getId().equals(child.getId())) {
                 removeNodes.add(childNode);
             }
         }
 
         for (final CSNode removeNode : removeNodes) {
-            this.csNodes.remove(removeNode);
+            getCSNodes().remove(removeNode);
+            removeNode.setParent(null);
             removeNode.setContentSpec(null);
         }
     }
 
     @Transient
     public void addChild(final CSNode child) {
-        this.csNodes.add(child);
+        getCSNodes().add(child);
         child.setContentSpec(this);
     }
 
     @Transient
     public List<ContentSpecToPropertyTag> getContentSpecToPropertyTagsList() {
-        return new ArrayList<ContentSpecToPropertyTag>(this.contentSpecToPropertyTags);
+        return new ArrayList<ContentSpecToPropertyTag>(getContentSpecToPropertyTags());
+    }
+
+    @Override
+    @Transient
+    protected Set<ContentSpecToPropertyTag> getPropertyTags() {
+        return contentSpecToPropertyTags;
     }
 
     public void addPropertyTag(final PropertyTag propertyTag, final String value) {
@@ -223,14 +231,14 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
         mapping.setPropertyTag(propertyTag);
         mapping.setValue(value);
 
-        this.contentSpecToPropertyTags.add(mapping);
+        getContentSpecToPropertyTags().add(mapping);
         propertyTag.getContentSpecToPropertyTags().add(mapping);
     }
 
     public void removePropertyTag(final PropertyTag propertyTag, final String value) {
         final List<ContentSpecToPropertyTag> removeList = new ArrayList<ContentSpecToPropertyTag>();
 
-        for (final ContentSpecToPropertyTag mapping : this.contentSpecToPropertyTags) {
+        for (final ContentSpecToPropertyTag mapping : getContentSpecToPropertyTags()) {
             final PropertyTag myPropertyTag = mapping.getPropertyTag();
             if (myPropertyTag.equals(propertyTag) && mapping.getValue().equals(value)) {
                 removeList.add(mapping);
@@ -238,7 +246,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
         }
 
         for (final ContentSpecToPropertyTag mapping : removeList) {
-            this.contentSpecToPropertyTags.remove(mapping);
+            getContentSpecToPropertyTags().remove(mapping);
             mapping.getPropertyTag().getContentSpecToPropertyTags().remove(mapping);
         }
     }
@@ -249,14 +257,14 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
         mapping.setCSMetaData(metaData);
         mapping.setValue(value);
 
-        this.contentSpecToCSMetaData.add(mapping);
+        getContentSpecToCSMetaData().add(mapping);
         metaData.getContentSpecToCSMetaData().add(mapping);
     }
 
     public void removeMetaData(final CSMetaData metaData, final String value) {
         final List<ContentSpecToCSMetaData> removeList = new ArrayList<ContentSpecToCSMetaData>();
 
-        for (final ContentSpecToCSMetaData mapping : this.contentSpecToCSMetaData) {
+        for (final ContentSpecToCSMetaData mapping : getContentSpecToCSMetaData()) {
             final CSMetaData myMetaData = mapping.getCSMetaData();
             if (myMetaData.equals(metaData) && mapping.getValue().equals(value)) {
                 removeList.add(mapping);
@@ -264,15 +272,25 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
         }
 
         for (final ContentSpecToCSMetaData mapping : removeList) {
-            this.contentSpecToCSMetaData.remove(mapping);
+            getContentSpecToCSMetaData().remove(mapping);
             mapping.getCSMetaData().getContentSpecToCSMetaData().remove(mapping);
         }
+    }
+
+    public void addMetaData(final ContentSpecToCSMetaData contentSpecToCSMetaData) {
+        getContentSpecToCSMetaData().add(contentSpecToCSMetaData);
+        contentSpecToCSMetaData.getCSMetaData().getContentSpecToCSMetaData().add(contentSpecToCSMetaData);
+    }
+
+    public void removeMetaData(final ContentSpecToCSMetaData contentSpecToCSMetaData) {
+        getContentSpecToCSMetaData().remove(contentSpecToCSMetaData);
+        contentSpecToCSMetaData.getCSMetaData().getContentSpecToCSMetaData().remove(contentSpecToCSMetaData);
     }
 
     @Transient
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final ContentSpecToTag contentSpecToTag : this.contentSpecToTags) {
+        for (final ContentSpecToTag contentSpecToTag : getContentSpecToTags()) {
             final Tag tag = contentSpecToTag.getTag();
             retValue.add(tag);
         }
@@ -283,13 +301,13 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
     }
 
     public void addTag(final Tag tag) throws CustomConstraintViolationException {
-        if (filter(having(on(ContentSpecToTag.class).getTag(), equalTo(tag)), this.getContentSpecToTags()).size() == 0) {
+        if (filter(having(on(ContentSpecToTag.class).getTag(), equalTo(tag)), getContentSpecToTags()).size() == 0) {
 
             // remove any excluded tags
             for (final Tag excludeTag : tag.getExcludedTags()) {
                 if (excludeTag.equals(tag)) continue;
 
-                this.removeTag(excludeTag);
+                removeTag(excludeTag);
             }
 
             // Remove other tags if the category is mutually exclusive
@@ -299,8 +317,7 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
                         if (categoryTag.equals(tag)) continue;
 
                         // Check if the Category Tag exists in this topic
-                        if (filter(having(on(ContentSpecToTag.class).getTag(), equalTo(categoryTag)),
-                                this.getContentSpecToTags()).size() != 0) {
+                        if (filter(having(on(ContentSpecToTag.class).getTag(), equalTo(categoryTag)), getContentSpecToTags()).size() != 0) {
                             throw new CustomConstraintViolationException(
                                     "Adding Tag " + tag.getTagName() + " (" + tag.getId() + ") failed due to a mutually exclusive " +
                                             "constraint violation.");
@@ -310,19 +327,39 @@ public class ContentSpec extends AuditedEntity<ContentSpec> implements Serializa
             }
 
             final ContentSpecToTag mapping = new ContentSpecToTag(this, tag);
-            this.contentSpecToTags.add(mapping);
+            getContentSpecToTags().add(mapping);
             tag.getContentSpecToTags().add(mapping);
         }
     }
 
     public void removeTag(final Tag tag) {
         final List<ContentSpecToTag> mappingEntities = filter(having(on(ContentSpecToTag.class).getTag(), equalTo(tag)),
-                this.getContentSpecToTags());
+                getContentSpecToTags());
         if (mappingEntities.size() != 0) {
             for (final ContentSpecToTag mapping : mappingEntities) {
-                this.contentSpecToTags.remove(mapping);
+                getContentSpecToTags().remove(mapping);
                 mapping.getTag().getContentSpecToTags().remove(mapping);
             }
         }
+    }
+
+    public void addTag(final ContentSpecToTag contentSpecToTag) {
+        getContentSpecToTags().add(contentSpecToTag);
+        contentSpecToTag.getTag().getContentSpecToTags().add(contentSpecToTag);
+    }
+
+    public void removeTag(final ContentSpecToTag contentSpecToTag) {
+        getContentSpecToTags().remove(contentSpecToTag);
+        contentSpecToTag.getTag().getContentSpecToTags().remove(contentSpecToTag);
+    }
+
+    public void addPropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
+        getContentSpecToPropertyTags().add(contentSpecToPropertyTag);
+        contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().add(contentSpecToPropertyTag);
+    }
+
+    public void removePropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
+        getContentSpecToPropertyTags().remove(contentSpecToPropertyTag);
+        contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().remove(contentSpecToPropertyTag);
     }
 }

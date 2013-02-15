@@ -12,13 +12,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Entity
@@ -26,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TranslatedTopicString")
-public class TranslatedTopicString extends AuditedEntity<TranslatedTopicString> implements java.io.Serializable {
+public class TranslatedTopicString extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 5185674451816385008L;
 
     private Integer translatedTopicStringID;
@@ -40,7 +39,7 @@ public class TranslatedTopicString extends AuditedEntity<TranslatedTopicString> 
 
     @Transient
     public Integer getId() {
-        return this.translatedTopicStringID;
+        return translatedTopicStringID;
     }
 
     @Id

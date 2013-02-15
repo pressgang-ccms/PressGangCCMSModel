@@ -12,24 +12,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Audited
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "PropertyTagToPropertyTagCategory", uniqueConstraints = @UniqueConstraint(columnNames = { "PropertyTagID",
-        "PropertyTagCategoryID" }))
-public class PropertyTagToPropertyTagCategory extends AuditedEntity<PropertyTagToPropertyTagCategory> implements
-        java.io.Serializable {
+@Table(name = "PropertyTagToPropertyTagCategory",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"PropertyTagID", "PropertyTagCategoryID"}))
+public class PropertyTagToPropertyTagCategory extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -4464431865504442832L;
-    public static final String SELECT_ALL_QUERY = "select propertyTagToPropertyTagCategory from PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory";
+    public static final String SELECT_ALL_QUERY = "select propertyTagToPropertyTagCategory from PropertyTagToPropertyTagCategory " +
+            "propertyTagToPropertyTagCategory";
 
     private Integer propertyTagToPropertyTagCategoryId;
     private PropertyTag propertyTag;
@@ -71,7 +70,7 @@ public class PropertyTagToPropertyTagCategory extends AuditedEntity<PropertyTagT
 
     @Column(name = "Sorting")
     public Integer getSorting() {
-        return this.sorting;
+        return sorting;
     }
 
     public void setSorting(Integer sorting) {
@@ -81,6 +80,6 @@ public class PropertyTagToPropertyTagCategory extends AuditedEntity<PropertyTagT
     @Override
     @Transient
     public Integer getId() {
-        return this.propertyTagToPropertyTagCategoryId;
+        return propertyTagToPropertyTagCategoryId;
     }
 }

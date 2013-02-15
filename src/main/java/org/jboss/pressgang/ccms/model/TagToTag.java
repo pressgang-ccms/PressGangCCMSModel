@@ -2,25 +2,24 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Aug 8, 2011 11:54:01 AM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
-
-import javax.persistence.Cacheable;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -30,9 +29,8 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TagToTag", uniqueConstraints = @UniqueConstraint(columnNames = { "PrimaryTagID", "SecondaryTagID",
-        "RelationshipType" }))
-public class TagToTag extends AuditedEntity<TagToTag> implements java.io.Serializable {
+@Table(name = "TagToTag", uniqueConstraints = @UniqueConstraint(columnNames = {"PrimaryTagID", "SecondaryTagID", "RelationshipType"}))
+public class TagToTag extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -7025237939786775336L;
 
     private Integer tagToTagId;
@@ -53,7 +51,7 @@ public class TagToTag extends AuditedEntity<TagToTag> implements java.io.Seriali
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TagToTagID", unique = true, nullable = false)
     public Integer getTagToTagId() {
-        return this.tagToTagId;
+        return tagToTagId;
     }
 
     public void setTagToTagId(final Integer tagToTagId) {
@@ -64,7 +62,7 @@ public class TagToTag extends AuditedEntity<TagToTag> implements java.io.Seriali
     @JoinColumn(name = "RelationshipType", nullable = false)
     @NotNull
     public TagToTagRelationship getTagToTagRelationship() {
-        return this.tagToTagRelationship;
+        return tagToTagRelationship;
     }
 
     public void setTagToTagRelationship(final TagToTagRelationship tagToTagRelationship) {
@@ -75,7 +73,7 @@ public class TagToTag extends AuditedEntity<TagToTag> implements java.io.Seriali
     @JoinColumn(name = "PrimaryTagID", nullable = false)
     @NotNull
     public Tag getPrimaryTag() {
-        return this.primaryTag;
+        return primaryTag;
     }
 
     public void setPrimaryTag(final Tag primaryTag) {
@@ -86,7 +84,7 @@ public class TagToTag extends AuditedEntity<TagToTag> implements java.io.Seriali
     @JoinColumn(name = "SecondaryTagID", nullable = false)
     @NotNull
     public Tag getSecondaryTag() {
-        return this.secondaryTag;
+        return secondaryTag;
     }
 
     public void setSecondaryTag(final Tag secondaryTag) {
@@ -96,7 +94,7 @@ public class TagToTag extends AuditedEntity<TagToTag> implements java.io.Seriali
     @Override
     @Transient
     public Integer getId() {
-        return this.tagToTagId;
+        return tagToTagId;
     }
 
 }

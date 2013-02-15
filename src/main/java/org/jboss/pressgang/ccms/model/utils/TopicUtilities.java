@@ -22,15 +22,14 @@ public class TopicUtilities {
     /**
      * Validate and Fix a topics relationships to ensure that the topics related topics are still matched by the Related Topics
      * themselves.
-     * 
-     * @param topic The topic to validate and fix the relationships for. 
+     *
+     * @param topic The topic to validate and fix the relationships for.
      */
     public static void validateAndFixRelationships(final Topic topic) {
         /* remove relationships to this topic in the parent collection */
         final ArrayList<TopicToTopic> removeList = new ArrayList<TopicToTopic>();
         for (final TopicToTopic topicToTopic : topic.getParentTopicToTopics())
-            if (topicToTopic.getRelatedTopic().getTopicId().equals(topic.getTopicId()))
-                removeList.add(topicToTopic);
+            if (topicToTopic.getRelatedTopic().getTopicId().equals(topic.getTopicId())) removeList.add(topicToTopic);
 
         for (final TopicToTopic topicToTopic : removeList)
             topic.getParentTopicToTopics().remove(topicToTopic);
@@ -38,8 +37,7 @@ public class TopicUtilities {
         /* remove relationships to this topic in the child collection */
         final ArrayList<TopicToTopic> removeChildList = new ArrayList<TopicToTopic>();
         for (final TopicToTopic topicToTopic : topic.getChildTopicToTopics())
-            if (topicToTopic.getMainTopic().getTopicId().equals(topic.getTopicId()))
-                removeChildList.add(topicToTopic);
+            if (topicToTopic.getMainTopic().getTopicId().equals(topic.getTopicId())) removeChildList.add(topicToTopic);
 
         for (final TopicToTopic topicToTopic : removeChildList)
             topic.getChildTopicToTopics().remove(topicToTopic);
@@ -48,7 +46,7 @@ public class TopicUtilities {
     /**
      * Validate and Fix a topics tags so that mutually exclusive tags are enforced and also remove any tags that may have been
      * duplicated.
-     * 
+     *
      * @param topic The topic to fix the tags for.
      */
     public static void validateAndFixTags(final Topic topic) {
@@ -66,8 +64,7 @@ public class TopicUtilities {
             for (final TagToCategory tagToCategory : tag.getTagToCategories()) {
                 final Category category = tagToCategory.getCategory();
 
-                if (!tagDB.containsKey(category))
-                    tagDB.put(category, new ArrayList<TagToCategory>());
+                if (!tagDB.containsKey(category)) tagDB.put(category, new ArrayList<TagToCategory>());
 
                 tagDB.get(category).add(tagToCategory);
             }
@@ -97,8 +94,7 @@ public class TopicUtilities {
                     /* and remove it from the tag collection */
                     final ArrayList<TopicToTag> removeTopicToTagList = new ArrayList<TopicToTag>();
                     for (final TopicToTag topicToTag : topic.getTopicToTags()) {
-                        if (topicToTag.getTag().equals(removeTag))
-                            removeTopicToTagList.add(topicToTag);
+                        if (topicToTag.getTag().equals(removeTag)) removeTopicToTagList.add(topicToTag);
                     }
 
                     for (final TopicToTag removeTopicToTag : removeTopicToTagList) {
@@ -111,26 +107,27 @@ public class TopicUtilities {
             for (final TagToCategory tagToCategory : tagToCategories) {
                 final Tag tag = tagToCategory.getTag();
                 for (final Tag exclusionTag : tag.getExcludedTags()) {
-                    if (filter(having(on(TopicToTag.class).getTag(), equalTo(tagToCategory.getTag())), topic.getTopicToTags())
-                            .size() != 0
-                            && // make
+                    if (filter(having(on(TopicToTag.class).getTag(), equalTo(tagToCategory.getTag())),
+                            topic.getTopicToTags()).size() != 0 && // make
                             /*
                              * sure that we have not removed this tag already
                              */
-                            filter(having(on(TopicToTag.class).getTag(), equalTo(exclusionTag)), topic.getTopicToTags()).size() != 0
-                            && // make
+                            filter(having(on(TopicToTag.class).getTag(), equalTo(exclusionTag)),
+                                    topic.getTopicToTags()).size() != 0 && // make
                             /*
                              * sure the exclusion tag exists
                              */
                             !exclusionTag.equals(tagToCategory.getTag())) // make
                     /*
                      * sure we are not trying to remove ourselves
-                     */
-                    {
+                     */ {
                         with(topic.getTopicToTags()).remove(having(on(TopicToTag.class).getTag(), equalTo(exclusionTag)));
                     }
                 }
             }
         }
+    }
+
+    private TopicUtilities() {
     }
 }

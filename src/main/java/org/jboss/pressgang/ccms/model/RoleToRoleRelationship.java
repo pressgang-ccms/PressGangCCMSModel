@@ -2,27 +2,25 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Aug 11, 2011 2:31:45 PM by Hibernate Tools 3.4.0.CR1
 
-import java.util.HashSet;
-import java.util.Set;
+import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -34,7 +32,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "RoleToRoleRelationship")
-public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship> implements java.io.Serializable {
+public class RoleToRoleRelationship extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -5070074888185753060L;
 
     private Integer roleToRoleRelationshipId;
@@ -53,7 +51,7 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "RoleToRoleRelationshipID", unique = true, nullable = false)
     public Integer getRoleToRoleRelationshipId() {
-        return this.roleToRoleRelationshipId;
+        return roleToRoleRelationshipId;
     }
 
     public void setRoleToRoleRelationshipId(final Integer roleToRoleRelationshipId) {
@@ -64,7 +62,7 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
     @Column(name = "Description", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(final String description) {
@@ -75,7 +73,7 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<RoleToRole> getRoleToRoles() {
-        return this.roleToRoles;
+        return roleToRoles;
     }
 
     public void setRoleToRoles(final Set<RoleToRole> roleToRoles) {
@@ -85,7 +83,7 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
     @Override
     @Transient
     public Integer getId() {
-        return this.roleToRoleRelationshipId;
+        return roleToRoleRelationshipId;
     }
 
 }

@@ -9,12 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Audited
@@ -22,7 +21,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TopicSecondOrderData")
-public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> implements java.io.Serializable {
+public class TopicSecondOrderData extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 3393132758855818345L;
 
     private Integer topicSecondOrderDataId;
@@ -40,7 +39,7 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicSecondOrderDataID")
     public Integer getTopicSecondOrderDataId() {
-        return this.topicSecondOrderDataId;
+        return topicSecondOrderDataId;
     }
 
     public void setTopicSecondOrderDataId(final Integer topicSecondOrderDataId) {
@@ -50,7 +49,7 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     @Column(name = "TopicHTMLView", columnDefinition = "MEDIUMTEXT")
     @Size(max = 16777215)
     public String getTopicHTMLView() {
-        return this.topicHTMLView;
+        return topicHTMLView;
     }
 
     public void setTopicHTMLView(final String topicHTMLView) {
@@ -60,7 +59,7 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     @Column(name = "TopicXMLErrors", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getTopicXMLErrors() {
-        return this.topicXMLErrors;
+        return topicXMLErrors;
     }
 
     public void setTopicXMLErrors(final String topicXMLErrors) {
@@ -70,6 +69,6 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     @Override
     @Transient
     public Integer getId() {
-        return this.topicSecondOrderDataId;
+        return topicSecondOrderDataId;
     }
 }

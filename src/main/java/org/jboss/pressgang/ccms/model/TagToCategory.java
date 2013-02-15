@@ -2,24 +2,23 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated May 31, 2011 9:27:13 AM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -29,8 +28,8 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TagToCategory", uniqueConstraints = @UniqueConstraint(columnNames = { "TagID", "CategoryID" }))
-public class TagToCategory extends AuditedEntity<TagToCategory> implements java.io.Serializable {
+@Table(name = "TagToCategory", uniqueConstraints = @UniqueConstraint(columnNames = {"TagID", "CategoryID"}))
+public class TagToCategory extends AuditedEntity implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "select tagToCategory from TagToCategory tagToCategory";
     private static final long serialVersionUID = 1037132589833037549L;
 
@@ -57,7 +56,7 @@ public class TagToCategory extends AuditedEntity<TagToCategory> implements java.
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TagToCategoryID", unique = true, nullable = false)
     public Integer getTagToCategoryId() {
-        return this.tagToCategoryId;
+        return tagToCategoryId;
     }
 
     public void setTagToCategoryId(final Integer tagToCategoryId) {
@@ -68,7 +67,7 @@ public class TagToCategory extends AuditedEntity<TagToCategory> implements java.
     @JoinColumn(name = "TagID", nullable = false)
     @NotNull
     public Tag getTag() {
-        return this.tag;
+        return tag;
     }
 
     public void setTag(final Tag tag) {
@@ -79,7 +78,7 @@ public class TagToCategory extends AuditedEntity<TagToCategory> implements java.
     @JoinColumn(name = "CategoryID", nullable = false)
     @NotNull
     public Category getCategory() {
-        return this.category;
+        return category;
     }
 
     public void setCategory(final Category category) {
@@ -88,7 +87,7 @@ public class TagToCategory extends AuditedEntity<TagToCategory> implements java.
 
     @Column(name = "Sorting")
     public Integer getSorting() {
-        return this.sorting;
+        return sorting;
     }
 
     public void setSorting(Integer sorting) {
@@ -98,6 +97,6 @@ public class TagToCategory extends AuditedEntity<TagToCategory> implements java.
     @Override
     @Transient
     public Integer getId() {
-        return this.tagToCategoryId;
+        return tagToCategoryId;
     }
 }

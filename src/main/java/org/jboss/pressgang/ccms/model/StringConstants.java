@@ -2,22 +2,21 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Jun 8, 2011 12:08:27 PM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -28,7 +27,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "StringConstants")
-public class StringConstants extends AuditedEntity<StringConstants> implements java.io.Serializable {
+public class StringConstants extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -6403239052018430987L;
     public static final String SELECT_ALL_QUERY = "SELECT stringConstants FROM StringConstants stringConstants";
 
@@ -52,7 +51,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "StringConstantsID", unique = true, nullable = false)
     public Integer getStringConstantsId() {
-        return this.stringConstantsId;
+        return stringConstantsId;
     }
 
     public void setStringConstantsId(Integer stringConstantsId) {
@@ -63,7 +62,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     @NotNull
     @Size(max = 45)
     public String getConstantName() {
-        return this.constantName;
+        return constantName;
     }
 
     public void setConstantName(final String constantName) {
@@ -73,7 +72,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     @Column(name = "ConstantValue", columnDefinition = "MEDIUMTEXT")
     @Size(max = 16777215)
     public String getConstantValue() {
-        return this.constantValue;
+        return constantValue;
     }
 
     public void setConstantValue(final String constantValue) {
@@ -83,7 +82,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     @Override
     @Transient
     public Integer getId() {
-        return this.stringConstantsId;
+        return stringConstantsId;
     }
 
 }

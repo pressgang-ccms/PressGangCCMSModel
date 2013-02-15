@@ -2,9 +2,6 @@ package org.jboss.pressgang.ccms.model.contentspec;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -30,7 +29,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "CSTranslatedString")
-public class CSTranslatedString extends AuditedEntity<CSTranslatedString> implements java.io.Serializable {
+public class CSTranslatedString extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 5185674451816385008L;
 
     private Integer contentspecTranslatedStringID;
@@ -43,7 +42,7 @@ public class CSTranslatedString extends AuditedEntity<CSTranslatedString> implem
 
     @Transient
     public Integer getId() {
-        return this.contentspecTranslatedStringID;
+        return contentspecTranslatedStringID;
     }
 
     @Id
@@ -54,7 +53,7 @@ public class CSTranslatedString extends AuditedEntity<CSTranslatedString> implem
     }
 
     public void setCSTranslatedStringID(final Integer translatedTopicStringID) {
-        this.contentspecTranslatedStringID = translatedTopicStringID;
+        contentspecTranslatedStringID = translatedTopicStringID;
     }
 
     @Column(name = "Locale", nullable = false)

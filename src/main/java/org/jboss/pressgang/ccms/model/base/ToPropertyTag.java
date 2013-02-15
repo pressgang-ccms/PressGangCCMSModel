@@ -8,22 +8,19 @@ import org.jboss.pressgang.ccms.model.PropertyTag;
 /**
  * This class provides consistent access to the details of a property tag
  */
-public abstract class ToPropertyTag<T extends AuditedEntity<T>> extends AuditedEntity<T> {
+public abstract class ToPropertyTag<T extends AuditedEntity> extends AuditedEntity {
     protected PropertyTag propertyTag;
     protected String value;
 
     @Transient
     public boolean isValid(final EntityManager entityManager, final Number revision) {
-        if (this.propertyTag == null)
-            return false;
+        if (propertyTag == null) return false;
 
-        if (this.value == null)
-            return this.propertyTag.isPropertyTagCanBeNull();
+        if (value == null) return propertyTag.isPropertyTagCanBeNull();
 
-        if (!testUnique(entityManager, revision))
-            return false;
+        if (!testUnique(entityManager, revision)) return false;
 
-        return this.value.matches(this.propertyTag.getPropertyTagRegex());
+        return value.matches(propertyTag.getPropertyTagRegex());
     }
 
     protected abstract boolean testUnique(final EntityManager entityManager, final Number revision);

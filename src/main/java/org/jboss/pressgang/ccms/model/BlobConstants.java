@@ -2,15 +2,15 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Jul 14, 2011 1:47:13 PM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,7 +27,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "BlobConstants")
-public class BlobConstants extends AuditedEntity<BlobConstants> implements java.io.Serializable {
+public class BlobConstants extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 2142789116413087991L;
     public static final String SELECT_ALL_QUERY = "SELECT blobConstants FROM BlobConstants blobConstants";
 
@@ -51,7 +51,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "BlobConstantsID", unique = true, nullable = false)
     public Integer getBlobConstantsId() {
-        return this.blobConstantsId;
+        return blobConstantsId;
     }
 
     public void setBlobConstantsId(final Integer blobConstantsId) {
@@ -62,7 +62,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
     @NotNull
     @Size(max = 45)
     public String getConstantName() {
-        return this.constantName;
+        return constantName;
     }
 
     public void setConstantName(final String constantName) {
@@ -71,7 +71,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
 
     @Column(name = "ConstantValue", columnDefinition = "longblob")
     public byte[] getConstantValue() {
-        return this.constantValue;
+        return constantValue;
     }
 
     public void setConstantValue(final byte[] constantValue) {
@@ -81,7 +81,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
     @Override
     @Transient
     public Integer getId() {
-        return this.blobConstantsId;
+        return blobConstantsId;
     }
 
 }

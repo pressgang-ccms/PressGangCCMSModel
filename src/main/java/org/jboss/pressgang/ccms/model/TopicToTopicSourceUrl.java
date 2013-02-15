@@ -2,25 +2,24 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Aug 12, 2011 11:10:16 AM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
-
-import javax.persistence.Cacheable;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -30,8 +29,8 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TopicToTopicSourceURL", uniqueConstraints = @UniqueConstraint(columnNames = { "TopicID", "TopicSourceURLID" }))
-public class TopicToTopicSourceUrl extends AuditedEntity<TopicToTopicSourceUrl> implements java.io.Serializable {
+@Table(name = "TopicToTopicSourceURL", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicID", "TopicSourceURLID"}))
+public class TopicToTopicSourceUrl extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -6269439146645434078L;
 
     private Integer topicToTopicSourceUrlid;
@@ -50,7 +49,7 @@ public class TopicToTopicSourceUrl extends AuditedEntity<TopicToTopicSourceUrl> 
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicToTopicSourceURLID", unique = true, nullable = false)
     public Integer getTopicToTopicSourceUrlid() {
-        return this.topicToTopicSourceUrlid;
+        return topicToTopicSourceUrlid;
     }
 
     public void setTopicToTopicSourceUrlid(final Integer topicToTopicSourceUrlid) {
@@ -61,7 +60,7 @@ public class TopicToTopicSourceUrl extends AuditedEntity<TopicToTopicSourceUrl> 
     @JoinColumn(name = "TopicSourceURLID", nullable = false)
     @NotNull
     public TopicSourceUrl getTopicSourceUrl() {
-        return this.topicSourceUrl;
+        return topicSourceUrl;
     }
 
     public void setTopicSourceUrl(final TopicSourceUrl topicSourceUrl) {
@@ -72,7 +71,7 @@ public class TopicToTopicSourceUrl extends AuditedEntity<TopicToTopicSourceUrl> 
     @JoinColumn(name = "TopicID", nullable = false)
     @NotNull
     public Topic getTopic() {
-        return this.topic;
+        return topic;
     }
 
     public void setTopic(final Topic topic) {
@@ -82,7 +81,7 @@ public class TopicToTopicSourceUrl extends AuditedEntity<TopicToTopicSourceUrl> 
     @Override
     @Transient
     public Integer getId() {
-        return this.topicToTopicSourceUrlid;
+        return topicToTopicSourceUrlid;
     }
 
 }

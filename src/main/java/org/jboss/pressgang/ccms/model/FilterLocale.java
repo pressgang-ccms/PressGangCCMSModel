@@ -2,26 +2,25 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Oct 21, 2011 10:43:30 AM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -31,8 +30,8 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "FilterLocale", uniqueConstraints = @UniqueConstraint(columnNames = { "LocaleName", "FilterID" }))
-public class FilterLocale extends AuditedEntity<FilterLocale> implements java.io.Serializable {
+@Table(name = "FilterLocale", uniqueConstraints = @UniqueConstraint(columnNames = {"LocaleName", "FilterID"}))
+public class FilterLocale extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -7054018830978278379L;
 
     private Integer filterLocaleId;
@@ -45,15 +44,15 @@ public class FilterLocale extends AuditedEntity<FilterLocale> implements java.io
 
     public FilterLocale(final Filter filter, final String filterLocaleName, final int filterLocaleState) {
         this.filter = filter;
-        this.localeName = filterLocaleName;
-        this.localeState = filterLocaleState;
+        localeName = filterLocaleName;
+        localeState = filterLocaleState;
     }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "FilterLocaleID", unique = true, nullable = false)
     public Integer getFilterLocaleId() {
-        return this.filterLocaleId;
+        return filterLocaleId;
     }
 
     public void setFilterLocaleId(Integer filterLocaleId) {
@@ -64,7 +63,7 @@ public class FilterLocale extends AuditedEntity<FilterLocale> implements java.io
     @JoinColumn(name = "FilterID", nullable = false)
     @NotNull
     public Filter getFilter() {
-        return this.filter;
+        return filter;
     }
 
     public void setFilter(final Filter filter) {
@@ -75,7 +74,7 @@ public class FilterLocale extends AuditedEntity<FilterLocale> implements java.io
     @NotNull
     @Size(max = 255)
     public String getLocaleName() {
-        return this.localeName;
+        return localeName;
     }
 
     public void setLocaleName(final String localeName) {
@@ -84,7 +83,7 @@ public class FilterLocale extends AuditedEntity<FilterLocale> implements java.io
 
     @Column(name = "LocaleState", nullable = false)
     public int getLocaleState() {
-        return this.localeState;
+        return localeState;
     }
 
     public void setLocaleState(final int localeState) {
@@ -94,7 +93,7 @@ public class FilterLocale extends AuditedEntity<FilterLocale> implements java.io
     @Override
     @Transient
     public Integer getId() {
-        return this.filterLocaleId;
+        return filterLocaleId;
     }
 
 }

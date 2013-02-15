@@ -1,26 +1,21 @@
 package org.jboss.pressgang.ccms.model.utils;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-
-import javax.swing.Icon;
 
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
-
 import org.w3c.dom.Document;
 
 /**
  * A Swing Icon that draws an SVG image.
- * 
+ *
  * @author <a href="mailto:cam%40mcc%2eid%2eau">Cameron McCormack</a>
  */
 public class SVGIcon extends UserAgentAdapter implements Icon {
@@ -43,7 +38,7 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 
     /**
      * Create a new SVGIcon object.
-     * 
+     *
      * @param uri The URI to read the SVG document from.
      */
     public SVGIcon(String uri) throws TranscoderException {
@@ -52,10 +47,10 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 
     /**
      * Create a new SVGIcon object.
-     * 
+     *
      * @param uri The URI to read the SVG document from.
-     * @param w The width of the icon.
-     * @param h The height of the icon.
+     * @param w   The width of the icon.
+     * @param h   The height of the icon.
      */
     public SVGIcon(String uri, int w, int h) throws TranscoderException {
         generateBufferedImage(new TranscoderInput(uri), w, h);
@@ -63,7 +58,7 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 
     /**
      * Create a new SVGIcon object.
-     * 
+     *
      * @param doc The SVG document.
      */
     public SVGIcon(Document doc) throws TranscoderException {
@@ -76,10 +71,10 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 
     /**
      * Create a new SVGIcon object.
-     * 
+     *
      * @param doc The SVG document.
-     * @param w The width of the icon.
-     * @param h The height of the icon.
+     * @param w   The width of the icon.
+     * @param h   The height of the icon.
      */
     public SVGIcon(Document doc, int w, int h) throws TranscoderException {
         generateBufferedImage(new TranscoderInput(doc), w, h);
@@ -87,10 +82,10 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 
     /**
      * Create a new SVGIcon object.
-     * 
+     *
      * @param doc The SVG document.
-     * @param w The width of the icon.
-     * @param h The height of the icon.
+     * @param w   The width of the icon.
+     * @param h   The height of the icon.
      */
     public SVGIcon(final InputStream steam, int w, int h) throws TranscoderException {
         generateBufferedImage(new TranscoderInput(steam), w, h);
@@ -122,8 +117,8 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 
         /**
          * Creates a new ARGB image with the specified dimension.
-         * 
-         * @param width the image width in pixels
+         *
+         * @param width  the image width in pixels
          * @param height the image height in pixels
          */
         @Override
@@ -133,9 +128,9 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
 
         /**
          * Writes the specified image to the specified output.
-         * 
-         * @param img the image to write
-         * @param output the output where to store the image
+         *
+         * @param img                 the image to write
+         * @param output              the output where to store the image
          * @param TranscoderException if an error occured while storing the image
          */
         @Override
@@ -182,10 +177,8 @@ public class SVGIcon extends UserAgentAdapter implements Icon {
      */
     @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
-        if (backgroundColour == null)
-            g.drawImage(bufferedImage, x, y, null);
-        else
-            g.drawImage(bufferedImage, x, y, backgroundColour, null);
+        if (backgroundColour == null) g.drawImage(bufferedImage, x, y, null);
+        else g.drawImage(bufferedImage, x, y, backgroundColour, null);
     }
 
     // UserAgent /////////////////////////////////////////////////////////////

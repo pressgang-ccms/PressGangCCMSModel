@@ -2,24 +2,23 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Jun 2, 2011 7:22:40 AM by Hibernate Tools 3.4.0.CR1
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -29,8 +28,8 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TopicToTag", uniqueConstraints = @UniqueConstraint(columnNames = { "TopicID", "TagID" }))
-public class TopicToTag extends AuditedEntity<TopicToTag> implements java.io.Serializable {
+@Table(name = "TopicToTag", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicID", "TagID"}))
+public class TopicToTag extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -7516063608506037594L;
 
     private Integer topicToTagId;
@@ -49,7 +48,7 @@ public class TopicToTag extends AuditedEntity<TopicToTag> implements java.io.Ser
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicToTagID", unique = true, nullable = false)
     public Integer getTopicToTagId() {
-        return this.topicToTagId;
+        return topicToTagId;
     }
 
     public void setTopicToTagId(final Integer topicToTagId) {
@@ -60,7 +59,7 @@ public class TopicToTag extends AuditedEntity<TopicToTag> implements java.io.Ser
     @JoinColumn(name = "TopicID", nullable = false)
     @NotNull
     public Topic getTopic() {
-        return this.topic;
+        return topic;
     }
 
     public void setTopic(final Topic topic) {
@@ -71,7 +70,7 @@ public class TopicToTag extends AuditedEntity<TopicToTag> implements java.io.Ser
     @JoinColumn(name = "TagID", nullable = false)
     @NotNull
     public Tag getTag() {
-        return this.tag;
+        return tag;
     }
 
     public void setTag(final Tag tag) {
@@ -81,7 +80,7 @@ public class TopicToTag extends AuditedEntity<TopicToTag> implements java.io.Ser
     @Override
     @Transient
     public Integer getId() {
-        return this.topicToTagId;
+        return topicToTagId;
     }
 
 }

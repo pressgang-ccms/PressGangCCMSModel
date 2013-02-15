@@ -2,12 +2,6 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +14,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -40,8 +39,8 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TranslatedTopic", uniqueConstraints = @UniqueConstraint(columnNames = { "TopicRevision", "TopicID" }))
-public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements java.io.Serializable {
+@Table(name = "TranslatedTopic", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicRevision", "TopicID"}))
+public class TranslatedTopic extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 4190214754023153898L;
     public static final String SELECT_ALL_QUERY = "select translatedTopic from TranslatedTopic translatedTopic";
 
@@ -53,7 +52,7 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
 
     @Transient
     public Integer getId() {
-        return this.translatedTopicId;
+        return translatedTopicId;
     }
 
     @Id
@@ -90,7 +89,7 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
      */
     @Transient
     public String getZanataId() {
-        return this.topicId + "-" + this.topicRevision;
+        return topicId + "-" + topicRevision;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "translatedTopic", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -106,7 +105,7 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
 
     @Transient
     public List<TranslatedTopicData> getTranslatedTopicDataList() {
-        return new ArrayList<TranslatedTopicData>(this.translatedTopicDatas);
+        return new ArrayList<TranslatedTopicData>(translatedTopicDatas);
     }
 
     @Transient
@@ -127,8 +126,8 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
         if (enversTopic == null) {
             /* Find the envers topic */
             final AuditReader reader = AuditReaderFactory.get(entityManager);
-            final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, this.topicRevision)
-                    .add(AuditEntity.id().eq(this.topicId));
+            final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, topicRevision).add(
+                    AuditEntity.id().eq(topicId));
             enversTopic = (Topic) query.getSingleResult();
         }
         return enversTopic;

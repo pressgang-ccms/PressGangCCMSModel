@@ -1,11 +1,10 @@
 package org.jboss.pressgang.ccms.model.base;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.Transient;
 
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.sort.ParentToPropertyTagIDComparator;
@@ -13,7 +12,7 @@ import org.jboss.pressgang.ccms.model.sort.ParentToPropertyTagIDComparator;
 /**
  * This class provides consistent access to property tags
  */
-public abstract class ParentToPropertyTag<T extends AuditedEntity<T>, U extends ToPropertyTag<U>> extends AuditedEntity<T> {
+public abstract class ParentToPropertyTag<T extends AuditedEntity, U extends ToPropertyTag<U>> extends AuditedEntity {
     protected abstract Set<U> getPropertyTags();
 
     @Transient
@@ -27,8 +26,7 @@ public abstract class ParentToPropertyTag<T extends AuditedEntity<T>, U extends 
         for (final ToPropertyTag<?> tagToPropertyTag : tags) {
             final PropertyTag propertyTag = tagToPropertyTag.getPropertyTag();
 
-            if (retValue.length() > 0)
-                retValue.append("\n");
+            if (retValue.length() > 0) retValue.append("\n");
 
             retValue.append(propertyTag.getPropertyTagName() + ": " + tagToPropertyTag.getValue());
         }
@@ -48,10 +46,9 @@ public abstract class ParentToPropertyTag<T extends AuditedEntity<T>, U extends 
     }
 
     public boolean hasProperty(final Integer propertyTag) {
-        for (final ToPropertyTag<?> toPropertyTag : this.getPropertyTags()) {
+        for (final ToPropertyTag<?> toPropertyTag : getPropertyTags()) {
             final PropertyTag myPropertyTag = toPropertyTag.getPropertyTag();
-            if (myPropertyTag.getPropertyTagId().equals(propertyTag))
-                return true;
+            if (myPropertyTag.getPropertyTagId().equals(propertyTag)) return true;
         }
 
         return false;
@@ -59,10 +56,9 @@ public abstract class ParentToPropertyTag<T extends AuditedEntity<T>, U extends 
 
     @Transient
     public U getProperty(final Integer propertyTagId) {
-        for (final U toPropertyTag : this.getPropertyTags()) {
+        for (final U toPropertyTag : getPropertyTags()) {
             final PropertyTag propertyTag = toPropertyTag.getPropertyTag();
-            if (propertyTag.getPropertyTagId().equals(propertyTagId))
-                return toPropertyTag;
+            if (propertyTag.getPropertyTagId().equals(propertyTagId)) return toPropertyTag;
         }
 
         return null;

@@ -1,11 +1,6 @@
 package org.jboss.pressgang.ccms.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
+import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -13,33 +8,36 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.PreRemove;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
-import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.utils.structures.NameIDSortMap;
 
 @Audited
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "Project", uniqueConstraints = @UniqueConstraint(columnNames = { "ProjectName" }))
-public class Project extends AuditedEntity<Project> implements java.io.Serializable {
+@Table(name = "Project", uniqueConstraints = @UniqueConstraint(columnNames = {"ProjectName"}))
+public class Project extends AuditedEntity implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "select project from Project project";
     private static final long serialVersionUID = 7468160102030564523L;
 
@@ -65,7 +63,7 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ProjectID", unique = true, nullable = false)
     public Integer getProjectId() {
-        return this.projectId;
+        return projectId;
     }
 
     public void setProjectId(final Integer projectId) {
@@ -76,7 +74,7 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
     @NotNull
     @Size(max = 255)
     public String getProjectName() {
-        return this.projectName;
+        return projectName;
     }
 
     public void setProjectName(final String projectName) {
@@ -86,19 +84,19 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
     @Column(name = "ProjectDescription", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getProjectDescription() {
-        return this.projectDescription;
+        return projectDescription;
     }
 
     public void setProjectDescription(final String projectDescription) {
         this.projectDescription = projectDescription;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = { CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TagToProject> getTagToProjects() {
-        return this.tagToProjects;
+        return tagToProjects;
     }
 
     public void setTagToProjects(final Set<TagToProject> tagToProjects) {
@@ -112,7 +110,7 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
 
     /**
      * Generates a HTML formatted and categorized list of the tags that are associated with this topic
-     * 
+     *
      * @return A HTML String to display in a table
      */
     @Transient
@@ -124,25 +122,23 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
 
         final TreeMap<NameIDSortMap, ArrayList<String>> tags = new TreeMap<NameIDSortMap, ArrayList<String>>();
 
-        for (final TagToProject tagToProject : this.tagToProjects) {
+        for (final TagToProject tagToProject : getTagToProjects()) {
             final Tag tag = tagToProject.getTag();
             final Set<TagToCategory> tagToCategories = tag.getTagToCategories();
 
             if (tagToCategories.size() == 0) {
                 NameIDSortMap categoryDetails = new NameIDSortMap("Uncatagorised", -1, 0);
 
-                if (!tags.containsKey(categoryDetails))
-                    tags.put(categoryDetails, new ArrayList<String>());
+                if (!tags.containsKey(categoryDetails)) tags.put(categoryDetails, new ArrayList<String>());
 
                 tags.get(categoryDetails).add(tag.getTagName());
             } else {
                 for (final TagToCategory category : tagToCategories) {
-                    NameIDSortMap categoryDetails = new NameIDSortMap(category.getCategory().getCategoryName(), category
-                            .getCategory().getCategoryId(), category.getCategory().getCategorySort() == null ? 0 : category
-                            .getCategory().getCategorySort());
+                    NameIDSortMap categoryDetails = new NameIDSortMap(category.getCategory().getCategoryName(),
+                            category.getCategory().getCategoryId(),
+                            category.getCategory().getCategorySort() == null ? 0 : category.getCategory().getCategorySort());
 
-                    if (!tags.containsKey(categoryDetails))
-                        tags.put(categoryDetails, new ArrayList<String>());
+                    if (!tags.containsKey(categoryDetails)) tags.put(categoryDetails, new ArrayList<String>());
 
                     tags.get(categoryDetails).add(tag.getTagName());
                 }
@@ -154,16 +150,14 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
             // sort alphabetically
             Collections.sort(tags.get(key));
 
-            if (tagsList.length() != 0)
-                tagsList += lineBreak;
+            if (tagsList.length() != 0) tagsList += lineBreak;
 
             tagsList += boldStart + key.getName() + boldEnd + ": ";
 
             String thisTagList = "";
 
             for (final String tag : tags.get(key)) {
-                if (thisTagList.length() != 0)
-                    thisTagList += ", ";
+                if (thisTagList.length() != 0) thisTagList += ", ";
 
                 thisTagList += tag;
             }
@@ -177,7 +171,7 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
     @Transient
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final TagToProject tag : this.tagToProjects)
+        for (final TagToProject tag : getTagToProjects())
             retValue.add(tag.getTag());
 
         Collections.sort(retValue, new TagIDComparator());
@@ -185,28 +179,26 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
         return retValue;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
-        for (final TagToProject mapping : tagToProjects)
+        for (final TagToProject mapping : getTagToProjects())
             mapping.getTag().getTagToProjects().remove(mapping);
 
-        this.tagToProjects.clear();
+        getTagToProjects().clear();
     }
 
     @Transient
     public boolean isRelatedTo(final Tag tag) {
-        for (final TagToProject mapping : this.getTagToProjects())
-            if (mapping.getTag().equals(tag))
-                return true;
+        for (final TagToProject mapping : getTagToProjects())
+            if (mapping.getTag().equals(tag)) return true;
 
         return false;
     }
 
     public boolean addRelationshipTo(final Tag tag) {
-        if (!this.isRelatedTo(tag)) {
+        if (!isRelatedTo(tag)) {
             final TagToProject mapping = new TagToProject(this, tag);
-            this.getTagToProjects().add(mapping);
+            getTagToProjects().add(mapping);
             tag.getTagToProjects().add(mapping);
             return true;
         }
@@ -215,12 +207,12 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
     }
 
     public boolean removeRelationshipTo(final Integer relatedTagId) {
-        for (final TagToProject mapping : this.getTagToProjects()) {
+        for (final TagToProject mapping : getTagToProjects()) {
             final Tag tag = mapping.getTag();
 
             if (tag.getTagId().equals(relatedTagId)) {
                 /* remove the relationship from this project */
-                this.getTagToProjects().remove(mapping);
+                getTagToProjects().remove(mapping);
 
                 /* remove the relationship from the tag */
                 tag.getTagToProjects().remove(mapping);
@@ -235,6 +227,6 @@ public class Project extends AuditedEntity<Project> implements java.io.Serializa
     @Override
     @Transient
     public Integer getId() {
-        return this.projectId;
+        return projectId;
     }
 }

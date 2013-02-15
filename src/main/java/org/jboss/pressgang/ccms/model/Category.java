@@ -1,10 +1,10 @@
 package org.jboss.pressgang.ccms.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.on;
+import static javax.persistence.GenerationType.IDENTITY;
+import static org.hamcrest.Matchers.equalTo;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -12,27 +12,24 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.on;
-import static javax.persistence.GenerationType.IDENTITY;
-import static org.hamcrest.Matchers.equalTo;
-
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
@@ -42,8 +39,8 @@ import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "Category", uniqueConstraints = @UniqueConstraint(columnNames = { "CategoryName" }))
-public class Category extends AuditedEntity<Category> implements java.io.Serializable, Comparable<Category> {
+@Table(name = "Category", uniqueConstraints = @UniqueConstraint(columnNames = {"CategoryName"}))
+public class Category extends AuditedEntity implements java.io.Serializable, Comparable<Category> {
     public static final String SELECT_ALL_QUERY = "select category from Category category";
     private static final long serialVersionUID = -8650833773254246211L;
 
@@ -71,7 +68,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TagToCategory> getTagToCategories() {
-        return this.tagToCategories;
+        return tagToCategories;
     }
 
     public void setTagToCategories(Set<TagToCategory> tagToCategories) {
@@ -82,7 +79,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     public List<TagToCategory> getTagToCategoriesArray() {
         final List<TagToCategory> retValue = new ArrayList<TagToCategory>();
 
-        for (final TagToCategory tagToCategory : this.tagToCategories) {
+        for (final TagToCategory tagToCategory : tagToCategories) {
             retValue.add(tagToCategory);
         }
 
@@ -93,7 +90,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "CategoryID", unique = true, nullable = false)
     public Integer getCategoryId() {
-        return this.categoryId;
+        return categoryId;
     }
 
     public void setCategoryId(Integer categoryId) {
@@ -104,7 +101,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     @NotNull
     @Size(max = 255)
     public String getCategoryName() {
-        return this.categoryName;
+        return categoryName;
     }
 
     public void setCategoryName(String categoryName) {
@@ -114,7 +111,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     @Column(name = "CategoryDescription", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getCategoryDescription() {
-        return this.categoryDescription;
+        return categoryDescription;
     }
 
     public void setCategoryDescription(String categoryDescription) {
@@ -123,7 +120,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
 
     @Column(name = "CategorySort")
     public Integer getCategorySort() {
-        return this.categorySort;
+        return categorySort;
     }
 
     public void setCategorySort(Integer categorySort) {
@@ -133,7 +130,7 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     @Column(name = "MutuallyExclusive", nullable = false, columnDefinition = "BIT", length = 1)
     @NotNull
     public boolean isMutuallyExclusive() {
-        return this.mutuallyExclusive;
+        return mutuallyExclusive;
     }
 
     public void setMutuallyExclusive(boolean mutuallyExclusive) {
@@ -142,25 +139,21 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
 
     @Override
     public int compareTo(Category o) {
-        if (o == null)
-            return 1;
+        if (o == null) return 1;
 
-        if (o.getCategorySort() == null && this.getCategorySort() == null)
-            return 0;
+        if (o.getCategorySort() == null && getCategorySort() == null) return 0;
 
-        if (o.getCategorySort() == null)
-            return 1;
+        if (o.getCategorySort() == null) return 1;
 
-        if (this.getCategorySort() == null)
-            return -1;
+        if (getCategorySort() == null) return -1;
 
-        return this.getCategorySort().compareTo(o.getCategorySort());
+        return getCategorySort().compareTo(o.getCategorySort());
     }
 
     @Transient
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final TagToCategory tag : this.tagToCategories)
+        for (final TagToCategory tag : getTagToCategories())
             retValue.add(tag.getTag());
 
         Collections.sort(retValue, new TagIDComparator());
@@ -172,10 +165,9 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     public List<Tag> getTagsInProject(final Project project) {
         final List<Tag> retValue = new ArrayList<Tag>();
 
-        for (final TagToCategory tagToCategory : this.tagToCategories) {
+        for (final TagToCategory tagToCategory : getTagToCategories()) {
             final Tag tag = tagToCategory.getTag();
-            if (tag.isInProject(project))
-                retValue.add(tag);
+            if (tag.isInProject(project)) retValue.add(tag);
         }
 
         return retValue;
@@ -185,22 +177,20 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     public String getTagsList() {
         String tagsList = "";
 
-        final List<TagToCategory> tags = new ArrayList<TagToCategory>(this.getTagToCategories());
+        final List<TagToCategory> tags = new ArrayList<TagToCategory>(getTagToCategories());
         Collections.sort(tags, new TagToCategorySortingComparator());
 
-        for (final TagToCategory tagToCatgeory : tags) {
-            if (tagsList.length() != 0)
-                tagsList += ", ";
-            tagsList += tagToCatgeory.getTag().getTagName();
+        for (final TagToCategory tagToCategory : tags) {
+            if (tagsList.length() != 0) tagsList += ", ";
+            tagsList += tagToCategory.getTag().getTagName();
         }
         return tagsList;
     }
 
     public boolean removeTagRelationship(final Tag childTag) {
-        final List<TagToCategory> children = filter(having(on(TagToCategory.class).getTag(), equalTo(childTag)),
-                this.getTagToCategories());
+        final List<TagToCategory> children = filter(having(on(TagToCategory.class).getTag(), equalTo(childTag)), getTagToCategories());
         for (final TagToCategory child : children) {
-            this.getTagToCategories().remove(child);
+            getTagToCategories().remove(child);
             childTag.getTagToCategories().remove(child);
         }
 
@@ -208,14 +198,13 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
     }
 
     public boolean addTagRelationship(final Tag childTag, final Integer sort) {
-        final List<TagToCategory> children = filter(having(on(TagToCategory.class).getTag(), equalTo(childTag)),
-                this.getTagToCategories());
+        final List<TagToCategory> children = filter(having(on(TagToCategory.class).getTag(), equalTo(childTag)), getTagToCategories());
 
         /* If this tag is not mapped at all, add it */
         if (children.size() == 0) {
             final TagToCategory tagToCategory = new TagToCategory(childTag, this);
             tagToCategory.setSorting(sort);
-            this.getTagToCategories().add(tagToCategory);
+            getTagToCategories().add(tagToCategory);
             childTag.getTagToCategories().add(tagToCategory);
             return true;
         }
@@ -227,30 +216,29 @@ public class Category extends AuditedEntity<Category> implements java.io.Seriali
         return addTagRelationship(childTag, null);
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
-        for (final TagToCategory tagToCategory : tagToCategories)
+        for (final TagToCategory tagToCategory : getTagToCategories())
             tagToCategory.getTag().getTagToCategories().remove(tagToCategory);
 
-        this.tagToCategories.clear();
+        getTagToCategories().clear();
     }
 
     @Override
     @Transient
     public Integer getId() {
-        return this.categoryId;
+        return categoryId;
     }
 
     @Transient
     public void addTagRelationship(final TagToCategory tagToCategory) {
         tagToCategory.getTag().getTagToCategories().add(tagToCategory);
-        this.tagToCategories.add(tagToCategory);
+        tagToCategories.add(tagToCategory);
     }
 
     @Transient
     public void removeTagRelationship(final TagToCategory tagToCategory) {
         tagToCategory.getTag().getTagToCategories().remove(tagToCategory);
-        this.tagToCategories.remove(tagToCategory);
+        tagToCategories.remove(tagToCategory);
     }
 }

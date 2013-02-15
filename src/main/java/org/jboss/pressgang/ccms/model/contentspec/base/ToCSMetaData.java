@@ -6,7 +6,7 @@ import org.jboss.pressgang.ccms.model.contentspec.CSMetaData;
 /**
  * This class provides consistent access to the details of a property tag
  */
-public abstract class ToCSMetaData<T extends AuditedEntity<T>> extends AuditedEntity<T> {
+public abstract class ToCSMetaData<T extends AuditedEntity> extends AuditedEntity {
     protected CSMetaData csMetaData;
     protected String value;
 

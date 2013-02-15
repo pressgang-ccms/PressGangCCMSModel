@@ -2,25 +2,24 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Jun 14, 2011 8:42:43 AM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -31,7 +30,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "FilterField")
-public class FilterField extends AuditedEntity<FilterField> implements java.io.Serializable {
+public class FilterField extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -4542168304657354480L;
 
     private Integer filterFieldId;
@@ -53,7 +52,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "FilterFieldID", unique = true, nullable = false)
     public Integer getFilterFieldId() {
-        return this.filterFieldId;
+        return filterFieldId;
     }
 
     public void setFilterFieldId(final Integer filterFieldId) {
@@ -64,7 +63,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @JoinColumn(name = "FilterID", nullable = false)
     @NotNull
     public Filter getFilter() {
-        return this.filter;
+        return filter;
     }
 
     public void setFilter(final Filter filter) {
@@ -75,7 +74,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @NotNull
     @Size(max = 255)
     public String getField() {
-        return this.field;
+        return field;
     }
 
     public void setField(final String field) {
@@ -86,7 +85,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @NotNull
     @Size(max = 65535)
     public String getValue() {
-        return this.value;
+        return value;
     }
 
     public void setValue(final String value) {
@@ -96,7 +95,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @Column(name = "Description", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(final String description) {
@@ -106,7 +105,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @Override
     @Transient
     public Integer getId() {
-        return this.filterFieldId;
+        return filterFieldId;
     }
 
 }

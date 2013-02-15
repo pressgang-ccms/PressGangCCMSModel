@@ -1,30 +1,29 @@
 package org.jboss.pressgang.ccms.model;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-
 import javax.persistence.Id;
 import javax.persistence.Table;
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Entity
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "RelationshipTag", uniqueConstraints = @UniqueConstraint(columnNames = { "RelationshipTagName" }))
-public class RelationshipTag extends AuditedEntity<RelationshipTag> implements java.io.Serializable {
+@Table(name = "RelationshipTag", uniqueConstraints = @UniqueConstraint(columnNames = {"RelationshipTagName"}))
+public class RelationshipTag extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 1882693752297919114L;
     public static final String SELECT_ALL_QUERY = "select relationshipTag from RelationshipTag relationshipTag";
 
@@ -36,7 +35,7 @@ public class RelationshipTag extends AuditedEntity<RelationshipTag> implements j
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "RelationshipTagId", unique = true, nullable = false)
     public Integer getRelationshipTagId() {
-        return this.relationshipTagId;
+        return relationshipTagId;
     }
 
     public void setRelationshipTagId(final Integer relationshipTagId) {
@@ -47,7 +46,7 @@ public class RelationshipTag extends AuditedEntity<RelationshipTag> implements j
     @NotNull
     @Size(max = 255)
     public String getRelationshipTagName() {
-        return this.relationshipTagName;
+        return relationshipTagName;
     }
 
     public void setRelationshipTagName(final String relationshipTagName) {
@@ -57,7 +56,7 @@ public class RelationshipTag extends AuditedEntity<RelationshipTag> implements j
     @Column(name = "RelationshipTagDescription", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getRelationshipTagDescription() {
-        return this.relationshipTagDescription;
+        return relationshipTagDescription;
     }
 
     public void setRelationshipTagDescription(final String relationshipTagDescription) {
@@ -67,6 +66,6 @@ public class RelationshipTag extends AuditedEntity<RelationshipTag> implements j
     @Override
     @Transient
     public Integer getId() {
-        return this.relationshipTagId;
+        return relationshipTagId;
     }
 }

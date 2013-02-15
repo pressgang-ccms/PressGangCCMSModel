@@ -2,15 +2,6 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,14 +18,21 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
@@ -44,9 +42,8 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TranslatedTopicData", uniqueConstraints = @UniqueConstraint(columnNames = { "TranslatedTopicID",
-        "TranslationLocale" }))
-public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> implements java.io.Serializable {
+@Table(name = "TranslatedTopicData", uniqueConstraints = @UniqueConstraint(columnNames = {"TranslatedTopicID", "TranslationLocale"}))
+public class TranslatedTopicData extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 7470594104954257672L;
     public static final String SELECT_ALL_QUERY = "select translatedTopicData from TranslatedTopicData translatedTopicData";
 
@@ -62,7 +59,7 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
 
     @Transient
     public Integer getId() {
-        return this.translatedTopicDataId;
+        return translatedTopicDataId;
     }
 
     @Id
@@ -79,7 +76,7 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TranslatedXMLRenderedUpdated", nullable = true, length = 0)
     public Date getTranslatedXmlRenderedUpdated() {
-        return this.translatedXmlRenderedUpdated;
+        return translatedXmlRenderedUpdated;
     }
 
     public void setTranslatedXmlRenderedUpdated(final Date translatedXmlRenderedUpdated) {
@@ -97,7 +94,6 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
         this.translatedTopic = translatedTopic;
     }
 
-    // @Column(name = "TranslatedXML", length = 65535)
     @Column(name = "TranslatedXML", columnDefinition = "MEDIUMTEXT")
     @Size(max = 16777215)
     public String getTranslatedXml() {
@@ -118,7 +114,6 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
         this.translatedXmlErrors = translatedXmlErrors;
     }
 
-    // @Column(name = "TranslatedXMLRendered", length = 65535)
     @Column(name = "TranslatedXMLRendered", columnDefinition = "MEDIUMTEXT")
     @Size(max = 16777215)
     public String getTranslatedXmlRendered() {
@@ -163,9 +158,9 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
 
     @Transient
     public String getFormattedTranslatedXmlRenderedUpdated() {
-        if (this.translatedXmlRenderedUpdated != null) {
+        if (translatedXmlRenderedUpdated != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat(CommonConstants.FILTER_DISPLAY_DATE_FORMAT);
-            return formatter.format(this.translatedXmlRenderedUpdated);
+            return formatter.format(translatedXmlRenderedUpdated);
         }
 
         return new String();
@@ -173,7 +168,7 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
 
     @Transient
     public List<TranslatedTopicString> getTranslatedTopicDataStringsArray() {
-        final List<TranslatedTopicString> results = new ArrayList<TranslatedTopicString>(this.translatedTopicStrings);
+        final List<TranslatedTopicString> results = new ArrayList<TranslatedTopicString>(translatedTopicStrings);
         return results;
     }
 
@@ -192,8 +187,7 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
     }
 
     @Transient
-    private List<TranslatedTopicData> getRelatedTranslatedTopicData(final EntityManager entityManager,
-            final List<Topic> relatedTopics) {
+    private List<TranslatedTopicData> getRelatedTranslatedTopicData(final EntityManager entityManager, final List<Topic> relatedTopics) {
 
         final List<TranslatedTopicData> relatedTranslatedTopicDatas = new ArrayList<TranslatedTopicData>();
         for (final Topic relatedTopic : relatedTopics) {
@@ -201,7 +195,7 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
             final List<TranslatedTopicData> translatedTopics = relatedTopic.getTranslatedTopics(entityManager, null);
 
             for (final TranslatedTopicData relatedTranslation : translatedTopics) {
-                if (relatedTranslation.getTranslationLocale().equals(this.translationLocale)) {
+                if (relatedTranslation.getTranslationLocale().equals(translationLocale)) {
                     relatedTranslatedTopicDatas.add(relatedTranslation);
                 }
             }
@@ -218,11 +212,10 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
             /* Loop through the related TranslatedTopicData to find the latest complete translation */
             for (final TranslatedTopicData translatedTopicData : relatedOutgoingTranslatedTopicDatas) {
                 if (translatedTopicData.getTranslatedTopic().getTopicId().equals(topicId)
-                        /* Check that the translation is complete */
-                        && translatedTopicData.getTranslationPercentage() >= 100
-                        /* Check to see if this TranslatedTopic revision is higher then the current revision */
-                        && (relatedTranslatedTopicData == null || relatedTranslatedTopicData.getTranslatedTopic()
-                                .getTopicRevision() < translatedTopicData.getTranslatedTopic().getTopicRevision()))
+                        /* Check that the translation is complete */ && translatedTopicData.getTranslationPercentage() >= 100
+                        /* Check to see if this TranslatedTopic revision is higher then the current revision */ &&
+                        (relatedTranslatedTopicData == null || relatedTranslatedTopicData.getTranslatedTopic().getTopicRevision() <
+                                translatedTopicData.getTranslatedTopic().getTopicRevision()))
                     relatedTranslatedTopicData = translatedTopicData;
             }
         }
@@ -231,23 +224,19 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
 
     @Transient
     public List<TranslatedTopicData> getOutgoingDummyFilledRelatedTranslatedTopicDatas(final EntityManager entityManager) {
-        final List<TranslatedTopicData> outgoingRelatedTranslatedTopicDatas = this
-                .getOutgoingRelatedTranslatedTopicData(entityManager);
+        final List<TranslatedTopicData> outgoingRelatedTranslatedTopicDatas = getOutgoingRelatedTranslatedTopicData(entityManager);
 
         final List<TranslatedTopicData> results = getDummyFilledRelatedTranslatedTopicData(entityManager,
-                outgoingRelatedTranslatedTopicDatas, this.getTranslatedTopic().getEnversTopic(entityManager)
-                        .getOutgoingRelatedTopicsArray());
+                outgoingRelatedTranslatedTopicDatas, getTranslatedTopic().getEnversTopic(entityManager).getOutgoingRelatedTopicsArray());
         return results;
     }
 
     @Transient
     public List<TranslatedTopicData> getIncomingDummyFilledRelatedTranslatedTopicDatas(final EntityManager entityManager) {
-        final List<TranslatedTopicData> incomingRelatedTranslatedTopicDatas = this
-                .getIncomingRelatedTranslatedTopicData(entityManager);
+        final List<TranslatedTopicData> incomingRelatedTranslatedTopicDatas = getIncomingRelatedTranslatedTopicData(entityManager);
 
         final List<TranslatedTopicData> results = getDummyFilledRelatedTranslatedTopicData(entityManager,
-                incomingRelatedTranslatedTopicDatas, this.getTranslatedTopic().getEnversTopic(entityManager)
-                        .getIncomingRelatedTopicsArray());
+                incomingRelatedTranslatedTopicDatas, getTranslatedTopic().getEnversTopic(entityManager).getIncomingRelatedTopicsArray());
         return results;
     }
 
@@ -264,14 +253,13 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
                 final Integer topicId = translatedTopicData.getTranslatedTopic().getTopicId();
 
                 if (/* Check that the translation is complete */
-                translatedTopicData.getTranslationPercentage() >= 100
+                        translatedTopicData.getTranslationPercentage() >= 100
                         /*
                          * Check that a related topic hasn't been set or the topics revision is higher then the current topic
                          * revision
-                         */
-                        && (!translatedTopics.containsKey(topicId) || translatedTopicData.getTranslatedTopic()
-                                .getTopicRevision() > translatedTopics.get(topicId).getTranslatedTopic().getTopicRevision()))
-                    translatedTopics.put(topicId, translatedTopicData);
+                         */ && (!translatedTopics.containsKey(
+                                topicId) || translatedTopicData.getTranslatedTopic().getTopicRevision() > translatedTopics.get(
+                                topicId).getTranslatedTopic().getTopicRevision())) translatedTopics.put(topicId, translatedTopicData);
             }
 
             /* Loop through and create dummy relationships for topics that haven't been translated yet */
@@ -299,8 +287,8 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
         /* find the revision for the related topic */
         Number topicRevision = 0;
         for (final Number revision : EnversUtilities.getRevisions(entityManager, topic)) {
-            if (revision.longValue() <= this.translatedTopic.getTopicRevision().longValue()
-                    && revision.longValue() > topicRevision.longValue())
+            if (revision.longValue() <= this.translatedTopic.getTopicRevision().longValue() && revision.longValue() > topicRevision
+                    .longValue())
                 topicRevision = revision;
         }
 
@@ -318,7 +306,7 @@ public class TranslatedTopicData extends AuditedEntity<TranslatedTopicData> impl
 
     @Transient
     public Boolean containsFuzzyTranslation() {
-        for (final TranslatedTopicString translatedTopicString : this.getTranslatedTopicStrings()) {
+        for (final TranslatedTopicString translatedTopicString : getTranslatedTopicStrings()) {
             if (translatedTopicString.getFuzzyTranslation()) {
                 return true;
             }

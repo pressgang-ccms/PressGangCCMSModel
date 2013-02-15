@@ -25,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "CSNodeToCSNode")
-public class CSNodeToCSNode extends AuditedEntity<CSNodeToCSNode> implements Serializable {
+public class CSNodeToCSNode extends AuditedEntity implements Serializable {
     private static final long serialVersionUID = 1323433852480196579L;
 
     private Integer csNodeToCSNodeId = null;

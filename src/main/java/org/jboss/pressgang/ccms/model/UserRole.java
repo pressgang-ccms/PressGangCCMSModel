@@ -2,25 +2,24 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Aug 8, 2011 9:37:09 AM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.PreRemove;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -31,7 +30,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "UserRole")
-public class UserRole extends AuditedEntity<UserRole> implements java.io.Serializable {
+public class UserRole extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 5397193862244957553L;
 
     private Integer userRoleId;
@@ -50,7 +49,7 @@ public class UserRole extends AuditedEntity<UserRole> implements java.io.Seriali
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "UserRoleID", unique = true, nullable = false)
     public Integer getUserRoleId() {
-        return this.userRoleId;
+        return userRoleId;
     }
 
     public void setUserRoleId(Integer userRoleId) {
@@ -61,7 +60,7 @@ public class UserRole extends AuditedEntity<UserRole> implements java.io.Seriali
     @JoinColumn(name = "UserNameID", nullable = false)
     @NotNull
     public User getUser() {
-        return this.user;
+        return user;
     }
 
     public void setUser(final User user) {
@@ -72,23 +71,22 @@ public class UserRole extends AuditedEntity<UserRole> implements java.io.Seriali
     @JoinColumn(name = "RoleNameID", nullable = false)
     @NotNull
     public Role getRole() {
-        return this.role;
+        return role;
     }
 
     public void setRole(final Role role) {
         this.role = role;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
-        this.user.getUserRoles().remove(this);
-        this.role.getUserRoles().remove(this);
+        user.getUserRoles().remove(this);
+        role.getUserRoles().remove(this);
     }
 
     @Override
     @Transient
     public Integer getId() {
-        return this.userRoleId;
+        return userRoleId;
     }
 }

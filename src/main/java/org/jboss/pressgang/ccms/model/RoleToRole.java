@@ -2,13 +2,13 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Aug 11, 2011 2:31:45 PM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
-
-import javax.persistence.Cacheable;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -16,12 +16,11 @@ import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -31,9 +30,8 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "RoleToRole", uniqueConstraints = @UniqueConstraint(columnNames = { "PrimaryRole", "SecondaryRole",
-        "RelationshipType" }))
-public class RoleToRole extends AuditedEntity<RoleToRole> implements java.io.Serializable {
+@Table(name = "RoleToRole", uniqueConstraints = @UniqueConstraint(columnNames = {"PrimaryRole", "SecondaryRole", "RelationshipType"}))
+public class RoleToRole extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -4323051325365483977L;
 
     private Integer roleToRoleId;
@@ -54,7 +52,7 @@ public class RoleToRole extends AuditedEntity<RoleToRole> implements java.io.Ser
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "RoleToRoleID", unique = true, nullable = false)
     public Integer getRoleToRoleId() {
-        return this.roleToRoleId;
+        return roleToRoleId;
     }
 
     public void setRoleToRoleId(Integer roleToRoleId) {
@@ -65,7 +63,7 @@ public class RoleToRole extends AuditedEntity<RoleToRole> implements java.io.Ser
     @JoinColumn(name = "RelationshipType", nullable = false)
     @NotNull
     public RoleToRoleRelationship getRoleToRoleRelationship() {
-        return this.roleToRoleRelationship;
+        return roleToRoleRelationship;
     }
 
     public void setRoleToRoleRelationship(final RoleToRoleRelationship roleToRoleRelationship) {
@@ -76,7 +74,7 @@ public class RoleToRole extends AuditedEntity<RoleToRole> implements java.io.Ser
     @JoinColumn(name = "PrimaryRole", nullable = false)
     @NotNull
     public Role getPrimaryRole() {
-        return this.primaryRole;
+        return primaryRole;
     }
 
     public void setPrimaryRole(final Role primaryRole) {
@@ -87,14 +85,13 @@ public class RoleToRole extends AuditedEntity<RoleToRole> implements java.io.Ser
     @JoinColumn(name = "SecondaryRole", nullable = false)
     @NotNull
     public Role getSecondaryRole() {
-        return this.secondaryRole;
+        return secondaryRole;
     }
 
     public void setSecondaryRole(final Role secondaryRole) {
         this.secondaryRole = secondaryRole;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
         primaryRole.getParentRoleToRole().remove(this);
@@ -104,7 +101,7 @@ public class RoleToRole extends AuditedEntity<RoleToRole> implements java.io.Ser
     @Override
     @Transient
     public Integer getId() {
-        return this.roleToRoleId;
+        return roleToRoleId;
     }
 
 }

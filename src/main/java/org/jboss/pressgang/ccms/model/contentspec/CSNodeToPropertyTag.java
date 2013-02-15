@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -21,9 +23,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.envers.query.AuditQueryCreator;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.base.ToPropertyTag;
 
@@ -36,7 +35,7 @@ public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> impl
     private static final long serialVersionUID = 2778607056935737000L;
     public static String SELECT_ALL_QUERY = "SELECT csNodeToPropertyTag FROM CSNodeToPropertyTag AS csNodeToPropertyTag";
     public static String SELECT_SIZE_QUERY = "SELECT COUNT(csNodeToPropertyTag) FROM CSNodeToPropertyTag AS csNodeToPropertyTag";
-    
+
     private Integer csNodeToPropertyTagID;
     private CSNode csNode;
 
@@ -93,33 +92,31 @@ public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> impl
     @Override
     @Transient
     public Integer getId() {
-        return this.csNodeToPropertyTagID;
+        return csNodeToPropertyTagID;
     }
 
     @Override
     protected boolean testUnique(final EntityManager entityManager, final Number revision) {
-        if (this.propertyTag.getPropertyTagIsUnique()) {
+        if (propertyTag.getPropertyTagIsUnique()) {
             /*
              * Since having to iterate over thousands of entities is slow, use a HQL query to find the count for us.
              */
             final Long count;
             if (revision == null) {
-                final String query = CSNodeToPropertyTag.SELECT_SIZE_QUERY + " WHERE csNodeToPropertyTag.propertyTag = "
-                        + this.propertyTag.getId() + " AND csNodeToPropertyTag.value = '" + this.getValue() + "'";
+                final String query = CSNodeToPropertyTag.SELECT_SIZE_QUERY + " WHERE csNodeToPropertyTag.propertyTag = " + propertyTag
+                        .getId() + " AND csNodeToPropertyTag.value = '" + getValue() + "'";
                 count = (Long) entityManager.createQuery(query).getSingleResult();
             } else {
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
                 final AuditQueryCreator queryCreator = reader.createQuery();
-                final AuditQuery query = queryCreator.forEntitiesAtRevision(CSNodeToPropertyTag.class, revision)
-                        .addProjection(AuditEntity.id().count("csNodeToPropertyTagID"))
-                        .add(AuditEntity.relatedId("propertyTag").eq(this.propertyTag.getId()))
-                        .add(AuditEntity.property("value").eq(this.getValue()));
+                final AuditQuery query = queryCreator.forEntitiesAtRevision(CSNodeToPropertyTag.class, revision).addProjection(
+                        AuditEntity.id().count("csNodeToPropertyTagID")).add(
+                        AuditEntity.relatedId("propertyTag").eq(propertyTag.getId())).add(AuditEntity.property("value").eq(getValue()));
                 query.setCacheable(true);
                 count = (Long) query.getSingleResult();
             }
 
-            if (count > 1)
-                return false;
+            if (count > 1) return false;
         }
 
         return true;

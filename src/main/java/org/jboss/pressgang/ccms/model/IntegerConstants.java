@@ -2,22 +2,21 @@ package org.jboss.pressgang.ccms.model;
 
 // Generated Jun 8, 2011 1:12:46 PM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -28,7 +27,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "IntegerConstants")
-public class IntegerConstants extends AuditedEntity<IntegerConstants> implements java.io.Serializable {
+public class IntegerConstants extends AuditedEntity implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "SELECT integerConstants FROM IntegerConstants integerConstants";
     private static final long serialVersionUID = -6660808431652587223L;
 
@@ -52,7 +51,7 @@ public class IntegerConstants extends AuditedEntity<IntegerConstants> implements
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "IntegerConstantsID", unique = true, nullable = false)
     public Integer getIntegerConstantsId() {
-        return this.integerConstantsId;
+        return integerConstantsId;
     }
 
     public void setIntegerConstantsId(final Integer integerConstantsId) {
@@ -63,7 +62,7 @@ public class IntegerConstants extends AuditedEntity<IntegerConstants> implements
     @NotNull
     @Size(max = 45)
     public String getConstantName() {
-        return this.constantName;
+        return constantName;
     }
 
     public void setConstantName(final String constantName) {
@@ -72,7 +71,7 @@ public class IntegerConstants extends AuditedEntity<IntegerConstants> implements
 
     @Column(name = "ConstantValue")
     public Integer getConstantValue() {
-        return this.constantValue;
+        return constantValue;
     }
 
     public void setConstantValue(final Integer constantValue) {
@@ -82,7 +81,7 @@ public class IntegerConstants extends AuditedEntity<IntegerConstants> implements
     @Override
     @Transient
     public Integer getId() {
-        return this.integerConstantsId;
+        return integerConstantsId;
     }
 
 }

@@ -2,8 +2,6 @@ package org.jboss.pressgang.ccms.model.contentspec;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.io.Serializable;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,12 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import javax.validation.constraints.NotNull;
-
 import org.jboss.pressgang.ccms.model.Project;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
@@ -27,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ContentSpecToProject")
-public class ContentSpecToProject extends AuditedEntity<ContentSpecToProject> implements Serializable {
+public class ContentSpecToProject extends AuditedEntity implements Serializable {
 
     private static final long serialVersionUID = -739535710737597988L;
 
@@ -38,7 +36,7 @@ public class ContentSpecToProject extends AuditedEntity<ContentSpecToProject> im
     @Override
     @Transient
     public Integer getId() {
-        return this.contentSpecToProjectId;
+        return contentSpecToProjectId;
     }
 
     @Id

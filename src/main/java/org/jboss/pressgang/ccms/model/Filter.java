@@ -71,7 +71,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "FilterID", unique = true, nullable = false)
     public Integer getFilterId() {
-        return this.filterId;
+        return filterId;
     }
 
     public void setFilterId(Integer filterId) {
@@ -82,7 +82,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     @NotNull
     @Length(max = 255)
     public String getFilterName() {
-        return this.filterName;
+        return filterName;
     }
 
     public void setFilterName(final String filterName) {
@@ -92,7 +92,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     @Column(name = "FilterDescription", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getFilterDescription() {
-        return this.filterDescription;
+        return filterDescription;
     }
 
     public void setFilterDescription(final String filterDescription) {
@@ -103,7 +103,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<FilterTag> getFilterTags() {
-        return this.filterTags;
+        return filterTags;
     }
 
     public void setFilterTags(final Set<FilterTag> filterTags) {
@@ -124,7 +124,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<FilterCategory> getFilterCategories() {
-        return this.filterCategories;
+        return filterCategories;
     }
 
     public void setFilterCategories(final Set<FilterCategory> filterCategories) {
@@ -203,7 +203,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     public List<Integer> hasTag(final Integer tagID) {
         final List<Integer> retValue = new ArrayList<Integer>();
 
-        for (final FilterTag tag : this.getFilterTags()) {
+        for (final FilterTag tag : getFilterTags()) {
             if (tag.getTag().getTagId().equals(tagID)) retValue.add(tag.getTagState());
         }
 
@@ -213,10 +213,10 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     public ArrayList<Integer> hasCategory(final Integer categoryId, final Integer projectId) {
         ArrayList<Integer> states = new ArrayList<Integer>();
 
-        for (final FilterCategory cat : this.getFilterCategories()) {
+        for (final FilterCategory cat : getFilterCategories()) {
             if (cat.getCategory().getCategoryId().equals(categoryId)
                     // Check if the project id matches. If the project is null then its the common project.
-                    && ((cat.getProject() == null && projectId == null) || (cat.getProject() != null && cat.getProject().equals(
+                    && ((cat.getProject() == null && projectId == null) || (cat.getProject() != null && cat.getProject().getId().equals(
                     projectId)))) states.add(cat.getCategoryState());
         }
 
@@ -226,7 +226,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     public ArrayList<Integer> hasLocale(final String localeName) {
         ArrayList<Integer> states = new ArrayList<Integer>();
 
-        for (final FilterLocale locale : this.getFilterLocales()) {
+        for (final FilterLocale locale : getFilterLocales()) {
             if (locale.getLocaleName().equals(localeName)) states.add(locale.getLocaleState());
         }
 
@@ -247,7 +247,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     public ArrayList<Category> getFilterTagCategories() {
         final ArrayList<Category> categories = new ArrayList<Category>();
 
-        for (final FilterTag filterTag : this.filterTags) {
+        for (final FilterTag filterTag : filterTags) {
             final int filterTagState = filterTag.getTagState();
 
             if (filterTagState == CommonFilterConstants.MATCH_TAG_STATE || filterTagState == CommonFilterConstants.NOT_MATCH_TAG_STATE) {
@@ -268,7 +268,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     public ArrayList<Project> getFilterTagProjects() {
         final ArrayList<Project> projects = new ArrayList<Project>();
 
-        for (final FilterTag filterTag : this.filterTags) {
+        for (final FilterTag filterTag : filterTags) {
             final Tag tag = filterTag.getTag();
             final Set<TagToProject> tagToProjects = tag.getTagToProjects();
 
@@ -289,7 +289,7 @@ public class Filter extends AuditedEntity<Filter> implements java.io.Serializabl
     @Override
     @Transient
     public Integer getId() {
-        return this.filterId;
+        return filterId;
     }
 
     @Transient

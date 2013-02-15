@@ -7,4 +7,6 @@ public class Constants {
      */
     public static final int DEFAULT_BATCH_SIZE = 15;
 
+    private Constants() {
+    }
 }

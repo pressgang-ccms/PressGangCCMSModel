@@ -2,18 +2,17 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -50,7 +49,7 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "RoleToRoleRelationshipID", unique = true, nullable = false)
     public Integer getRoleToRoleRelationshipId() {
-        return this.roleToRoleRelationshipId;
+        return roleToRoleRelationshipId;
     }
 
     public void setRoleToRoleRelationshipId(final Integer roleToRoleRelationshipId) {
@@ -60,7 +59,7 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
     @Column(name = "Description", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(final String description) {
@@ -71,7 +70,7 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<RoleToRole> getRoleToRoles() {
-        return this.roleToRoles;
+        return roleToRoles;
     }
 
     public void setRoleToRoles(final Set<RoleToRole> roleToRoles) {
@@ -81,7 +80,7 @@ public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship
     @Override
     @Transient
     public Integer getId() {
-        return this.roleToRoleRelationshipId;
+        return roleToRoleRelationshipId;
     }
 
 }

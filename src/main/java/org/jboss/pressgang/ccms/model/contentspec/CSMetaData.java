@@ -2,12 +2,6 @@ package org.jboss.pressgang.ccms.model.contentspec;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,6 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -43,7 +42,7 @@ public class CSMetaData extends AuditedEntity<CSMetaData> implements Serializabl
     @Override
     @Transient
     public Integer getId() {
-        return this.csMetaDataId;
+        return csMetaDataId;
     }
 
     @Id
@@ -90,7 +89,7 @@ public class CSMetaData extends AuditedEntity<CSMetaData> implements Serializabl
     public List<ContentSpec> getContentSpecsList() {
         final List<ContentSpec> contentSpecs = new ArrayList<ContentSpec>();
 
-        for (final ContentSpecToCSMetaData mapping : this.contentSpecToCSMetaData) {
+        for (final ContentSpecToCSMetaData mapping : contentSpecToCSMetaData) {
             contentSpecs.add(mapping.getContentSpec());
         }
 

@@ -2,11 +2,11 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Cacheable;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,7 +24,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TopicToBugzillaBug", uniqueConstraints = @UniqueConstraint(columnNames = { "TopicID", "BugzillaBugID" }))
+@Table(name = "TopicToBugzillaBug", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicID", "BugzillaBugID"}))
 public class TopicToBugzillaBug extends AuditedEntity<TopicToBugzillaBug> implements java.io.Serializable {
     private static final long serialVersionUID = -4963859367368389435L;
     public static final String SELECT_ALL_QUERY = "select topicToBugzillaBug from TopicToBugzillaBug topicToBugzillaBug";
@@ -45,7 +45,7 @@ public class TopicToBugzillaBug extends AuditedEntity<TopicToBugzillaBug> implem
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicToBugzillaBugID", unique = true, nullable = false)
     public Integer getTopicToBugzillaBugId() {
-        return this.topicToBugzillaBugId;
+        return topicToBugzillaBugId;
     }
 
     public void setTopicToBugzillaBugId(final Integer topicToBugzillaBugId) {
@@ -56,7 +56,7 @@ public class TopicToBugzillaBug extends AuditedEntity<TopicToBugzillaBug> implem
     @JoinColumn(name = "BugzillaBugID", nullable = false)
     @NotNull
     public BugzillaBug getBugzillaBug() {
-        return this.bugzillaBug;
+        return bugzillaBug;
     }
 
     public void setBugzillaBug(final BugzillaBug bugzillaBug) {
@@ -67,7 +67,7 @@ public class TopicToBugzillaBug extends AuditedEntity<TopicToBugzillaBug> implem
     @JoinColumn(name = "TopicID", nullable = false)
     @NotNull
     public Topic getTopic() {
-        return this.topic;
+        return topic;
     }
 
     public void setTopic(final Topic topic) {
@@ -77,7 +77,7 @@ public class TopicToBugzillaBug extends AuditedEntity<TopicToBugzillaBug> implem
     @Override
     @Transient
     public Integer getId() {
-        return this.topicToBugzillaBugId;
+        return topicToBugzillaBugId;
     }
 
 }

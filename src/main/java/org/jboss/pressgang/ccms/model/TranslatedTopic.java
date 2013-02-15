@@ -52,7 +52,7 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
 
     @Transient
     public Integer getId() {
-        return this.translatedTopicId;
+        return translatedTopicId;
     }
 
     @Id
@@ -89,7 +89,7 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
      */
     @Transient
     public String getZanataId() {
-        return this.topicId + "-" + this.topicRevision;
+        return topicId + "-" + topicRevision;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "translatedTopic", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -105,7 +105,7 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
 
     @Transient
     public List<TranslatedTopicData> getTranslatedTopicDataList() {
-        return new ArrayList<TranslatedTopicData>(this.translatedTopicDatas);
+        return new ArrayList<TranslatedTopicData>(translatedTopicDatas);
     }
 
     @Transient
@@ -126,8 +126,8 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
         if (enversTopic == null) {
             /* Find the envers topic */
             final AuditReader reader = AuditReaderFactory.get(entityManager);
-            final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, this.topicRevision).add(
-                    AuditEntity.id().eq(this.topicId));
+            final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, topicRevision).add(
+                    AuditEntity.id().eq(topicId));
             enversTopic = (Topic) query.getSingleResult();
         }
         return enversTopic;

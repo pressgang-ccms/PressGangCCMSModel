@@ -68,7 +68,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicSourceURLID", unique = true, nullable = false)
     public Integer getTopicSourceUrlId() {
-        return this.topicSourceUrlId;
+        return topicSourceUrlId;
     }
 
     public void setTopicSourceUrlId(final Integer topicSourceUrlId) {
@@ -79,7 +79,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @NotNull
     @Length(max = 2048)
     public String getSourceUrl() {
-        return this.sourceUrl;
+        return sourceUrl;
     }
 
     public void setSourceUrl(final String sourceUrl) {
@@ -90,7 +90,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @NotNull
     @Length(max = 255)
     public String getTitle() {
-        return this.title;
+        return title;
     }
 
     public void setTitle(final String title) {
@@ -100,7 +100,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @Column(name = "Description", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(final String description) {
@@ -111,7 +111,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TopicToTopicSourceUrl> getTopicToTopicSourceUrls() {
-        return this.topicToTopicSourceUrls;
+        return topicToTopicSourceUrls;
     }
 
     public void setTopicToTopicSourceUrls(final Set<TopicToTopicSourceUrl> topicToTopicSourceUrls) {
@@ -121,12 +121,11 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     /**
      * If the user has left the title field empty, try to download the page and get the title from the HTML.
      */
-    @SuppressWarnings("unused")
     @PrePersist
     @PreUpdate
     private void setTitle() {
         try {
-            if (this.title == null || this.title.trim().length() == 0 && (this.sourceUrl != null && !this.sourceUrl.trim().isEmpty())) {
+            if (title == null || title.trim().length() == 0 && (sourceUrl != null && !sourceUrl.trim().isEmpty())) {
                 /* Some common string replacements to make in the titles */
                 final Map<String, String> replaceList = new HashMap<String, String>();
                 replaceList.put("&nbsp;", " ");
@@ -135,7 +134,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
                 final HtmlCleaner cleaner = new HtmlCleaner();
 
                 // clean the source url
-                final TagNode node = cleaner.clean(new URL(this.getSourceUrl()));
+                final TagNode node = cleaner.clean(new URL(getSourceUrl()));
 
                 // find the first title node
                 final TagNode title = node.findElementByName("title", true);
@@ -161,7 +160,7 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
     @Override
     @Transient
     public Integer getId() {
-        return this.topicSourceUrlId;
+        return topicSourceUrlId;
     }
 
 }

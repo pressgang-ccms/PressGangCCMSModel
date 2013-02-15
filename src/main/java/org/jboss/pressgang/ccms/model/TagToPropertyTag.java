@@ -88,33 +88,31 @@ public class TagToPropertyTag extends ToPropertyTag<TagToPropertyTag> implements
     @Override
     @Transient
     public Integer getId() {
-        return this.tagToPropertyTagID;
+        return tagToPropertyTagID;
     }
 
     @Override
     protected boolean testUnique(final EntityManager entityManager, final Number revision) {
-        if (this.propertyTag.getPropertyTagIsUnique()) {
+        if (propertyTag.getPropertyTagIsUnique()) {
             /*
              * Since having to iterate over thousands of entities is slow, use a HQL query for the latest versions, for
              * revisions though we still have to do it the slow way since we don't know the revision number.
              */
             final Long count;
             if (revision == null) {
-                final String query = TagToPropertyTag.SELECT_SIZE_QUERY + " WHERE tagToPropertyTag.propertyTag = "
-                        + this.propertyTag.getId() + " AND tagToPropertyTag.value = '" + this.getValue() + "'";
+                final String query = TagToPropertyTag.SELECT_SIZE_QUERY + " WHERE tagToPropertyTag.propertyTag = " + propertyTag.getId()
+                        + " AND tagToPropertyTag.value = '" + getValue() + "'";
                 count = (Long) entityManager.createQuery(query).getSingleResult();
             } else {
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
                 final AuditQueryCreator queryCreator = reader.createQuery();
-                final AuditQuery query = queryCreator.forEntitiesAtRevision(TagToPropertyTag.class, revision)
-                        .addProjection(AuditEntity.id().count("tagToPropertyTagID"))
-                        .add(AuditEntity.relatedId("propertyTag").eq(this.propertyTag.getId()))
-                        .add(AuditEntity.property("value").eq(this.getValue()));
+                final AuditQuery query = queryCreator.forEntitiesAtRevision(TagToPropertyTag.class, revision).addProjection(
+                        AuditEntity.id().count("tagToPropertyTagID")).add(AuditEntity.relatedId("propertyTag").eq(propertyTag.getId())).add(
+                        AuditEntity.property("value").eq(getValue()));
                 count = (Long) query.getSingleResult();
             }
 
-            if (count > 1)
-                return false;
+            if (count > 1) return false;
         }
 
         return true;

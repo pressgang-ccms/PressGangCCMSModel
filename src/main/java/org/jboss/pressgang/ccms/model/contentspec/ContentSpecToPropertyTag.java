@@ -45,7 +45,7 @@ public class ContentSpecToPropertyTag extends ToPropertyTag<ContentSpecToPropert
     @Override
     @Transient
     public Integer getId() {
-        return this.contentSpecToPropertyTagId;
+        return contentSpecToPropertyTagId;
     }
 
     @Id
@@ -97,22 +97,21 @@ public class ContentSpecToPropertyTag extends ToPropertyTag<ContentSpecToPropert
 
     @Override
     protected boolean testUnique(final EntityManager entityManager, final Number revision) {
-        if (this.propertyTag.getPropertyTagIsUnique()) {
+        if (propertyTag.getPropertyTagIsUnique()) {
             /*
              * Since having to iterate over thousands of entities is slow, use a HQL query to find the count for us.
              */
             final Long count;
             if (revision == null) {
-                final String query = ContentSpecToPropertyTag.SELECT_SIZE_QUERY + " WHERE contentSpecToPropertyTag.propertyTag = " + this
-                        .propertyTag.getId() + " AND contentSpecToPropertyTag.value = '" + this.getValue() + "'";
+                final String query = ContentSpecToPropertyTag.SELECT_SIZE_QUERY + " WHERE contentSpecToPropertyTag.propertyTag = " +
+                        propertyTag.getId() + " AND contentSpecToPropertyTag.value = '" + getValue() + "'";
                 count = (Long) entityManager.createQuery(query).getSingleResult();
             } else {
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
                 final AuditQueryCreator queryCreator = reader.createQuery();
                 final AuditQuery query = queryCreator.forEntitiesAtRevision(TopicToPropertyTag.class, revision).addProjection(
                         AuditEntity.id().count("contentSpecToPropertyTagId")).add(
-                        AuditEntity.relatedId("propertyTag").eq(this.propertyTag.getId())).add(
-                        AuditEntity.property("value").eq(this.getValue()));
+                        AuditEntity.relatedId("propertyTag").eq(propertyTag.getId())).add(AuditEntity.property("value").eq(getValue()));
                 query.setCacheable(true);
                 count = (Long) query.getSingleResult();
             }

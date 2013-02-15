@@ -250,14 +250,14 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
 
     @Transient
     public List<CSNode> getChildrenList() {
-        return new ArrayList<CSNode>(this.getChildren());
+        return new ArrayList<CSNode>(getChildren());
     }
 
     @Transient
     public List<CSTranslatedString> getCSTranslatedStringsList() {
         final List<CSTranslatedString> translatedStrings = new ArrayList<CSTranslatedString>();
 
-        for (final CSNodeToCSTranslatedString mapping : this.csNodeToCSTranslatedStrings) {
+        for (final CSNodeToCSTranslatedString mapping : csNodeToCSTranslatedStrings) {
             translatedStrings.add(mapping.getCSTranslatedString());
         }
 
@@ -266,33 +266,33 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
 
     @Transient
     public List<CSNodeToCSNode> getRelatedFromNodesList() {
-        return new ArrayList<CSNodeToCSNode>(this.relatedFromNodes);
+        return new ArrayList<CSNodeToCSNode>(relatedFromNodes);
     }
 
     @Transient
     public List<CSNodeToCSNode> getRelatedToNodesList() {
-        return new ArrayList<CSNodeToCSNode>(this.relatedToNodes);
+        return new ArrayList<CSNodeToCSNode>(relatedToNodes);
     }
 
     @Transient
     public void removeChild(final CSNode child) {
         final List<CSNode> removeNodes = new ArrayList<CSNode>();
 
-        for (final CSNode childNode : this.children) {
+        for (final CSNode childNode : children) {
             if (childNode.equals(child)) {
                 removeNodes.add(childNode);
             }
         }
 
         for (final CSNode removeNode : removeNodes) {
-            this.children.remove(removeNode);
+            children.remove(removeNode);
             removeNode.setParent(null);
         }
     }
 
     @Transient
     public void addChild(final CSNode child) {
-        this.children.add(child);
+        children.add(child);
         child.setParent(this);
     }
 
@@ -300,14 +300,14 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
     public void removeRelatedTo(final CSNode node, Integer relationshipTypeId) {
         final List<CSNodeToCSNode> removeNodes = new ArrayList<CSNodeToCSNode>();
 
-        for (final CSNodeToCSNode nodeToNode : this.relatedToNodes) {
+        for (final CSNodeToCSNode nodeToNode : relatedToNodes) {
             if (nodeToNode.getRelatedNode().equals(node) && nodeToNode.getRelationshipType().equals(relationshipTypeId)) {
                 removeNodes.add(nodeToNode);
             }
         }
 
         for (final CSNodeToCSNode removeNode : removeNodes) {
-            this.relatedToNodes.remove(removeNode);
+            relatedToNodes.remove(removeNode);
             removeNode.getRelatedNode().getRelatedFromNodes().remove(removeNode);
         }
     }
@@ -319,19 +319,19 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         nodeToNode.setRelatedNode(relatedNode);
         nodeToNode.setRelationshipType(relationshipTypeId);
 
-        this.getRelatedToNodes().add(nodeToNode);
+        getRelatedToNodes().add(nodeToNode);
         relatedNode.getRelatedFromNodes().add(nodeToNode);
     }
 
     @Transient
     public void addRelatedTo(final CSNodeToCSNode relatedNode) {
-        this.getRelatedToNodes().add(relatedNode);
+        getRelatedToNodes().add(relatedNode);
         relatedNode.getRelatedNode().getRelatedFromNodes().add(relatedNode);
     }
 
     @Transient
     public void removeRelatedTo(final CSNodeToCSNode relatedNode) {
-        this.getRelatedToNodes().remove(relatedNode);
+        getRelatedToNodes().remove(relatedNode);
         relatedNode.getRelatedNode().getRelatedFromNodes().remove(relatedNode);
     }
 
@@ -339,14 +339,14 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
     public void removeRelatedFrom(final CSNode node, Integer relationshipTypeId) {
         final List<CSNodeToCSNode> removeNodes = new ArrayList<CSNodeToCSNode>();
 
-        for (final CSNodeToCSNode nodeFromNode : this.relatedFromNodes) {
+        for (final CSNodeToCSNode nodeFromNode : relatedFromNodes) {
             if (nodeFromNode.getRelatedNode().equals(node) && nodeFromNode.getRelationshipType().equals(relationshipTypeId)) {
                 removeNodes.add(nodeFromNode);
             }
         }
 
         for (final CSNodeToCSNode removeNode : removeNodes) {
-            this.relatedFromNodes.remove(removeNode);
+            relatedFromNodes.remove(removeNode);
             removeNode.getRelatedNode().getRelatedToNodes().remove(removeNode);
         }
     }
@@ -358,25 +358,25 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         nodeFromNode.setRelatedNode(relatedNode);
         nodeFromNode.setRelationshipType(relationshipTypeId);
 
-        this.getRelatedFromNodes().add(nodeFromNode);
+        getRelatedFromNodes().add(nodeFromNode);
         relatedNode.getRelatedToNodes().add(nodeFromNode);
     }
 
     @Transient
     public void addRelatedFrom(final CSNodeToCSNode relatedNode) {
-        this.getRelatedFromNodes().add(relatedNode);
+        getRelatedFromNodes().add(relatedNode);
         relatedNode.getRelatedNode().getRelatedToNodes().add(relatedNode);
     }
 
     @Transient
     public void removeRelatedFrom(final CSNodeToCSNode relatedNode) {
-        this.getRelatedFromNodes().remove(relatedNode);
+        getRelatedFromNodes().remove(relatedNode);
         relatedNode.getRelatedNode().getRelatedToNodes().remove(relatedNode);
     }
 
     @Transient
     public List<CSNodeToPropertyTag> getCSNodeToPropertyTagsList() {
-        return new ArrayList<CSNodeToPropertyTag>(this.csNodeToPropertyTags);
+        return new ArrayList<CSNodeToPropertyTag>(csNodeToPropertyTags);
     }
 
     public void addPropertyTag(final PropertyTag propertyTag, final String value) {
@@ -385,14 +385,14 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         mapping.setPropertyTag(propertyTag);
         mapping.setValue(value);
 
-        this.csNodeToPropertyTags.add(mapping);
+        csNodeToPropertyTags.add(mapping);
         propertyTag.getCSNodeToPropertyTags().add(mapping);
     }
 
     public void removePropertyTag(final PropertyTag propertyTag, final String value) {
         final List<CSNodeToPropertyTag> removeList = new ArrayList<CSNodeToPropertyTag>();
 
-        for (final CSNodeToPropertyTag mapping : this.csNodeToPropertyTags) {
+        for (final CSNodeToPropertyTag mapping : csNodeToPropertyTags) {
             final PropertyTag myPropertyTag = mapping.getPropertyTag();
             if (myPropertyTag.equals(propertyTag) && mapping.getValue().equals(value)) {
                 removeList.add(mapping);
@@ -400,7 +400,7 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         }
 
         for (final CSNodeToPropertyTag mapping : removeList) {
-            this.csNodeToPropertyTags.remove(mapping);
+            csNodeToPropertyTags.remove(mapping);
             mapping.getPropertyTag().getCSNodeToPropertyTags().remove(mapping);
         }
     }
@@ -411,21 +411,21 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         mapping.setCSNode(this);
         mapping.setCSTranslatedString(translatedString);
 
-        this.csNodeToCSTranslatedStrings.add(mapping);
+        csNodeToCSTranslatedStrings.add(mapping);
         translatedString.getCSNodeToCSTranslatedStrings().add(mapping);
     }
 
     public void removeTranslatedString(final CSTranslatedString translatedString) {
         final List<CSNodeToCSTranslatedString> removeList = new ArrayList<CSNodeToCSTranslatedString>();
 
-        for (final CSNodeToCSTranslatedString mapping : this.csNodeToCSTranslatedStrings) {
+        for (final CSNodeToCSTranslatedString mapping : csNodeToCSTranslatedStrings) {
             if (mapping.getCSTranslatedString().equals(translatedString)) {
                 removeList.add(mapping);
             }
         }
 
         for (final CSNodeToCSTranslatedString mapping : removeList) {
-            this.csNodeToCSTranslatedStrings.remove(mapping);
+            csNodeToCSTranslatedStrings.remove(mapping);
             mapping.getCSTranslatedString().getCSNodeToCSTranslatedStrings().remove(mapping);
         }
     }
@@ -441,8 +441,8 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
             } else {
                 // Find the envers topic
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
-                final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, this.topicRevision).add(
-                        AuditEntity.id().eq(this.topicId));
+                final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, topicRevision).add(
+                        AuditEntity.id().eq(topicId));
                 topic = (Topic) query.getSingleResult();
             }
         }

@@ -6,9 +6,9 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,7 +49,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "StringConstantsID", unique = true, nullable = false)
     public Integer getStringConstantsId() {
-        return this.stringConstantsId;
+        return stringConstantsId;
     }
 
     public void setStringConstantsId(Integer stringConstantsId) {
@@ -60,7 +60,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     @NotNull
     @Length(max = 45)
     public String getConstantName() {
-        return this.constantName;
+        return constantName;
     }
 
     public void setConstantName(final String constantName) {
@@ -70,7 +70,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     @Column(name = "ConstantValue", columnDefinition = "MEDIUMTEXT")
     @Length(max = 16777215)
     public String getConstantValue() {
-        return this.constantValue;
+        return constantValue;
     }
 
     public void setConstantValue(final String constantValue) {
@@ -80,7 +80,7 @@ public class StringConstants extends AuditedEntity<StringConstants> implements j
     @Override
     @Transient
     public Integer getId() {
-        return this.stringConstantsId;
+        return stringConstantsId;
     }
 
 }

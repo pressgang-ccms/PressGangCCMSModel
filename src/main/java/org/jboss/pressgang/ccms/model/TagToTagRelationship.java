@@ -1,8 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -39,8 +38,7 @@ public class TagToTagRelationship extends AuditedEntity<TagToTagRelationship> im
         this.tagToTagRelationshipType = tagToTagRelationshipType;
     }
 
-    public TagToTagRelationship(final int tagToTagRelationshipType, final String tagToTagRelationshipDescription,
-            Set<TagToTag> tagToTags) {
+    public TagToTagRelationship(final int tagToTagRelationshipType, final String tagToTagRelationshipDescription, Set<TagToTag> tagToTags) {
         this.tagToTagRelationshipType = tagToTagRelationshipType;
         this.tagToTagRelationshipDescription = tagToTagRelationshipDescription;
         this.tagToTags = tagToTags;
@@ -49,7 +47,7 @@ public class TagToTagRelationship extends AuditedEntity<TagToTagRelationship> im
     @Id
     @Column(name = "TagToTagRelationshipType", unique = true, nullable = false)
     public int getTagToTagRelationshipType() {
-        return this.tagToTagRelationshipType;
+        return tagToTagRelationshipType;
     }
 
     public void setTagToTagRelationshipType(final int tagToTagRelationshipType) {
@@ -59,7 +57,7 @@ public class TagToTagRelationship extends AuditedEntity<TagToTagRelationship> im
     @Column(name = "TagToTagRelationshipDescription", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getTagToTagRelationshipDescription() {
-        return this.tagToTagRelationshipDescription;
+        return tagToTagRelationshipDescription;
     }
 
     public void setTagToTagRelationshipDescription(final String tagToTagRelationshipDescription) {
@@ -70,7 +68,7 @@ public class TagToTagRelationship extends AuditedEntity<TagToTagRelationship> im
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TagToTag> getTagToTags() {
-        return this.tagToTags;
+        return tagToTags;
     }
 
     public void setTagToTags(final Set<TagToTag> tagToTags) {
@@ -80,7 +78,7 @@ public class TagToTagRelationship extends AuditedEntity<TagToTagRelationship> im
     @Override
     @Transient
     public Integer getId() {
-        return this.tagToTagRelationshipType;
+        return tagToTagRelationshipType;
     }
 
 }

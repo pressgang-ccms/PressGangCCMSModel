@@ -2,9 +2,6 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -44,7 +43,7 @@ public class BugzillaBug extends AuditedEntity<BugzillaBug> implements java.io.S
     @Override
     @Transient
     public Integer getId() {
-        return this.bugzillaBugId;
+        return bugzillaBugId;
     }
 
     @Id
@@ -91,18 +90,17 @@ public class BugzillaBug extends AuditedEntity<BugzillaBug> implements java.io.S
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TopicToBugzillaBug> getTopicToBugzillaBugs() {
-        return this.topicToBugzillaBugs;
+        return topicToBugzillaBugs;
     }
 
     public void setTopicToBugzillaBugs(final Set<TopicToBugzillaBug> topicToBugzillaBugs) {
         this.topicToBugzillaBugs = topicToBugzillaBugs;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
-        for (final TopicToBugzillaBug mapping : this.topicToBugzillaBugs)
+        for (final TopicToBugzillaBug mapping : topicToBugzillaBugs)
             mapping.getTopic().getTopicToBugzillaBugs().remove(mapping);
-        this.topicToBugzillaBugs.clear();
+        topicToBugzillaBugs.clear();
     }
 }

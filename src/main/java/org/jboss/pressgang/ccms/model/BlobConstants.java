@@ -6,10 +6,9 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,7 +49,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "BlobConstantsID", unique = true, nullable = false)
     public Integer getBlobConstantsId() {
-        return this.blobConstantsId;
+        return blobConstantsId;
     }
 
     public void setBlobConstantsId(final Integer blobConstantsId) {
@@ -61,7 +60,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
     @NotNull
     @Length(max = 45)
     public String getConstantName() {
-        return this.constantName;
+        return constantName;
     }
 
     public void setConstantName(final String constantName) {
@@ -70,7 +69,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
 
     @Column(name = "ConstantValue", columnDefinition = "longblob")
     public byte[] getConstantValue() {
-        return this.constantValue;
+        return constantValue;
     }
 
     public void setConstantValue(final byte[] constantValue) {
@@ -80,7 +79,7 @@ public class BlobConstants extends AuditedEntity<BlobConstants> implements java.
     @Override
     @Transient
     public Integer getId() {
-        return this.blobConstantsId;
+        return blobConstantsId;
     }
 
 }

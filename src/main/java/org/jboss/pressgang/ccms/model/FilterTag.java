@@ -7,12 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,7 +48,7 @@ public class FilterTag extends AuditedEntity<FilterTag> implements java.io.Seria
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "FilterTagID", unique = true, nullable = false)
     public Integer getFilterTagId() {
-        return this.filterTagId;
+        return filterTagId;
     }
 
     public void setFilterTagId(Integer filterTagId) {
@@ -60,7 +59,7 @@ public class FilterTag extends AuditedEntity<FilterTag> implements java.io.Seria
     @JoinColumn(name = "FilterID", nullable = false)
     @NotNull
     public Filter getFilter() {
-        return this.filter;
+        return filter;
     }
 
     public void setFilter(final Filter filter) {
@@ -71,7 +70,7 @@ public class FilterTag extends AuditedEntity<FilterTag> implements java.io.Seria
     @JoinColumn(name = "TagID", nullable = false)
     @NotNull
     public Tag getTag() {
-        return this.tag;
+        return tag;
     }
 
     public void setTag(final Tag tag) {
@@ -80,7 +79,7 @@ public class FilterTag extends AuditedEntity<FilterTag> implements java.io.Seria
 
     @Column(name = "TagState", nullable = false)
     public int getTagState() {
-        return this.tagState;
+        return tagState;
     }
 
     public void setTagState(final int tagState) {
@@ -90,7 +89,7 @@ public class FilterTag extends AuditedEntity<FilterTag> implements java.io.Seria
     @Override
     @Transient
     public Integer getId() {
-        return this.filterTagId;
+        return filterTagId;
     }
 
 }

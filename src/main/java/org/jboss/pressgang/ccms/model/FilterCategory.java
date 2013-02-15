@@ -7,12 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -52,7 +51,7 @@ public class FilterCategory extends AuditedEntity<FilterCategory> implements jav
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "FilterCategoryID", unique = true, nullable = false)
     public Integer getFilterCategoryId() {
-        return this.filterCategoryId;
+        return filterCategoryId;
     }
 
     public void setFilterCategoryId(Integer filterCategoryId) {
@@ -65,7 +64,7 @@ public class FilterCategory extends AuditedEntity<FilterCategory> implements jav
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Filter getFilter() {
-        return this.filter;
+        return filter;
     }
 
     public void setFilter(Filter filter) {
@@ -78,7 +77,7 @@ public class FilterCategory extends AuditedEntity<FilterCategory> implements jav
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Category getCategory() {
-        return this.category;
+        return category;
     }
 
     public void setCategory(Category category) {
@@ -87,7 +86,7 @@ public class FilterCategory extends AuditedEntity<FilterCategory> implements jav
 
     @Column(name = "CategoryState", nullable = false)
     public int getCategoryState() {
-        return this.categoryState;
+        return categoryState;
     }
 
     public void setCategoryState(int categoryState) {
@@ -109,7 +108,7 @@ public class FilterCategory extends AuditedEntity<FilterCategory> implements jav
     @Override
     @Transient
     public Integer getId() {
-        return this.filterCategoryId;
+        return filterCategoryId;
     }
 
 }

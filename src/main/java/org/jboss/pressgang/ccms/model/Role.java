@@ -2,23 +2,22 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.PreRemove;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.persistence.CascadeType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -33,7 +32,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "Role", uniqueConstraints = @UniqueConstraint(columnNames = { "RoleName" }))
+@Table(name = "Role", uniqueConstraints = @UniqueConstraint(columnNames = {"RoleName"}))
 public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "select role from Role role";
     private static final long serialVersionUID = 894929331710959265L;
@@ -62,7 +61,7 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "RoleID", unique = true, nullable = false)
     public Integer getRoleId() {
-        return this.roleId;
+        return roleId;
     }
 
     public void setRoleId(Integer roleId) {
@@ -73,7 +72,7 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     @NotNull
     @Length(max = 255)
     public String getRoleName() {
-        return this.roleName;
+        return roleName;
     }
 
     public void setRoleName(String roleName) {
@@ -83,27 +82,27 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     @Column(name = "Description", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "role", cascade = { CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "role",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<UserRole> getUserRoles() {
-        return this.userRoles;
+        return userRoles;
     }
 
     public void setUserRoles(Set<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "secondaryRole", cascade = { CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "secondaryRole",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<RoleToRole> getChildrenRoleToRole() {
@@ -114,8 +113,8 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
         this.childrenRoleToRole = childrenRoleToRole;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "primaryRole", cascade = { CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "primaryRole",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<RoleToRole> getParentRoleToRole() {
@@ -131,9 +130,8 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     }
 
     public boolean hasUser(final Integer user) {
-        for (final UserRole userRole : this.userRoles) {
-            if (userRole.getUser().getUserId().equals(user))
-                return true;
+        for (final UserRole userRole : userRoles) {
+            if (userRole.getUser().getUserId().equals(user)) return true;
         }
 
         return false;
@@ -142,7 +140,7 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     public void addUser(final User user) {
         if (!hasUser(user)) {
             final UserRole userRole = new UserRole(user, this);
-            this.getUserRoles().add(userRole);
+            getUserRoles().add(userRole);
             user.getUserRoles().add(userRole);
         }
     }
@@ -152,9 +150,9 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     }
 
     public void removeUser(final Integer userId) {
-        for (final UserRole userRole : this.userRoles) {
+        for (final UserRole userRole : userRoles) {
             if (userRole.getUser().getUserId().equals(userId)) {
-                this.getUserRoles().remove(userRole);
+                getUserRoles().remove(userRole);
                 userRole.getUser().getUserRoles().remove(userRole);
                 break;
             }
@@ -164,20 +162,18 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     @Transient
     public String getUsersCommaSeperatedList() {
         String retValue = "";
-        for (final UserRole role : this.userRoles) {
-            if (retValue.length() != 0)
-                retValue += ", ";
+        for (final UserRole role : userRoles) {
+            if (retValue.length() != 0) retValue += ", ";
             retValue += role.getUser().getUserName();
         }
         return retValue;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
-        this.userRoles.clear();
-        this.childrenRoleToRole.clear();
-        this.parentRoleToRole.clear();
+        userRoles.clear();
+        childrenRoleToRole.clear();
+        parentRoleToRole.clear();
     }
 
     @Transient
@@ -214,10 +210,9 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     }
 
     public RoleToRole getParentRole(final Integer role, final Integer relationshipID) {
-        for (final RoleToRole roleToRole : this.parentRoleToRole) {
-            if (roleToRole.getSecondaryRole().getRoleId().equals(role)
-                    && roleToRole.getRoleToRoleRelationship().getRoleToRoleRelationshipId().equals(relationshipID))
-                return roleToRole;
+        for (final RoleToRole roleToRole : parentRoleToRole) {
+            if (roleToRole.getSecondaryRole().getRoleId().equals(
+                    role) && roleToRole.getRoleToRoleRelationship().getRoleToRoleRelationshipId().equals(relationshipID)) return roleToRole;
         }
 
         return null;
@@ -228,10 +223,9 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     }
 
     public RoleToRole getChildRole(final Integer role, final Integer relationshipID) {
-        for (final RoleToRole roleToRole : this.getChildrenRoleToRole()) {
-            if (roleToRole.getPrimaryRole().getRoleId().equals(role)
-                    && roleToRole.getRoleToRoleRelationship().getRoleToRoleRelationshipId().equals(relationshipID))
-                return roleToRole;
+        for (final RoleToRole roleToRole : getChildrenRoleToRole()) {
+            if (roleToRole.getPrimaryRole().getRoleId().equals(
+                    role) && roleToRole.getRoleToRoleRelationship().getRoleToRoleRelationshipId().equals(relationshipID)) return roleToRole;
         }
 
         return null;
@@ -244,7 +238,7 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     public void addParentRole(final Role role, final RoleToRoleRelationship roleToRoleRelationship) {
         if (!hasParentRole(role.getRoleId(), roleToRoleRelationship.getRoleToRoleRelationshipId())) {
             final RoleToRole roleToRole = new RoleToRole(roleToRoleRelationship, this, role);
-            this.getParentRoleToRole().add(roleToRole);
+            getParentRoleToRole().add(roleToRole);
             role.getChildrenRoleToRole().add(roleToRole);
         }
     }
@@ -252,7 +246,7 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     public void addChildRole(final Role role, final RoleToRoleRelationship roleToRoleRelationship) {
         if (!hasChildRole(role.getRoleId(), roleToRoleRelationship.getRoleToRoleRelationshipId())) {
             final RoleToRole roleToRole = new RoleToRole(roleToRoleRelationship, role, this);
-            this.getChildrenRoleToRole().add(roleToRole);
+            getChildrenRoleToRole().add(roleToRole);
             role.getParentRoleToRole().add(roleToRole);
         }
     }
@@ -260,7 +254,7 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     public void removeParentRole(final Role role, final RoleToRoleRelationship roleToRoleRelationship) {
         final RoleToRole roleToRole = getParentRole(role.getRoleId(), roleToRoleRelationship.getRoleToRoleRelationshipId());
         if (roleToRole != null) {
-            this.getParentRoleToRole().remove(roleToRole);
+            getParentRoleToRole().remove(roleToRole);
             role.getChildrenRoleToRole().remove(roleToRole);
         }
     }
@@ -268,7 +262,7 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     public void removeChildRole(final Role role, final RoleToRoleRelationship roleToRoleRelationship) {
         final RoleToRole roleToRole = getChildRole(role.getRoleId(), roleToRoleRelationship.getRoleToRoleRelationshipId());
         if (roleToRole != null) {
-            this.getChildrenRoleToRole().remove(roleToRole);
+            getChildrenRoleToRole().remove(roleToRole);
             role.getParentRoleToRole().remove(roleToRole);
         }
     }
@@ -276,7 +270,7 @@ public class Role extends AuditedEntity<Role> implements java.io.Serializable {
     @Override
     @Transient
     public Integer getId() {
-        return this.roleId;
+        return roleId;
     }
 
 }

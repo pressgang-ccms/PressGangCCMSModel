@@ -1,17 +1,17 @@
 package org.jboss.pressgang.ccms.model;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,7 +50,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "FilterFieldID", unique = true, nullable = false)
     public Integer getFilterFieldId() {
-        return this.filterFieldId;
+        return filterFieldId;
     }
 
     public void setFilterFieldId(final Integer filterFieldId) {
@@ -61,7 +61,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @JoinColumn(name = "FilterID", nullable = false)
     @NotNull
     public Filter getFilter() {
-        return this.filter;
+        return filter;
     }
 
     public void setFilter(final Filter filter) {
@@ -72,7 +72,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @NotNull
     @Length(max = 255)
     public String getField() {
-        return this.field;
+        return field;
     }
 
     public void setField(final String field) {
@@ -83,7 +83,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @NotNull
     @Length(max = 65535)
     public String getValue() {
-        return this.value;
+        return value;
     }
 
     public void setValue(final String value) {
@@ -93,7 +93,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @Column(name = "Description", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(final String description) {
@@ -103,7 +103,7 @@ public class FilterField extends AuditedEntity<FilterField> implements java.io.S
     @Override
     @Transient
     public Integer getId() {
-        return this.filterFieldId;
+        return filterFieldId;
     }
 
 }

@@ -2,14 +2,6 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import javax.imageio.ImageIO;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -24,7 +16,12 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.swing.ImageIcon;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Cache;
@@ -42,7 +39,7 @@ import org.slf4j.LoggerFactory;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "LanguageImage", uniqueConstraints = @UniqueConstraint(columnNames = { "ImageFileID", "Locale" }))
+@Table(name = "LanguageImage", uniqueConstraints = @UniqueConstraint(columnNames = {"ImageFileID", "Locale"}))
 public class LanguageImage extends AuditedEntity<LanguageImage> implements java.io.Serializable {
     private static final Logger log = LoggerFactory.getLogger(LanguageImage.class);
     private static final long serialVersionUID = 1585978752264763594L;
@@ -52,7 +49,9 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
     private static final String PNG_MIME_TYPE = "image/png";
     public static final String SELECT_ALL_QUERY = "SELECT languageImage FROM LanguageImage languageImage";
 
-    /** The dimensions of the generated thumbnail */
+    /**
+     * The dimensions of the generated thumbnail
+     */
     private static final int THUMBNAIL_SIZE = 64;
     private Integer languageImageId;
     private ImageFile imageFile;
@@ -77,7 +76,7 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "LanguageImageID", unique = true, nullable = false)
     public Integer getLanguageImageId() {
-        return this.languageImageId;
+        return languageImageId;
     }
 
     public void setLanguageImageId(final Integer languageImageId) {
@@ -87,7 +86,7 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
     @Column(name = "OriginalFileName", length = 255)
     @Length(max = 255)
     public String getOriginalFileName() {
-        return this.originalFileName;
+        return originalFileName;
     }
 
     public void setOriginalFileName(final String originalFileName) {
@@ -107,7 +106,7 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
 
     @Column(name = "ImageDataBase64", columnDefinition = "mediumblob")
     public byte[] getImageDataBase64() {
-        return this.imageDataBase64;
+        return imageDataBase64;
     }
 
     public void setImageDataBase64(final byte[] imageDataBase64) {
@@ -116,12 +115,12 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
 
     @Transient
     public String getImageDataBase64String() {
-        return this.imageDataBase64 == null ? "" : new String(this.imageDataBase64);
+        return imageDataBase64 == null ? "" : new String(imageDataBase64);
     }
 
     @Column(name = "ImageData", columnDefinition = "mediumblob")
     public byte[] getImageData() {
-        return this.imageData;
+        return imageData;
     }
 
     public void setImageData(final byte[] imageData) {
@@ -130,7 +129,7 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
 
     @Column(name = "ThumbnailData", columnDefinition = "mediumblob")
     public byte[] getThumbnailData() {
-        return this.thumbnail;
+        return thumbnail;
     }
 
     public void setThumbnailData(final byte[] thumbnail) {
@@ -139,22 +138,19 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
 
     @Transient
     public String getThumbnailDataString() {
-        return this.thumbnail == null ? "" : new String(this.thumbnail);
+        return thumbnail == null ? "" : new String(thumbnail);
     }
 
     private byte[] createImage(final boolean resize) {
-        if (this.imageData == null)
-            return null;
+        if (imageData == null) return null;
 
         try {
             BufferedImage outImage = null;
 
             if (getMimeType().equals(SVG_MIME_TYPE)) {
                 SVGIcon svgIcon = null;
-                if (resize)
-                    svgIcon = new SVGIcon(new ByteArrayInputStream(this.imageData), THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-                else
-                    svgIcon = new SVGIcon(new ByteArrayInputStream(this.imageData));
+                if (resize) svgIcon = new SVGIcon(new ByteArrayInputStream(imageData), THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+                else svgIcon = new SVGIcon(new ByteArrayInputStream(imageData));
 
                 outImage = new BufferedImage(svgIcon.getIconWidth(), svgIcon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
                 final Graphics2D g2d = outImage.createGraphics();
@@ -163,7 +159,7 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
                 svgIcon.paintIcon(null, g2d, 0, 0);
                 g2d.dispose();
             } else {
-                final ImageIcon imageIcon = new ImageIcon(this.imageData);
+                final ImageIcon imageIcon = new ImageIcon(imageData);
                 final Image inImage = imageIcon.getImage();
 
                 double scale = 1.0d;
@@ -183,8 +179,7 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
 
                 final AffineTransform tx = new AffineTransform();
 
-                if (scale < 1.0d)
-                    tx.scale(scale, scale);
+                if (scale < 1.0d) tx.scale(scale, scale);
 
                 g2d.drawImage(inImage, tx, null);
                 g2d.dispose();
@@ -205,30 +200,29 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
 
     @Transient
     public String getImageDataString() {
-        if (imageData == null)
-            return "";
+        if (imageData == null) return "";
         return new String(imageData);
     }
 
     @Override
     @Transient
     public Integer getId() {
-        return this.languageImageId;
+        return languageImageId;
     }
 
     /**
      * Create the thumbnails, and make sure the parent imagefile is valid.
-     * 
+     *
      * @throws CustomConstraintViolationException
+     *
      */
-    @SuppressWarnings("unused")
     @PrePersist
     @PreUpdate
     private void updateImageData() throws CustomConstraintViolationException {
-        this.thumbnail = createImage(true);
-        this.imageDataBase64 = createImage(false);
+        thumbnail = createImage(true);
+        imageDataBase64 = createImage(false);
 
-        this.imageFile.validate();
+        imageFile.validate();
     }
 
     @Column(name = "Locale", nullable = false)
@@ -243,17 +237,13 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
 
     @Transient
     public String getMimeType() {
-        final int lastPeriodIndex = this.originalFileName.lastIndexOf(".");
-        if (lastPeriodIndex != -1 && lastPeriodIndex < this.originalFileName.length() - 1) {
-            final String extension = this.originalFileName.substring(lastPeriodIndex + 1);
-            if (extension.equalsIgnoreCase("JPG"))
-                return JPG_MIME_TYPE;
-            if (extension.equalsIgnoreCase("GIF"))
-                return GIF_MIME_TYPE;
-            if (extension.equalsIgnoreCase("PNG"))
-                return PNG_MIME_TYPE;
-            if (extension.equalsIgnoreCase("SVG"))
-                return SVG_MIME_TYPE;
+        final int lastPeriodIndex = originalFileName.lastIndexOf(".");
+        if (lastPeriodIndex != -1 && lastPeriodIndex < originalFileName.length() - 1) {
+            final String extension = originalFileName.substring(lastPeriodIndex + 1);
+            if (extension.equalsIgnoreCase("JPG")) return JPG_MIME_TYPE;
+            if (extension.equalsIgnoreCase("GIF")) return GIF_MIME_TYPE;
+            if (extension.equalsIgnoreCase("PNG")) return PNG_MIME_TYPE;
+            if (extension.equalsIgnoreCase("SVG")) return SVG_MIME_TYPE;
         }
 
         return "application/octet-stream";
@@ -268,13 +258,12 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
      * The UI will attempt to assign a null value if the file upload box does not have a file selected. This method is used to
      * ignore any null values, while passing through any legitimate file uploads. This means that the absence of a file in the
      * upload box does not indicate that no file should be assigned to the entity.
-     * 
+     *
      * @param uiImageData The image data uploaded through the UI
      */
     public void setUiImageData(byte[] uiImageData) {
         this.uiImageData = uiImageData;
-        if (this.uiImageData != null)
-            this.imageData = this.uiImageData;
+        if (this.uiImageData != null) imageData = this.uiImageData;
     }
 
     @Transient
@@ -286,12 +275,11 @@ public class LanguageImage extends AuditedEntity<LanguageImage> implements java.
      * The UI will attempt to assign an empty value if the file upload box does not have a file selected. This method is used to
      * ignore any empty values, while passing through any legitimate file uploads. This means that the absence of a file in the
      * upload box does not indicate that no file should be assigned to the entity.
-     * 
+     *
      * @param uiImageData The image file name uploaded through the UI
      */
     public void setUiOriginalFileName(final String uiOriginalFileName) {
         this.uiOriginalFileName = uiOriginalFileName;
-        if (this.uiOriginalFileName != null && !this.uiOriginalFileName.isEmpty())
-            this.originalFileName = this.uiOriginalFileName;
+        if (this.uiOriginalFileName != null && !this.uiOriginalFileName.isEmpty()) originalFileName = this.uiOriginalFileName;
     }
 }

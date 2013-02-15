@@ -39,7 +39,7 @@ public class TranslatedTopicString extends AuditedEntity<TranslatedTopicString> 
 
     @Transient
     public Integer getId() {
-        return this.translatedTopicStringID;
+        return translatedTopicStringID;
     }
 
     @Id

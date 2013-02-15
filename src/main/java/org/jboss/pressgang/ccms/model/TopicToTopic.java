@@ -23,7 +23,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TopicToTopic", uniqueConstraints = @UniqueConstraint(columnNames = { "MainTopicID", "RelatedTopicID" }))
+@Table(name = "TopicToTopic", uniqueConstraints = @UniqueConstraint(columnNames = {"MainTopicID", "RelatedTopicID"}))
 public class TopicToTopic extends AuditedEntity<TopicToTopic> implements java.io.Serializable {
     private static final long serialVersionUID = -589601408520832737L;
 
@@ -45,7 +45,7 @@ public class TopicToTopic extends AuditedEntity<TopicToTopic> implements java.io
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicToTopicID", unique = true, nullable = false)
     public Integer getTopicToTopicId() {
-        return this.topicToTopicId;
+        return topicToTopicId;
     }
 
     public void setTopicToTopicId(final Integer topicToTopicId) {
@@ -56,7 +56,7 @@ public class TopicToTopic extends AuditedEntity<TopicToTopic> implements java.io
     @JoinColumn(name = "MainTopicID", nullable = false)
     @NotNull
     public Topic getMainTopic() {
-        return this.mainTopic;
+        return mainTopic;
     }
 
     public void setMainTopic(final Topic mainTopic) {
@@ -67,7 +67,7 @@ public class TopicToTopic extends AuditedEntity<TopicToTopic> implements java.io
     @JoinColumn(name = "RelatedTopicID", nullable = false)
     @NotNull
     public Topic getRelatedTopic() {
-        return this.relatedTopic;
+        return relatedTopic;
     }
 
     public void setRelatedTopic(final Topic relatedTopic) {
@@ -88,7 +88,7 @@ public class TopicToTopic extends AuditedEntity<TopicToTopic> implements java.io
     @Override
     @Transient
     public Integer getId() {
-        return this.topicToTopicId;
+        return topicToTopicId;
     }
 
 }

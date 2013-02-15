@@ -39,7 +39,7 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "TopicSecondOrderDataID")
     public Integer getTopicSecondOrderDataId() {
-        return this.topicSecondOrderDataId;
+        return topicSecondOrderDataId;
     }
 
     public void setTopicSecondOrderDataId(final Integer topicSecondOrderDataId) {
@@ -49,7 +49,7 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     @Column(name = "TopicHTMLView", columnDefinition = "MEDIUMTEXT")
     @Length(max = 16777215)
     public String getTopicHTMLView() {
-        return this.topicHTMLView;
+        return topicHTMLView;
     }
 
     public void setTopicHTMLView(final String topicHTMLView) {
@@ -59,7 +59,7 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     @Column(name = "TopicXMLErrors", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getTopicXMLErrors() {
-        return this.topicXMLErrors;
+        return topicXMLErrors;
     }
 
     public void setTopicXMLErrors(final String topicXMLErrors) {
@@ -69,6 +69,6 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     @Override
     @Transient
     public Integer getId() {
-        return this.topicSecondOrderDataId;
+        return topicSecondOrderDataId;
     }
 }

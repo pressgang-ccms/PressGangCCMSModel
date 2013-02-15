@@ -2,9 +2,6 @@ package org.jboss.pressgang.ccms.model.contentspec;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -43,7 +42,7 @@ public class CSTranslatedString extends AuditedEntity<CSTranslatedString> implem
 
     @Transient
     public Integer getId() {
-        return this.contentspecTranslatedStringID;
+        return contentspecTranslatedStringID;
     }
 
     @Id
@@ -54,7 +53,7 @@ public class CSTranslatedString extends AuditedEntity<CSTranslatedString> implem
     }
 
     public void setCSTranslatedStringID(final Integer translatedTopicStringID) {
-        this.contentspecTranslatedStringID = translatedTopicStringID;
+        contentspecTranslatedStringID = translatedTopicStringID;
     }
 
     @Column(name = "Locale", nullable = false)

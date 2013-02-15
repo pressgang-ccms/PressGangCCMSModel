@@ -6,10 +6,9 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,7 +49,7 @@ public class IntegerConstants extends AuditedEntity<IntegerConstants> implements
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "IntegerConstantsID", unique = true, nullable = false)
     public Integer getIntegerConstantsId() {
-        return this.integerConstantsId;
+        return integerConstantsId;
     }
 
     public void setIntegerConstantsId(final Integer integerConstantsId) {
@@ -61,7 +60,7 @@ public class IntegerConstants extends AuditedEntity<IntegerConstants> implements
     @NotNull
     @Length(max = 45)
     public String getConstantName() {
-        return this.constantName;
+        return constantName;
     }
 
     public void setConstantName(final String constantName) {
@@ -70,7 +69,7 @@ public class IntegerConstants extends AuditedEntity<IntegerConstants> implements
 
     @Column(name = "ConstantValue")
     public Integer getConstantValue() {
-        return this.constantValue;
+        return constantValue;
     }
 
     public void setConstantValue(final Integer constantValue) {
@@ -80,7 +79,7 @@ public class IntegerConstants extends AuditedEntity<IntegerConstants> implements
     @Override
     @Transient
     public Integer getId() {
-        return this.integerConstantsId;
+        return integerConstantsId;
     }
 
 }

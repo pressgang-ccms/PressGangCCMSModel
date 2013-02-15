@@ -2,11 +2,6 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,9 +11,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -33,7 +32,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "PropertyTagCategory", uniqueConstraints = @UniqueConstraint(columnNames = { "PropertyTagCategoryName" }))
+@Table(name = "PropertyTagCategory", uniqueConstraints = @UniqueConstraint(columnNames = {"PropertyTagCategoryName"}))
 public class PropertyTagCategory extends AuditedEntity<PropertyTagCategory> implements java.io.Serializable {
     private static final long serialVersionUID = -8850771550313264840L;
     public static final String SELECT_ALL_QUERY = "select propertyTagCategory from PropertyTagCategory propertyTagCategory";
@@ -41,8 +40,7 @@ public class PropertyTagCategory extends AuditedEntity<PropertyTagCategory> impl
     private Integer propertyTagCategoryId;
     private String propertyTagCategoryName;
     private String propertyTagCategoryDescription;
-    private Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories = new HashSet<PropertyTagToPropertyTagCategory>(
-            0);
+    private Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories = new HashSet<PropertyTagToPropertyTagCategory>(0);
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -83,21 +81,18 @@ public class PropertyTagCategory extends AuditedEntity<PropertyTagCategory> impl
         return propertyTagToPropertyTagCategories;
     }
 
-    public void setPropertyTagToPropertyTagCategories(
-            final Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories) {
+    public void setPropertyTagToPropertyTagCategories(final Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories) {
         this.propertyTagToPropertyTagCategories = propertyTagToPropertyTagCategories;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preRemove() {
-        this.propertyTagToPropertyTagCategories.clear();
+        propertyTagToPropertyTagCategories.clear();
     }
 
     public boolean hasPropertyTag(final PropertyTag propertyTag) {
-        for (final PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory : this.propertyTagToPropertyTagCategories)
-            if (propertyTagToPropertyTagCategory.getPropertyTag().equals(propertyTag))
-                return true;
+        for (final PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory : propertyTagToPropertyTagCategories)
+            if (propertyTagToPropertyTagCategory.getPropertyTag().equals(propertyTag)) return true;
         return false;
     }
 
@@ -136,7 +131,7 @@ public class PropertyTagCategory extends AuditedEntity<PropertyTagCategory> impl
     @Override
     @Transient
     public Integer getId() {
-        return this.propertyTagCategoryId;
+        return propertyTagCategoryId;
     }
 
     @Transient

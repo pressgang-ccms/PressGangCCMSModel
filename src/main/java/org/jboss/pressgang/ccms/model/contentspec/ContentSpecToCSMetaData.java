@@ -2,12 +2,6 @@ package org.jboss.pressgang.ccms.model.contentspec;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +14,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -75,7 +74,7 @@ public class ContentSpecToCSMetaData extends ToCSMetaData<ContentSpecToCSMetaDat
     @JoinColumn(name = "ContentSpecMetaDataID", nullable = false)
     @NotNull
     public CSMetaData getCSMetaData() {
-        return this.csMetaData;
+        return csMetaData;
     }
 
     @Override
@@ -87,7 +86,7 @@ public class ContentSpecToCSMetaData extends ToCSMetaData<ContentSpecToCSMetaDat
     @Column(name = "Value", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getValue() {
-        return this.value;
+        return value;
     }
 
     @Override
@@ -110,7 +109,7 @@ public class ContentSpecToCSMetaData extends ToCSMetaData<ContentSpecToCSMetaDat
     public List<CSTranslatedString> getCSTranslatedStringsList() {
         final List<CSTranslatedString> translatedStrings = new ArrayList<CSTranslatedString>();
 
-        for (final CSMetaDataToCSTranslatedString mapping : this.csMetaDataToCSTranslatedStrings) {
+        for (final CSMetaDataToCSTranslatedString mapping : csMetaDataToCSTranslatedStrings) {
             translatedStrings.add(mapping.getCSTranslatedString());
         }
 
@@ -123,21 +122,21 @@ public class ContentSpecToCSMetaData extends ToCSMetaData<ContentSpecToCSMetaDat
         mapping.setContentSpecToCSMetaData(this);
         mapping.setCSTranslatedString(translatedString);
 
-        this.csMetaDataToCSTranslatedStrings.add(mapping);
+        csMetaDataToCSTranslatedStrings.add(mapping);
         translatedString.getCSMetaDataToCSTranslatedStrings().add(mapping);
     }
 
     public void removeTranslatedString(final CSTranslatedString translatedString) {
         final List<CSMetaDataToCSTranslatedString> removeList = new ArrayList<CSMetaDataToCSTranslatedString>();
 
-        for (final CSMetaDataToCSTranslatedString mapping : this.csMetaDataToCSTranslatedStrings) {
+        for (final CSMetaDataToCSTranslatedString mapping : csMetaDataToCSTranslatedStrings) {
             if (mapping.getCSTranslatedString().equals(translatedString)) {
                 removeList.add(mapping);
             }
         }
 
         for (final CSMetaDataToCSTranslatedString mapping : removeList) {
-            this.csMetaDataToCSTranslatedStrings.remove(mapping);
+            csMetaDataToCSTranslatedStrings.remove(mapping);
             mapping.getCSTranslatedString().getCSMetaDataToCSTranslatedStrings().remove(mapping);
         }
     }

@@ -7,12 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-
-import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
@@ -29,7 +28,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "FilterOption", uniqueConstraints = @UniqueConstraint(columnNames = { "FilterOptionName", "FilterID" }))
+@Table(name = "FilterOption", uniqueConstraints = @UniqueConstraint(columnNames = {"FilterOptionName", "FilterID"}))
 public class FilterOption extends AuditedEntity<FilterOption> implements java.io.Serializable {
     private static final long serialVersionUID = 4103450242726344458L;
 
@@ -51,7 +50,7 @@ public class FilterOption extends AuditedEntity<FilterOption> implements java.io
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "FilterOptionID", unique = true, nullable = false)
     public Integer getFilterOptionId() {
-        return this.filterOptionId;
+        return filterOptionId;
     }
 
     public void setFilterOptionId(Integer filterOptionId) {
@@ -62,7 +61,7 @@ public class FilterOption extends AuditedEntity<FilterOption> implements java.io
     @JoinColumn(name = "FilterID", nullable = false)
     @NotNull
     public Filter getFilter() {
-        return this.filter;
+        return filter;
     }
 
     public void setFilter(final Filter filter) {
@@ -73,7 +72,7 @@ public class FilterOption extends AuditedEntity<FilterOption> implements java.io
     @NotNull
     @Length(max = 255)
     public String getFilterOptionName() {
-        return this.filterOptionName;
+        return filterOptionName;
     }
 
     public void setFilterOptionName(final String filterOptionName) {
@@ -84,7 +83,7 @@ public class FilterOption extends AuditedEntity<FilterOption> implements java.io
     @NotNull
     @Length(max = 255)
     public String getFilterOptionValue() {
-        return this.filterOptionValue;
+        return filterOptionValue;
     }
 
     public void setFilterOptionValue(final String filterOptionValue) {
@@ -94,7 +93,7 @@ public class FilterOption extends AuditedEntity<FilterOption> implements java.io
     @Override
     @Transient
     public Integer getId() {
-        return this.filterOptionId;
+        return filterOptionId;
     }
 
 }

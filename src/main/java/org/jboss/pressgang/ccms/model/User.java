@@ -2,23 +2,22 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.PreRemove;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -36,7 +35,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "User", uniqueConstraints = @UniqueConstraint(columnNames = { "UserName" }))
+@Table(name = "User", uniqueConstraints = @UniqueConstraint(columnNames = {"UserName"}))
 public class User extends AuditedEntity<User> implements java.io.Serializable {
     private static final long serialVersionUID = -1745432150593137619L;
     public static final String SELECT_ALL_QUERY = "select user from User user";
@@ -63,7 +62,7 @@ public class User extends AuditedEntity<User> implements java.io.Serializable {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "UserID", unique = true, nullable = false)
     public Integer getUserId() {
-        return this.userId;
+        return userId;
     }
 
     public void setUserId(Integer userId) {
@@ -74,7 +73,7 @@ public class User extends AuditedEntity<User> implements java.io.Serializable {
     @NotNull
     @Length(max = 255)
     public String getUserName() {
-        return this.userName;
+        return userName;
     }
 
     public void setUserName(String userName) {
@@ -84,19 +83,19 @@ public class User extends AuditedEntity<User> implements java.io.Serializable {
     @Column(name = "Description", columnDefinition = "TEXT")
     @Length(max = 65535)
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<UserRole> getUserRoles() {
-        return this.userRoles;
+        return userRoles;
     }
 
     public void setUserRoles(final Set<UserRole> userRoles) {
@@ -105,17 +104,15 @@ public class User extends AuditedEntity<User> implements java.io.Serializable {
 
     @Transient
     public boolean isInRole(final Role role) {
-        if (role == null)
-            return false;
+        if (role == null) return false;
 
         return isInRole(role.getRoleId());
     }
 
     @Transient
     public boolean isInRole(final Integer role) {
-        for (final UserRole userRole : this.userRoles) {
-            if (userRole.getRole().getRoleId().equals(role))
-                return true;
+        for (final UserRole userRole : userRoles) {
+            if (userRole.getRole().getRoleId().equals(role)) return true;
         }
 
         return false;
@@ -124,7 +121,7 @@ public class User extends AuditedEntity<User> implements java.io.Serializable {
     public void addRole(final Role role) {
         if (!isInRole(role)) {
             final UserRole userRole = new UserRole(this, role);
-            this.getUserRoles().add(userRole);
+            getUserRoles().add(userRole);
             role.getUserRoles().add(userRole);
         }
     }
@@ -134,9 +131,9 @@ public class User extends AuditedEntity<User> implements java.io.Serializable {
     }
 
     public void removeRole(final Integer roleId) {
-        for (final UserRole userRole : this.userRoles) {
+        for (final UserRole userRole : userRoles) {
             if (userRole.getRole().getRoleId().equals(roleId)) {
-                this.getUserRoles().remove(userRole);
+                getUserRoles().remove(userRole);
                 userRole.getRole().getUserRoles().remove(userRole);
                 break;
             }
@@ -146,24 +143,22 @@ public class User extends AuditedEntity<User> implements java.io.Serializable {
     @Transient
     public String getUserRolesCommaSeperatedList() {
         String retValue = "";
-        for (final UserRole role : this.userRoles) {
-            if (retValue.length() != 0)
-                retValue += ", ";
+        for (final UserRole role : userRoles) {
+            if (retValue.length() != 0) retValue += ", ";
             retValue += role.getRole().getRoleName();
         }
         return retValue;
     }
 
-    @SuppressWarnings("unused")
     @PreRemove
     private void preDelete() {
-        this.userRoles.clear();
+        userRoles.clear();
     }
 
     @Transient
     public List<Role> getRoles() {
         final List<Role> retValue = new ArrayList<Role>();
-        for (final UserRole userRole : this.userRoles)
+        for (final UserRole userRole : userRoles)
             retValue.add(userRole.getRole());
         return retValue;
     }
@@ -171,7 +166,7 @@ public class User extends AuditedEntity<User> implements java.io.Serializable {
     @Override
     @Transient
     public Integer getId() {
-        return this.userId;
+        return userId;
     }
 
 }

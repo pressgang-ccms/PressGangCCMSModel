@@ -23,8 +23,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "CSNodeToCSTranslatedString", uniqueConstraints = @UniqueConstraint(columnNames = { "CSNodeID",
-        "CSTranslatedStringID" }))
+@Table(name = "CSNodeToCSTranslatedString", uniqueConstraints = @UniqueConstraint(columnNames = {"CSNodeID", "CSTranslatedStringID"}))
 public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslatedString> implements java.io.Serializable {
     private static final long serialVersionUID = -7516063608506037594L;
 
@@ -36,7 +35,7 @@ public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslat
     }
 
     public CSNodeToCSTranslatedString(final CSNode csMetaData, final CSTranslatedString csTranslatedString) {
-        this.csNode = csMetaData;
+        csNode = csMetaData;
         this.csTranslatedString = csTranslatedString;
     }
 
@@ -44,7 +43,7 @@ public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslat
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "CSNodeToCSTranslatedStringID", unique = true, nullable = false)
     public Integer getTopicToTagId() {
-        return this.topicToTagId;
+        return topicToTagId;
     }
 
     public void setTopicToTagId(final Integer topicToTagId) {
@@ -55,7 +54,7 @@ public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslat
     @JoinColumn(name = "CSNodeID", nullable = false)
     @NotNull
     public CSNode getCSNode() {
-        return this.csNode;
+        return csNode;
     }
 
     public void setCSNode(final CSNode csNode) {
@@ -66,7 +65,7 @@ public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslat
     @JoinColumn(name = "CSTranslatedStringID", nullable = false)
     @NotNull
     public CSTranslatedString getCSTranslatedString() {
-        return this.csTranslatedString;
+        return csTranslatedString;
     }
 
     public void setCSTranslatedString(final CSTranslatedString csTranslatedString) {
@@ -76,7 +75,7 @@ public class CSNodeToCSTranslatedString extends AuditedEntity<CSNodeToCSTranslat
     @Override
     @Transient
     public Integer getId() {
-        return this.topicToTagId;
+        return topicToTagId;
     }
 
 }

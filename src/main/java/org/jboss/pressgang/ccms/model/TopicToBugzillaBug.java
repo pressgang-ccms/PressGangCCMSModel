@@ -25,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TopicToBugzillaBug", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicID", "BugzillaBugID"}))
-public class TopicToBugzillaBug extends AuditedEntity<TopicToBugzillaBug> implements java.io.Serializable {
+public class TopicToBugzillaBug extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -4963859367368389435L;
     public static final String SELECT_ALL_QUERY = "select topicToBugzillaBug from TopicToBugzillaBug topicToBugzillaBug";
 
@@ -79,5 +79,4 @@ public class TopicToBugzillaBug extends AuditedEntity<TopicToBugzillaBug> implem
     public Integer getId() {
         return topicToBugzillaBugId;
     }
-
 }

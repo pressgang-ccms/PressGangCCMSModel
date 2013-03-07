@@ -36,7 +36,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "User", uniqueConstraints = @UniqueConstraint(columnNames = {"UserName"}))
-public class User extends AuditedEntity<User> implements java.io.Serializable {
+public class User extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -1745432150593137619L;
     public static final String SELECT_ALL_QUERY = "select user from User user";
 

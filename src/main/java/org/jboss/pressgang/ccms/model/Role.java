@@ -33,7 +33,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "Role", uniqueConstraints = @UniqueConstraint(columnNames = {"RoleName"}))
-public class Role extends AuditedEntity<Role> implements java.io.Serializable {
+public class Role extends AuditedEntity implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "select role from Role role";
     private static final long serialVersionUID = 894929331710959265L;
 

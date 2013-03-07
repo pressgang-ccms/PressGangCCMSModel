@@ -29,7 +29,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "FilterLocale", uniqueConstraints = @UniqueConstraint(columnNames = {"LocaleName", "FilterID"}))
-public class FilterLocale extends AuditedEntity<FilterLocale> implements java.io.Serializable {
+public class FilterLocale extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -7054018830978278379L;
 
     private Integer filterLocaleId;

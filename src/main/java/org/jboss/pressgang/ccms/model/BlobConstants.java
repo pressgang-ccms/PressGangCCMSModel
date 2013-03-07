@@ -25,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "BlobConstants")
-public class BlobConstants extends AuditedEntity<BlobConstants> implements java.io.Serializable {
+public class BlobConstants extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 2142789116413087991L;
     public static final String SELECT_ALL_QUERY = "SELECT blobConstants FROM BlobConstants blobConstants";
 

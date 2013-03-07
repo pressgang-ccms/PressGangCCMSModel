@@ -791,10 +791,95 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         final Root<CSNode> root = query.from(CSNode.class);
         query.select(root.get("contentSpec").as(ContentSpec.class));
 
-        final Predicate topicIdMatches = criteriaBuilder.equal(root.get("topicId"), getTopicId());
-        query.where(topicIdMatches);
+        final Predicate topicIdMatches = criteriaBuilder.equal(root.get("entityId"), getTopicId());
+        final Predicate topicTypeMatches = criteriaBuilder.equal(root.get("CSNodeType"), CommonConstants.CS_NODE_TOPIC);
+        query.where(criteriaBuilder.and(topicIdMatches, topicTypeMatches));
 
         final List<ContentSpec> results = entityManager.createQuery(query).getResultList();
         return results;
     }
+
+//    @Transient
+//    public Topic clone() {
+//        final Topic clone = new Topic();
+//
+//        clone.topicTitle = topicTitle;
+//        clone.topicId = topicId;
+//        clone.setRevision(getRevision());
+//        clone.topicTimeStamp = topicTimeStamp == null ? null : (Date) topicTimeStamp.clone();
+//        clone.topicLocale = topicLocale;
+//        clone.topicXML = topicXML;
+//        clone.topicText = topicText;
+//        clone.xmlDoctype = xmlDoctype;
+//
+//        /*
+//         * One to One mapping entities should clone the other side of the mapping
+//         */
+//        // TOPIC SECOND ORDER DATA
+//        final TopicSecondOrderData clonedTopicSecondOrderData = topicSecondOrderData.clone();
+//        clonedTopicSecondOrderData.setTopicSecondOrderDataId(null);
+//        clone.topicSecondOrderData = clonedTopicSecondOrderData;
+//
+//        // TOPIC SOURCE URL
+//        for (final TopicToTopicSourceUrl topicToTopicSourceUrl : topicToTopicSourceUrls) {
+//            TopicToTopicSourceUrl toTag = new TopicToTopicSourceUrl();
+//
+//            toTag.setTopic(clone);
+//            toTag.setTopicSourceUrl(topicToTopicSourceUrl.getTopicSourceUrl().clone());
+//
+//            clone.topicToTopicSourceUrls.add(toTag);
+//        }
+//
+//        /*
+//         * Deep Cloning involves copying the entities on the other side of a 1:N or M:N relationship. Whereas just a normal clone
+//         * leaves them as is. No matter what though the joiners should not be cloned (ie id not copied) and should be recreated as its the
+//         * primary entities that need cloning and not the actual joiner entities.
+//         */
+//
+//        // BUGS
+//        for (final TopicToBugzillaBug topicToBugzillaBug : topicToBugzillaBugs) {
+//            TopicToBugzillaBug bug = new TopicToBugzillaBug();
+//
+//            bug.setTopic(clone);
+//            bug.setBugzillaBug(topicToBugzillaBug.getBugzillaBug());
+//
+//            clone.topicToBugzillaBugs.add(bug);
+//        }
+//
+//        // PROPERTIES
+//        for (final TopicToPropertyTag topicToPropertyTag : topicToPropertyTags) {
+//            TopicToPropertyTag toPropertyTag = new TopicToPropertyTag();
+//
+//            toPropertyTag.setTopic(clone);
+//            toPropertyTag.setPropertyTag(topicToPropertyTag.getPropertyTag());
+//            toPropertyTag.setValue(topicToPropertyTag.getValue());
+//
+//            clone.topicToPropertyTags.add(toPropertyTag);
+//        }
+//
+//        // TAGS
+//        for (final TopicToTag topicToTag : topicToTags) {
+//            TopicToTag toTag = new TopicToTag();
+//
+//            toTag.setTopic(clone);
+//            toTag.setTag(topicToTag.getTag());
+//
+//            clone.topicToTags.add(toTag);
+//        }
+//
+//        // TAGS
+//        for (final TopicToTag topicToTag : topicToTags) {
+//            TopicToTag toTag = new TopicToTag();
+//
+//            toTag.setTopic(clone);
+//            toTag.setTag(topicToTag.getTag());
+//
+//            clone.topicToTags.add(toTag);
+//        }
+//            clone.topicToTopicSourceUrls = topicToTopicSourceUrls;
+//            clone.parentTopicToTopics = parentTopicToTopics;
+//            clone.childTopicToTopics = childTopicToTopics;
+//
+//        return clone;
+//    }
 }

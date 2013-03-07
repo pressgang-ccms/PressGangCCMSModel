@@ -30,7 +30,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "BugzillaBug")
-public class BugzillaBug extends AuditedEntity<BugzillaBug> implements java.io.Serializable {
+public class BugzillaBug extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -2421128855519132960L;
     public static final String SELECT_ALL_QUERY = "select bugzillaBug from BugzillaBug bugzillaBug";
 

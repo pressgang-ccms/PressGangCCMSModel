@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TopicSourceURL")
-public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements java.io.Serializable {
+public class TopicSourceUrl extends AuditedEntity implements java.io.Serializable {
     private static final Logger log = LoggerFactory.getLogger(TopicSourceUrl.class);
     private static final long serialVersionUID = 1923828486173137768L;
 
@@ -163,4 +163,14 @@ public class TopicSourceUrl extends AuditedEntity<TopicSourceUrl> implements jav
         return topicSourceUrlId;
     }
 
+//    @Transient
+//    public TopicSourceUrl clone() {
+//        final TopicSourceUrl clone = new TopicSourceUrl();
+//
+//        clone.description = description;
+//        clone.title = title;
+//        clone.sourceUrl = sourceUrl;
+//
+//        return clone;
+//    }
 }

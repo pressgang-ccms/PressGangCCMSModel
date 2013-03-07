@@ -23,7 +23,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "RelationshipTag", uniqueConstraints = @UniqueConstraint(columnNames = {"RelationshipTagName"}))
-public class RelationshipTag extends AuditedEntity<RelationshipTag> implements java.io.Serializable {
+public class RelationshipTag extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 1882693752297919114L;
     public static final String SELECT_ALL_QUERY = "select relationshipTag from RelationshipTag relationshipTag";
 

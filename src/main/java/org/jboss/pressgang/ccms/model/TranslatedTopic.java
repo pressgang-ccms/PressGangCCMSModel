@@ -40,7 +40,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TranslatedTopic", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicRevision", "TopicID"}))
-public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements java.io.Serializable {
+public class TranslatedTopic extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 4190214754023153898L;
     public static final String SELECT_ALL_QUERY = "select translatedTopic from TranslatedTopic translatedTopic";
 
@@ -131,5 +131,10 @@ public class TranslatedTopic extends AuditedEntity<TranslatedTopic> implements j
             enversTopic = (Topic) query.getSingleResult();
         }
         return enversTopic;
+    }
+
+    @Transient
+    public void setEnversTopic(final Topic enversTopic) {
+        this.enversTopic = enversTopic;
     }
 }

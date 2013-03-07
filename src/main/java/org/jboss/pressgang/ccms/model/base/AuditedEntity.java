@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * This base class is used to provide consistent access to previous versions of an audited entity
  */
-public abstract class AuditedEntity<T extends AuditedEntity<T>> {
+public abstract class AuditedEntity {
     private Date lastModified;
     private Number revision;
 

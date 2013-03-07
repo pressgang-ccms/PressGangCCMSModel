@@ -25,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "PropertyTagToPropertyTagCategory",
         uniqueConstraints = @UniqueConstraint(columnNames = {"PropertyTagID", "PropertyTagCategoryID"}))
-public class PropertyTagToPropertyTagCategory extends AuditedEntity<PropertyTagToPropertyTagCategory> implements java.io.Serializable {
+public class PropertyTagToPropertyTagCategory extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -4464431865504442832L;
     public static final String SELECT_ALL_QUERY = "select propertyTagToPropertyTagCategory from PropertyTagToPropertyTagCategory " +
             "propertyTagToPropertyTagCategory";

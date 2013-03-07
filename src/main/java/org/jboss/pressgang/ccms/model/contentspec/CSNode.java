@@ -13,9 +13,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,15 +31,19 @@ import java.util.Set;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.classic.ValidationFailure;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
 @Audited
@@ -41,27 +51,26 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ContentSpecNode", uniqueConstraints = {@UniqueConstraint(columnNames = {"ContentSpecID", "NextNodeID"}), @UniqueConstraint(
         columnNames = {"ContentSpecID", "PreviousNodeID"})})
-public class CSNode extends AuditedEntity<CSNode> implements Serializable {
+public class CSNode extends AuditedEntity implements Serializable {
 
     private static final long serialVersionUID = -5074781793940947664L;
     public static final String SELECT_ALL_QUERY = "select csNode FROM CSNode AS csNode";
 
     private Integer csNodeId = null;
     private String csNodeTitle = null;
-    private String csNodeAlternativeTitle = null;
+    private String csNodeTargetId = null;
+    private String additionalText = null;
     private Integer csNodeType = null;
     private ContentSpec contentSpec = null;
     private CSNode parent = null;
     private CSNode next = null;
     private CSNode previous = null;
-    private Integer topicId = null;
-    private Integer topicRevision = null;
+    private Integer entityId = null;
+    private Integer entityRevision = null;
     private String condition = null;
-    private Integer flag = 0;
     private Set<CSNode> children = new HashSet<CSNode>(0);
     private Set<CSNodeToCSNode> relatedFromNodes = new HashSet<CSNodeToCSNode>(0);
     private Set<CSNodeToCSNode> relatedToNodes = new HashSet<CSNodeToCSNode>(0);
-    private Set<CSNodeToCSTranslatedString> csNodeToCSTranslatedStrings = new HashSet<CSNodeToCSTranslatedString>(0);
     private Set<CSNodeToPropertyTag> csNodeToPropertyTags = new HashSet<CSNodeToPropertyTag>(0);
 
     private Topic topic;
@@ -86,7 +95,8 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         this.csNodeId = csNodeId;
     }
 
-    @Column(name = "NodeTitle", nullable = false, length = 255)
+    @Column(name = "NodeTitle", length = 255)
+    @NotNull
     public String getCSNodeTitle() {
         return csNodeTitle;
     }
@@ -95,13 +105,23 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         this.csNodeTitle = csNodeTitle;
     }
 
-    @Column(name = "NodeAlternativeTitle", length = 255)
-    public String getCSAlternativeNodeTitle() {
-        return csNodeAlternativeTitle;
+    @Column(name = "NodeTargetID", length = 255, nullable = true)
+    public String getCSNodeTargetId() {
+        return csNodeTargetId;
     }
 
-    public void setCSAlternativeNodeTitle(String csNodeAlternativeTitle) {
-        this.csNodeAlternativeTitle = csNodeAlternativeTitle;
+    public void setCSNodeTargetId(String csNodeTargetId) {
+        this.csNodeTargetId = csNodeTargetId;
+    }
+
+    @Column(name = "AdditionalText", columnDefinition = "TEXT", nullable = true)
+    @Length(max = 65535)
+    public String getAdditionalText() {
+        return additionalText;
+    }
+
+    public void setAdditionalText(String csNodeAlternativeTitle) {
+        this.additionalText = csNodeAlternativeTitle;
     }
 
     @Column(name = "NodeType", nullable = false)
@@ -157,22 +177,22 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         this.previous = previous;
     }
 
-    @Column(name = "TopicID")
-    public Integer getTopicId() {
-        return topicId;
+    @Column(name = "EntityID")
+    public Integer getEntityId() {
+        return entityId;
     }
 
-    public void setTopicId(Integer topicId) {
-        this.topicId = topicId;
+    public void setEntityId(Integer entityId) {
+        this.entityId = entityId;
     }
 
-    @Column(name = "TopicRevision")
-    public Integer getTopicRevision() {
-        return topicRevision;
+    @Column(name = "EntityRevision")
+    public Integer getEntityRevision() {
+        return entityRevision;
     }
 
-    public void setTopicRevision(Integer topicRevision) {
-        this.topicRevision = topicRevision;
+    public void setEntityRevision(Integer entityRevision) {
+        this.entityRevision = entityRevision;
     }
 
     @Column(name = "NodeCondition")
@@ -195,46 +215,26 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         this.children = children;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mainNode", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<CSNodeToCSNode> getRelatedFromNodes() {
-        return relatedFromNodes;
-    }
-
-    public void setRelatedFromNodes(Set<CSNodeToCSNode> relatedFromNodes) {
-        this.relatedFromNodes = relatedFromNodes;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "relatedNode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mainNode", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<CSNodeToCSNode> getRelatedToNodes() {
         return relatedToNodes;
     }
 
-    public void setRelatedToNodes(Set<CSNodeToCSNode> relatedToNodes) {
-        this.relatedToNodes = relatedToNodes;
+    public void setRelatedFromNodes(Set<CSNodeToCSNode> relatedFromNodes) {
+        this.relatedFromNodes = relatedFromNodes;
     }
 
-    @Column(name = "Flag")
-    public Integer getFlag() {
-        return flag;
-    }
-
-    public void setFlag(Integer flag) {
-        this.flag = flag;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "CSNode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "relatedNode", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<CSNodeToCSTranslatedString> getCSNodeToCSTranslatedStrings() {
-        return csNodeToCSTranslatedStrings;
+    public Set<CSNodeToCSNode> getRelatedFromNodes() {
+        return relatedFromNodes;
     }
 
-    public void setCSNodeToCSTranslatedStrings(Set<CSNodeToCSTranslatedString> csNodeToCSTranslatedStrings) {
-        this.csNodeToCSTranslatedStrings = csNodeToCSTranslatedStrings;
+    public void setRelatedToNodes(Set<CSNodeToCSNode> relatedToNodes) {
+        this.relatedToNodes = relatedToNodes;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "CSNode", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -251,17 +251,6 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
     @Transient
     public List<CSNode> getChildrenList() {
         return new ArrayList<CSNode>(getChildren());
-    }
-
-    @Transient
-    public List<CSTranslatedString> getCSTranslatedStringsList() {
-        final List<CSTranslatedString> translatedStrings = new ArrayList<CSTranslatedString>();
-
-        for (final CSNodeToCSTranslatedString mapping : csNodeToCSTranslatedStrings) {
-            translatedStrings.add(mapping.getCSTranslatedString());
-        }
-
-        return translatedStrings;
     }
 
     @Transient
@@ -405,47 +394,73 @@ public class CSNode extends AuditedEntity<CSNode> implements Serializable {
         }
     }
 
-    public void addTranslatedString(final CSTranslatedString translatedString) {
-        final CSNodeToCSTranslatedString mapping = new CSNodeToCSTranslatedString();
-
-        mapping.setCSNode(this);
-        mapping.setCSTranslatedString(translatedString);
-
-        csNodeToCSTranslatedStrings.add(mapping);
-        translatedString.getCSNodeToCSTranslatedStrings().add(mapping);
-    }
-
-    public void removeTranslatedString(final CSTranslatedString translatedString) {
-        final List<CSNodeToCSTranslatedString> removeList = new ArrayList<CSNodeToCSTranslatedString>();
-
-        for (final CSNodeToCSTranslatedString mapping : csNodeToCSTranslatedStrings) {
-            if (mapping.getCSTranslatedString().equals(translatedString)) {
-                removeList.add(mapping);
-            }
-        }
-
-        for (final CSNodeToCSTranslatedString mapping : removeList) {
-            csNodeToCSTranslatedStrings.remove(mapping);
-            mapping.getCSTranslatedString().getCSNodeToCSTranslatedStrings().remove(mapping);
-        }
-    }
-
     @Transient
     public Topic getTopic(final EntityManager entityManager) {
-        if (topicId == null) return null;
+        if (getCSNodeType() != CommonConstants.CS_NODE_TOPIC) return null;
+        if (entityId == null) return null;
 
         if (topic == null) {
-            if (topicRevision == null) {
+            if (entityRevision == null) {
                 // Find the latest topic
-                topic = entityManager.find(Topic.class, topicId);
+                topic = entityManager.find(Topic.class, entityId);
             } else {
                 // Find the envers topic
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
-                final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, topicRevision).add(
-                        AuditEntity.id().eq(topicId));
+                final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, entityRevision).add(
+                        AuditEntity.id().eq(entityId));
                 topic = (Topic) query.getSingleResult();
             }
         }
         return topic;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transient
+    public List<CSTranslatedNode> getTranslatedNodes(final EntityManager entityManager, final Number revision) {
+        final List<CSTranslatedNode> translatedNodeStrings = new ArrayList<CSTranslatedNode>();
+
+        /*
+         * We have to do a query here as a @OneToMany won't work with hibernate envers since the CSTranslatedNode entity is
+         * audited and we need the latest results. This is because the translated node will never exist for its matching
+         * audited node.
+         */
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<CSTranslatedNode> query = criteriaBuilder.createQuery(CSTranslatedNode.class);
+        final Root<CSTranslatedNode> root = query.from(CSTranslatedNode.class);
+        query.select(root);
+
+        final Predicate csNodeIdMatches = criteriaBuilder.equal(root.get("CSNodeId"), csNodeId);
+        final Predicate csNodeRevisionMatches = criteriaBuilder.equal(root.get("CSNodeRevision"), revision);
+
+        if (revision == null) {
+            query.where(csNodeIdMatches);
+        } else {
+            query.where(criteriaBuilder.and(csNodeIdMatches, csNodeRevisionMatches));
+        }
+
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    @PrePersist
+    protected void prePersist() {
+        validateNode();
+    }
+
+    @PreUpdate
+    protected void preUpdate() {
+        validateNode();
+    }
+
+    @Transient
+    protected void validateNode() {
+        if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && getParent() != null) {
+            throw new ValidationFailure("Meta Data nodes are only allowed at the root level.");
+        }
+
+        if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && !getChildren().isEmpty()) {
+            throw new ValidationFailure("Meta Data nodes cannot have children nodes.");
+        } else if (getCSNodeType() == CommonConstants.CS_NODE_TOPIC && !getChildren().isEmpty()) {
+            throw new ValidationFailure("Topic nodes cannot have children nodes.");
+        }
     }
 }

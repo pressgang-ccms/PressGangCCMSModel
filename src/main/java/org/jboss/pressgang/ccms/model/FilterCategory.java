@@ -29,7 +29,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "FilterCategory")
-public class FilterCategory extends AuditedEntity<FilterCategory> implements java.io.Serializable {
+public class FilterCategory extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -9199839815820171298L;
 
     private Integer filterCategoryId;

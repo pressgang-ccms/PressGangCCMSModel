@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "LanguageImage", uniqueConstraints = @UniqueConstraint(columnNames = {"ImageFileID", "Locale"}))
-public class LanguageImage extends AuditedEntity<LanguageImage> implements java.io.Serializable {
+public class LanguageImage extends AuditedEntity implements java.io.Serializable {
     private static final Logger log = LoggerFactory.getLogger(LanguageImage.class);
     private static final long serialVersionUID = 1585978752264763594L;
     private static final String SVG_MIME_TYPE = "image/svg+xml";

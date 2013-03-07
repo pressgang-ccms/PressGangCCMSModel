@@ -14,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -27,7 +29,9 @@ import java.util.Set;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.classic.ValidationFailure;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
@@ -47,14 +51,11 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     public static final String SELECT_ALL_QUERY = "select contentSpec from ContentSpec as contentSpec";
 
     private Integer contentSpecId = null;
-    private String contentSpecTitle = null;
-    private String contentSpecProduct = null;
-    private String contentSpecVersion = null;
     private Integer contentSpecType = CommonConstants.CS_BOOK;
-    private String locale = null;
+    private String locale = CommonConstants.DEFAULT_LOCALE;
+    private String condition = null;
     private Date lastPublished = null;
     private Set<ContentSpecToPropertyTag> contentSpecToPropertyTags = new HashSet<ContentSpecToPropertyTag>(0);
-    private Set<ContentSpecToCSMetaData> contentSpecToCSMetaData = new HashSet<ContentSpecToCSMetaData>(0);
     private Set<CSNode> csNodes = new HashSet<CSNode>(0);
     private Set<ContentSpecToTag> contentSpecToTags = new HashSet<ContentSpecToTag>(0);
 
@@ -75,34 +76,8 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         this.contentSpecId = contentSpecId;
     }
 
-    @Column(name = "ContentSpecTitle", nullable = false, length = 255)
-    public String getContentSpecTitle() {
-        return contentSpecTitle;
-    }
-
-    public void setContentSpecTitle(String contentSpecTitle) {
-        this.contentSpecTitle = contentSpecTitle;
-    }
-
-    @Column(name = "ContentSpecProduct", nullable = false, length = 255)
-    public String getContentSpecProduct() {
-        return contentSpecProduct;
-    }
-
-    public void setContentSpecProduct(String contentSpecProduct) {
-        this.contentSpecProduct = contentSpecProduct;
-    }
-
-    @Column(name = "ContentSpecVersion", nullable = false, length = 255)
-    public String getContentSpecVersion() {
-        return contentSpecVersion;
-    }
-
-    public void setContentSpecVersion(String contentSpecVersion) {
-        this.contentSpecVersion = contentSpecVersion;
-    }
-
     @Column(name = "Locale", nullable = false, length = 255)
+    @NotNull
     public String getLocale() {
         return locale;
     }
@@ -111,7 +86,17 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         this.locale = locale;
     }
 
+    @Column(name = "Condition", nullable = true, length = 255)
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
     @Column(name = "ContentSpecType", nullable = false)
+    @NotNull
     public Integer getContentSpecType() {
         return contentSpecType;
     }
@@ -129,17 +114,6 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     public void setContentSpecToPropertyTags(Set<ContentSpecToPropertyTag> contentSpecToPropertyTags) {
         this.contentSpecToPropertyTags = contentSpecToPropertyTags;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentSpec", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<ContentSpecToCSMetaData> getContentSpecToCSMetaData() {
-        return contentSpecToCSMetaData;
-    }
-
-    public void setContentSpecToCSMetaData(Set<ContentSpecToCSMetaData> contentSpecToCSMetaData) {
-        this.contentSpecToCSMetaData = contentSpecToCSMetaData;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentSpec", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -187,11 +161,6 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     }
 
     @Transient
-    public List<ContentSpecToCSMetaData> getContentSpecMetaDataList() {
-        return new ArrayList<ContentSpecToCSMetaData>(contentSpecToCSMetaData);
-    }
-
-    @Transient
     public void removeChild(final CSNode child) {
         final List<CSNode> removeNodes = new ArrayList<CSNode>();
 
@@ -205,6 +174,28 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
             csNodes.remove(removeNode);
             removeNode.setParent(null);
             removeNode.setContentSpec(null);
+        }
+    }
+
+    @Transient
+    public void removeChildAndAllChildren(final CSNode child) {
+        final List<CSNode> removeNodes = new ArrayList<CSNode>();
+
+        for (final CSNode childNode : csNodes) {
+            if (childNode.getId().equals(child.getId())) {
+                removeNodes.add(childNode);
+            }
+        }
+
+        for (final CSNode removeNode : removeNodes) {
+            csNodes.remove(removeNode);
+            removeNode.setParent(null);
+            removeNode.setContentSpec(null);
+
+            // Remove all the children for the node
+            for (final CSNode childChildNode : removeNode.getChildren()) {
+                removeChildAndAllChildren(childChildNode);
+            }
         }
     }
 
@@ -249,42 +240,6 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
             contentSpecToPropertyTags.remove(mapping);
             mapping.getPropertyTag().getContentSpecToPropertyTags().remove(mapping);
         }
-    }
-
-    public void addMetaData(final CSMetaData metaData, final String value) {
-        final ContentSpecToCSMetaData mapping = new ContentSpecToCSMetaData();
-        mapping.setContentSpec(this);
-        mapping.setCSMetaData(metaData);
-        mapping.setValue(value);
-
-        contentSpecToCSMetaData.add(mapping);
-        metaData.getContentSpecToCSMetaData().add(mapping);
-    }
-
-    public void removeMetaData(final CSMetaData metaData, final String value) {
-        final List<ContentSpecToCSMetaData> removeList = new ArrayList<ContentSpecToCSMetaData>();
-
-        for (final ContentSpecToCSMetaData mapping : contentSpecToCSMetaData) {
-            final CSMetaData myMetaData = mapping.getCSMetaData();
-            if (myMetaData.equals(metaData) && mapping.getValue().equals(value)) {
-                removeList.add(mapping);
-            }
-        }
-
-        for (final ContentSpecToCSMetaData mapping : removeList) {
-            contentSpecToCSMetaData.remove(mapping);
-            mapping.getCSMetaData().getContentSpecToCSMetaData().remove(mapping);
-        }
-    }
-
-    public void addMetaData(final ContentSpecToCSMetaData contentSpecToCSMetaData) {
-        this.contentSpecToCSMetaData.add(contentSpecToCSMetaData);
-        contentSpecToCSMetaData.getCSMetaData().getContentSpecToCSMetaData().add(contentSpecToCSMetaData);
-    }
-
-    public void removeMetaData(final ContentSpecToCSMetaData contentSpecToCSMetaData) {
-        this.contentSpecToCSMetaData.remove(contentSpecToCSMetaData);
-        contentSpecToCSMetaData.getCSMetaData().getContentSpecToCSMetaData().remove(contentSpecToCSMetaData);
     }
 
     @Transient
@@ -361,5 +316,101 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     public void removePropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
         contentSpecToPropertyTags.remove(contentSpecToPropertyTag);
         contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().remove(contentSpecToPropertyTag);
+    }
+
+    @Transient
+    public CSNode getContentSpecTitle() {
+        for (final CSNode node : getTopCSNodes()) {
+            if (node.getCSNodeTitle().equals("Title")) {
+                return node;
+            }
+        }
+
+        return null;
+    }
+
+    @Transient
+    public void setContentSpecTitle(final CSNode contentSpecTitle) {
+        if (!getTopCSNodes().contains(contentSpecTitle)) {
+            contentSpecTitle.setParent(null);
+            contentSpecTitle.setContentSpec(this);
+            getCSNodes().add(contentSpecTitle);
+        }
+    }
+
+    @Transient
+    public CSNode getContentSpecProduct() {
+        for (final CSNode node : getTopCSNodes()) {
+            if (node.getCSNodeTitle().equals("Product")) {
+                return node;
+            }
+        }
+
+        return null;
+    }
+
+    @Transient
+    public void setContentSpecProduct(final CSNode contentSpecProduct) {
+        if (!getTopCSNodes().contains(contentSpecProduct)) {
+            contentSpecProduct.setParent(null);
+            contentSpecProduct.setContentSpec(this);
+            getCSNodes().add(contentSpecProduct);
+        }
+    }
+
+    @Transient
+    public CSNode getContentSpecVersion() {
+        for (final CSNode node : getTopCSNodes()) {
+            if (node.getCSNodeTitle().equals("Version")) {
+                return node;
+            }
+        }
+
+        return null;
+    }
+
+    @Transient
+    public void setContentSpecVersion(final CSNode contentSpecVersion) {
+        if (!getTopCSNodes().contains(contentSpecVersion)) {
+            contentSpecVersion.setParent(null);
+            contentSpecVersion.setContentSpec(this);
+            getCSNodes().add(contentSpecVersion);
+        }
+    }
+
+    @PrePersist
+    protected void prePersist() {
+        validateMetaData();
+    }
+
+    @PreUpdate
+    protected void preUpdate() {
+        validateMetaData();
+    }
+
+    @Transient
+    protected void validateMetaData() {
+        if (getContentSpecTitle() == null) {
+            throw new ValidationFailure("Content Spec Title cannot be null.");
+        }
+        if (getContentSpecProduct() == null) {
+            throw new ValidationFailure("Content Spec Product cannot be null.");
+        }
+        if (getContentSpecVersion() == null) {
+            throw new ValidationFailure("Content Spec Version cannot be null.");
+        }
+    }
+
+    @Transient
+    public CSNode getMetaData(final String metaDataTitle) {
+        if (getTopCSNodes() != null) {
+            for (final CSNode item : getTopCSNodes()) {
+                if (item.getCSNodeTitle().equalsIgnoreCase(metaDataTitle)) {
+                    return item;
+                }
+            }
+        }
+
+        return null;
     }
 }

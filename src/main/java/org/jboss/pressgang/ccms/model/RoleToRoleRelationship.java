@@ -30,7 +30,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "RoleToRoleRelationship")
-public class RoleToRoleRelationship extends AuditedEntity<RoleToRoleRelationship> implements java.io.Serializable {
+public class RoleToRoleRelationship extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -5070074888185753060L;
 
     private Integer roleToRoleRelationshipId;

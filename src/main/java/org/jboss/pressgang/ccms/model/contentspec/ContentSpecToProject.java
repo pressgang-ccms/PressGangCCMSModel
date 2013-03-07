@@ -25,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ContentSpecToProject")
-public class ContentSpecToProject extends AuditedEntity<ContentSpecToProject> implements Serializable {
+public class ContentSpecToProject extends AuditedEntity implements Serializable {
 
     private static final long serialVersionUID = -739535710737597988L;
 

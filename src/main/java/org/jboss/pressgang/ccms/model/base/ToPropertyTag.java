@@ -8,7 +8,7 @@ import org.jboss.pressgang.ccms.model.PropertyTag;
 /**
  * This class provides consistent access to the details of a property tag
  */
-public abstract class ToPropertyTag<T extends AuditedEntity<T>> extends AuditedEntity<T> {
+public abstract class ToPropertyTag<T extends AuditedEntity> extends AuditedEntity {
     protected PropertyTag propertyTag;
     protected String value;
 

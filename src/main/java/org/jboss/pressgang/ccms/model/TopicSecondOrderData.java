@@ -21,7 +21,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TopicSecondOrderData")
-public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> implements java.io.Serializable {
+public class TopicSecondOrderData extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 3393132758855818345L;
 
     private Integer topicSecondOrderDataId;
@@ -71,4 +71,16 @@ public class TopicSecondOrderData extends AuditedEntity<TopicSecondOrderData> im
     public Integer getId() {
         return topicSecondOrderDataId;
     }
+
+//    @Transient
+//    public TopicSecondOrderData clone() {
+//        final TopicSecondOrderData clone = new TopicSecondOrderData();
+//
+//        clone.topicSecondOrderDataId = topicSecondOrderDataId;
+//        clone.topicHTMLView = topicHTMLView;
+//        clone.topicXMLErrors = topicXMLErrors;
+//
+//        return clone;
+//    }
+
 }

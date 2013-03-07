@@ -29,7 +29,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "RoleToRole", uniqueConstraints = @UniqueConstraint(columnNames = {"PrimaryRole", "SecondaryRole", "RelationshipType"}))
-public class RoleToRole extends AuditedEntity<RoleToRole> implements java.io.Serializable {
+public class RoleToRole extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -4323051325365483977L;
 
     private Integer roleToRoleId;

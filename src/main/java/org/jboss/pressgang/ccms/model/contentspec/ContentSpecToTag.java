@@ -25,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ContentSpecToTag", uniqueConstraints = @UniqueConstraint(columnNames = {"ContentSpecID", "TagID"}))
-public class ContentSpecToTag extends AuditedEntity<ContentSpecToTag> implements java.io.Serializable {
+public class ContentSpecToTag extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -7516063608506037594L;
 
     private Integer contentSpecToTagId;

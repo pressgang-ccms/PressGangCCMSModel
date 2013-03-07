@@ -33,7 +33,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "PropertyTagCategory", uniqueConstraints = @UniqueConstraint(columnNames = {"PropertyTagCategoryName"}))
-public class PropertyTagCategory extends AuditedEntity<PropertyTagCategory> implements java.io.Serializable {
+public class PropertyTagCategory extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -8850771550313264840L;
     public static final String SELECT_ALL_QUERY = "select propertyTagCategory from PropertyTagCategory propertyTagCategory";
 

@@ -25,7 +25,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "StringConstants")
-public class StringConstants extends AuditedEntity<StringConstants> implements java.io.Serializable {
+public class StringConstants extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -6403239052018430987L;
     public static final String SELECT_ALL_QUERY = "SELECT stringConstants FROM StringConstants stringConstants";
 

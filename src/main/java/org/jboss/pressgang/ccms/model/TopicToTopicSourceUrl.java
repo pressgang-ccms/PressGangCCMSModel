@@ -28,7 +28,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TopicToTopicSourceURL", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicID", "TopicSourceURLID"}))
-public class TopicToTopicSourceUrl extends AuditedEntity<TopicToTopicSourceUrl> implements java.io.Serializable {
+public class TopicToTopicSourceUrl extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -6269439146645434078L;
 
     private Integer topicToTopicSourceUrlid;

@@ -34,7 +34,7 @@ import org.jboss.pressgang.ccms.utils.common.FileUtilities;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ImageFile")
-public class ImageFile extends AuditedEntity<ImageFile> implements java.io.Serializable {
+public class ImageFile extends AuditedEntity implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "select imageFile from ImageFile imageFile";
     private static final String SVG_MIME_TYPE = "image/svg+xml";
     private static final String JPG_MIME_TYPE = "image/jpeg";

@@ -12,7 +12,7 @@ import org.jboss.pressgang.ccms.model.sort.ParentToPropertyTagIDComparator;
 /**
  * This class provides consistent access to property tags
  */
-public abstract class ParentToPropertyTag<T extends AuditedEntity<T>, U extends ToPropertyTag<U>> extends AuditedEntity<T> {
+public abstract class ParentToPropertyTag<T extends AuditedEntity, U extends ToPropertyTag<U>> extends AuditedEntity {
     protected abstract Set<U> getPropertyTags();
 
     @Transient

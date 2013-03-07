@@ -35,7 +35,7 @@ import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToPropertyTag;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "PropertyTag", uniqueConstraints = @UniqueConstraint(columnNames = {"PropertyTagName"}))
-public class PropertyTag extends AuditedEntity<PropertyTag> implements java.io.Serializable {
+public class PropertyTag extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -9064491060913710869L;
     public static final String SELECT_ALL_QUERY = "select propertyTag from PropertyTag propertyTag";
 

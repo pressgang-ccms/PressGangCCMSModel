@@ -24,7 +24,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TagToTagRelationship")
-public class TagToTagRelationship extends AuditedEntity<TagToTagRelationship> implements java.io.Serializable {
+public class TagToTagRelationship extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 54337112345485162L;
 
     private int tagToTagRelationshipType;

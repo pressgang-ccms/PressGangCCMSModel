@@ -1,11 +1,10 @@
-package org.jboss.pressgang.ccms.model;
+package org.jboss.pressgang.ccms.model.contentspec;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,44 +23,51 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TranslatedTopicString")
-public class TranslatedTopicString extends AuditedEntity implements java.io.Serializable {
-    private static final long serialVersionUID = 5185674451816385008L;
+@Table(name = "CSTranslatedNodeString")
+public class CSTranslatedNodeString extends AuditedEntity implements java.io.Serializable {
+    private static final long serialVersionUID = -2111116884944950287L;
 
-    private Integer translatedTopicStringID;
-    private TranslatedTopicData translatedTopicData;
+    private Integer contentSpecTranslatedNodeStringId;
+    private CSTranslatedNode translatedNode;
+    private String locale;
     private String originalString;
     private String translatedString;
     private Boolean fuzzyTranslation = false;
 
-    public TranslatedTopicString() {
-    }
-
     @Transient
     public Integer getId() {
-        return translatedTopicStringID;
+        return contentSpecTranslatedNodeStringId;
     }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "TranslatedTopicStringID", unique = true, nullable = false)
-    public Integer getTranslatedTopicStringID() {
-        return translatedTopicStringID;
+    @Column(name = "CSTranslatedNodeStringID", unique = true, nullable = false)
+    public Integer getCSTranslatedNodeStringId() {
+        return contentSpecTranslatedNodeStringId;
     }
 
-    public void setTranslatedTopicStringID(final Integer translatedTopicStringID) {
-        this.translatedTopicStringID = translatedTopicStringID;
+    public void setCSTranslatedNodeStringId(final Integer translatedTopicStringId) {
+        contentSpecTranslatedNodeStringId = translatedTopicStringId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TranslatedTopicDataID", nullable = false)
+    @Column(name = "Locale", nullable = false)
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "CSTranslatedNodeID", nullable = false)
     @NotNull
-    public TranslatedTopicData getTranslatedTopicData() {
-        return translatedTopicData;
+    public CSTranslatedNode getCSTranslatedNode() {
+        return translatedNode;
     }
 
-    public void setTranslatedTopicData(final TranslatedTopicData translatedTopicData) {
-        this.translatedTopicData = translatedTopicData;
+    public void setCSTranslatedNode(final CSTranslatedNode translatedNode) {
+        this.translatedNode = translatedNode;
     }
 
     @Column(name = "OriginalString", columnDefinition = "TEXT")

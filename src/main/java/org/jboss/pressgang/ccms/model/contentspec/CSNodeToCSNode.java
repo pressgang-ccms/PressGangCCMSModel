@@ -10,28 +10,33 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.classic.ValidationFailure;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "CSNodeToCSNode")
-public class CSNodeToCSNode extends AuditedEntity<CSNodeToCSNode> implements Serializable {
+public class CSNodeToCSNode extends AuditedEntity implements Serializable {
     private static final long serialVersionUID = 1323433852480196579L;
 
     private Integer csNodeToCSNodeId = null;
     private CSNode mainNode = null;
     private CSNode relatedNode = null;
     private Integer relationshipType = null;
+    private Integer relationshipSort = null;
 
     @Override
     @Transient
@@ -79,5 +84,33 @@ public class CSNodeToCSNode extends AuditedEntity<CSNodeToCSNode> implements Ser
 
     public void setRelationshipType(Integer relationshipType) {
         this.relationshipType = relationshipType;
+    }
+
+    @Column(name = "Sort")
+    public Integer getRelationshipSort() {
+        return relationshipSort;
+    }
+
+    public void setRelationshipSort(Integer relationshipSort) {
+        this.relationshipSort = relationshipSort;
+    }
+
+    @PrePersist
+    protected void prePersist() {
+        validateNodeToNode();
+    }
+
+    @PreUpdate
+    protected void preUpdate() {
+        validateNodeToNode();
+    }
+
+    @Transient
+    protected void validateNodeToNode() {
+        if (getMainNode().getCSNodeType() == CommonConstants.CS_NODE_META_DATA || getRelatedNode().getCSNodeType() == CommonConstants
+                .CS_NODE_META_DATA || getMainNode().getCSNodeType() == CommonConstants.CS_NODE_COMMENT || getRelatedNode().getCSNodeType
+                () == CommonConstants.CS_NODE_COMMENT) {
+            throw new ValidationFailure("Node to Node relationships can't be performed on Comments or Meta Data.");
+        }
     }
 }

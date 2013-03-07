@@ -28,7 +28,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "FilterField")
-public class FilterField extends AuditedEntity<FilterField> implements java.io.Serializable {
+public class FilterField extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -4542168304657354480L;
 
     private Integer filterFieldId;

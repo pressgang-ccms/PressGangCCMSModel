@@ -28,7 +28,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "UserRole")
-public class UserRole extends AuditedEntity<UserRole> implements java.io.Serializable {
+public class UserRole extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 5397193862244957553L;
 
     private Integer userRoleId;

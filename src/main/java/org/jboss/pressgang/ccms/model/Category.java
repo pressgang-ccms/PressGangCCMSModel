@@ -40,7 +40,7 @@ import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "Category", uniqueConstraints = @UniqueConstraint(columnNames = {"CategoryName"}))
-public class Category extends AuditedEntity<Category> implements java.io.Serializable, Comparable<Category> {
+public class Category extends AuditedEntity implements java.io.Serializable, Comparable<Category> {
     public static final String SELECT_ALL_QUERY = "select category from Category category";
     private static final long serialVersionUID = -8650833773254246211L;
 

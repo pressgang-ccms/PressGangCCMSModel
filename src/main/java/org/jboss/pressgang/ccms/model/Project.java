@@ -37,7 +37,7 @@ import org.jboss.pressgang.ccms.utils.structures.NameIDSortMap;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "Project", uniqueConstraints = @UniqueConstraint(columnNames = {"ProjectName"}))
-public class Project extends AuditedEntity<Project> implements java.io.Serializable {
+public class Project extends AuditedEntity implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "select project from Project project";
     private static final long serialVersionUID = 7468160102030564523L;
 

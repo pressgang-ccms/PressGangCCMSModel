@@ -36,7 +36,7 @@ import org.jboss.pressgang.ccms.utils.constants.CommonFilterConstants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "Filter", uniqueConstraints = @UniqueConstraint(columnNames = {"FilterName"}))
-public class Filter extends AuditedEntity<Filter> implements java.io.Serializable {
+public class Filter extends AuditedEntity implements java.io.Serializable {
     public static final String SELECT_ALL_QUERY = "select filter from Filter filter";
     /**
      * Serializable version identifier

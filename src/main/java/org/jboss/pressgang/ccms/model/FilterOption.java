@@ -29,7 +29,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "FilterOption", uniqueConstraints = @UniqueConstraint(columnNames = {"FilterOptionName", "FilterID"}))
-public class FilterOption extends AuditedEntity<FilterOption> implements java.io.Serializable {
+public class FilterOption extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 4103450242726344458L;
 
     private Integer filterOptionId;

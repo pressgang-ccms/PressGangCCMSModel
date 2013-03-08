@@ -14,8 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -29,7 +27,6 @@ import java.util.Set;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.classic.ValidationFailure;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.PropertyTag;
@@ -86,7 +83,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         this.locale = locale;
     }
 
-    @Column(name = "Condition", nullable = true, length = 255)
+    @Column(name = "GlobalCondition", nullable = true, length = 255)
     public String getCondition() {
         return condition;
     }
@@ -375,29 +372,6 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
             contentSpecVersion.setParent(null);
             contentSpecVersion.setContentSpec(this);
             getCSNodes().add(contentSpecVersion);
-        }
-    }
-
-    @PrePersist
-    protected void prePersist() {
-        validateMetaData();
-    }
-
-    @PreUpdate
-    protected void preUpdate() {
-        validateMetaData();
-    }
-
-    @Transient
-    protected void validateMetaData() {
-        if (getContentSpecTitle() == null) {
-            throw new ValidationFailure("Content Spec Title cannot be null.");
-        }
-        if (getContentSpecProduct() == null) {
-            throw new ValidationFailure("Content Spec Product cannot be null.");
-        }
-        if (getContentSpecVersion() == null) {
-            throw new ValidationFailure("Content Spec Version cannot be null.");
         }
     }
 

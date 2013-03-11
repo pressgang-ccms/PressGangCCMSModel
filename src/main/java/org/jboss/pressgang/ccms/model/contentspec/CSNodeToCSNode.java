@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -109,7 +110,7 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
         if (getMainNode().getCSNodeType() == CommonConstants.CS_NODE_META_DATA || getRelatedNode().getCSNodeType() == CommonConstants
                 .CS_NODE_META_DATA || getMainNode().getCSNodeType() == CommonConstants.CS_NODE_COMMENT || getRelatedNode().getCSNodeType
                 () == CommonConstants.CS_NODE_COMMENT) {
-            throw new ValidationFailure("Node to Node relationships can't be performed on Comments or Meta Data.");
+            throw new PersistenceException("Node to Node relationships can't be performed on Comments or Meta Data.");
         }
     }
 }

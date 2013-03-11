@@ -19,9 +19,6 @@ import org.jboss.pressgang.ccms.model.TopicToTopic;
 import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
 
 public class TopicUtilities {
-    private TopicUtilities() {
-    }
-
     /**
      * Validate and Fix a topics relationships to ensure that the topics related topics are still matched by the Related Topics
      * themselves.

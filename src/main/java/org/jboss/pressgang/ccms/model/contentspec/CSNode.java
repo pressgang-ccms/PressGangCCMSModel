@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -453,13 +454,13 @@ public class CSNode extends AuditedEntity implements Serializable {
     @Transient
     protected void validateNode() {
         if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && getParent() != null) {
-            throw new ValidationFailure("Meta Data nodes are only allowed at the root level.");
+            throw new PersistenceException("Meta Data nodes are only allowed at the root level.");
         }
 
         if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && !getChildren().isEmpty()) {
-            throw new ValidationFailure("Meta Data nodes cannot have children nodes.");
+            throw new PersistenceException("Meta Data nodes cannot have children nodes.");
         } else if (getCSNodeType() == CommonConstants.CS_NODE_TOPIC && !getChildren().isEmpty()) {
-            throw new ValidationFailure("Topic nodes cannot have children nodes.");
+            throw new PersistenceException("Topic nodes cannot have children nodes.");
         }
     }
 }

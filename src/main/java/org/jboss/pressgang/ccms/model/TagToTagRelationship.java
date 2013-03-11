@@ -1,7 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Aug 8, 2011 11:54:01 AM by Hibernate Tools 3.4.0.CR1
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;

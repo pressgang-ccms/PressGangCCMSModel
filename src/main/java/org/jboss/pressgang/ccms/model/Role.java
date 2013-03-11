@@ -1,7 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Aug 8, 2011 9:22:31 AM by Hibernate Tools 3.4.0.CR1
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
@@ -132,7 +130,7 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     }
 
     public boolean hasUser(final Integer user) {
-        for (final UserRole userRole : getUserRoles()) {
+        for (final UserRole userRole : userRoles) {
             if (userRole.getUser().getUserId().equals(user)) return true;
         }
 
@@ -152,7 +150,7 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     }
 
     public void removeUser(final Integer userId) {
-        for (final UserRole userRole : getUserRoles()) {
+        for (final UserRole userRole : userRoles) {
             if (userRole.getUser().getUserId().equals(userId)) {
                 getUserRoles().remove(userRole);
                 userRole.getUser().getUserRoles().remove(userRole);
@@ -164,7 +162,7 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     @Transient
     public String getUsersCommaSeperatedList() {
         String retValue = "";
-        for (final UserRole role : getUserRoles()) {
+        for (final UserRole role : userRoles) {
             if (retValue.length() != 0) retValue += ", ";
             retValue += role.getUser().getUserName();
         }
@@ -173,16 +171,16 @@ public class Role extends AuditedEntity implements java.io.Serializable {
 
     @PreRemove
     private void preRemove() {
-        getUserRoles().clear();
-        getChildrenRoleToRole().clear();
-        getParentRoleToRole().clear();
+        userRoles.clear();
+        childrenRoleToRole.clear();
+        parentRoleToRole.clear();
     }
 
     @Transient
     public List<User> getUsers() {
         final List<User> retValue = new ArrayList<User>();
 
-        for (final UserRole userRole : getUserRoles()) {
+        for (final UserRole userRole : userRoles) {
             retValue.add(userRole.getUser());
         }
 
@@ -193,7 +191,7 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     public List<Role> getParentRoles() {
         final List<Role> retValue = new ArrayList<Role>();
 
-        for (final RoleToRole userRole : getParentRoleToRole()) {
+        for (final RoleToRole userRole : parentRoleToRole) {
             retValue.add(userRole.getSecondaryRole());
         }
 
@@ -204,7 +202,7 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     public List<Role> getChildRoles() {
         final List<Role> retValue = new ArrayList<Role>();
 
-        for (final RoleToRole userRole : getParentRoleToRole()) {
+        for (final RoleToRole userRole : parentRoleToRole) {
             retValue.add(userRole.getPrimaryRole());
         }
 
@@ -212,7 +210,7 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     }
 
     public RoleToRole getParentRole(final Integer role, final Integer relationshipID) {
-        for (final RoleToRole roleToRole : getParentRoleToRole()) {
+        for (final RoleToRole roleToRole : parentRoleToRole) {
             if (roleToRole.getSecondaryRole().getRoleId().equals(
                     role) && roleToRole.getRoleToRoleRelationship().getRoleToRoleRelationshipId().equals(relationshipID)) return roleToRole;
         }

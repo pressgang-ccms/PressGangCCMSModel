@@ -1,7 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Aug 8, 2011 9:37:09 AM by Hibernate Tools 3.4.0.CR1
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
@@ -49,7 +47,7 @@ public class UserRole extends AuditedEntity implements java.io.Serializable {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "UserRoleID", unique = true, nullable = false)
     public Integer getUserRoleId() {
-        return userRoleId;
+        return this.userRoleId;
     }
 
     public void setUserRoleId(Integer userRoleId) {
@@ -60,7 +58,7 @@ public class UserRole extends AuditedEntity implements java.io.Serializable {
     @JoinColumn(name = "UserNameID", nullable = false)
     @NotNull
     public User getUser() {
-        return user;
+        return this.user;
     }
 
     public void setUser(final User user) {
@@ -71,7 +69,7 @@ public class UserRole extends AuditedEntity implements java.io.Serializable {
     @JoinColumn(name = "RoleNameID", nullable = false)
     @NotNull
     public Role getRole() {
-        return role;
+        return this.role;
     }
 
     public void setRole(final Role role) {

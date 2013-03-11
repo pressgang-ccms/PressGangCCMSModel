@@ -89,7 +89,6 @@ public class Filter extends AuditedEntity implements java.io.Serializable {
         this.filterName = filterName;
     }
 
-    // @Column(name = "FilterDescription", length = 65535)
     @Column(name = "FilterDescription", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getFilterDescription() {
@@ -293,4 +292,51 @@ public class Filter extends AuditedEntity implements java.io.Serializable {
         return filterId;
     }
 
+    @Transient
+    public void addFilterTag(FilterTag filterTag) {
+        getFilterTags().add(filterTag);
+        filterTag.setFilter(this);
+    }
+
+    @Transient
+    public void removeFilterTag(FilterTag filterTag) {
+        getFilterTags().remove(filterTag);
+        filterTag.setFilter(null);
+    }
+
+    @Transient
+    public void addFilterLocale(FilterLocale filterLocale) {
+        getFilterLocales().add(filterLocale);
+        filterLocale.setFilter(this);
+    }
+
+    @Transient
+    public void removeFilterLocale(FilterLocale filterLocale) {
+        getFilterLocales().remove(filterLocale);
+        filterLocale.setFilter(null);
+    }
+
+    @Transient
+    public void addFilterCategory(FilterCategory filterCategory) {
+        getFilterCategories().add(filterCategory);
+        filterCategory.setFilter(this);
+    }
+
+    @Transient
+    public void removeFilterCategory(FilterCategory filterCategory) {
+        getFilterCategories().remove(filterCategory);
+        filterCategory.setFilter(null);
+    }
+
+    @Transient
+    public void addFilterField(FilterField filterField) {
+        getFilterFields().add(filterField);
+        filterField.setFilter(this);
+    }
+
+    @Transient
+    public void removeFilterField(FilterField filterField) {
+        getFilterFields().remove(filterField);
+        filterField.setFilter(null);
+    }
 }

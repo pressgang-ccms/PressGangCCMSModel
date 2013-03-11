@@ -1,7 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Jun 2, 2011 7:22:40 AM by Hibernate Tools 3.4.0.CR1
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;

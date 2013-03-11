@@ -153,7 +153,7 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
     @Transient
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final TagToCategory tag : getTagToCategories())
+        for (final TagToCategory tag : tagToCategories)
             retValue.add(tag.getTag());
 
         Collections.sort(retValue, new TagIDComparator());
@@ -165,7 +165,7 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
     public List<Tag> getTagsInProject(final Project project) {
         final List<Tag> retValue = new ArrayList<Tag>();
 
-        for (final TagToCategory tagToCategory : getTagToCategories()) {
+        for (final TagToCategory tagToCategory : tagToCategories) {
             final Tag tag = tagToCategory.getTag();
             if (tag.isInProject(project)) retValue.add(tag);
         }
@@ -180,9 +180,9 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
         final List<TagToCategory> tags = new ArrayList<TagToCategory>(getTagToCategories());
         Collections.sort(tags, new TagToCategorySortingComparator());
 
-        for (final TagToCategory tagToCategory : tags) {
+        for (final TagToCategory tagToCatgeory : tags) {
             if (tagsList.length() != 0) tagsList += ", ";
-            tagsList += tagToCategory.getTag().getTagName();
+            tagsList += tagToCatgeory.getTag().getTagName();
         }
         return tagsList;
     }
@@ -218,10 +218,10 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
 
     @PreRemove
     private void preRemove() {
-        for (final TagToCategory tagToCategory : getTagToCategories())
+        for (final TagToCategory tagToCategory : tagToCategories)
             tagToCategory.getTag().getTagToCategories().remove(tagToCategory);
 
-        getTagToCategories().clear();
+        tagToCategories.clear();
     }
 
     @Override

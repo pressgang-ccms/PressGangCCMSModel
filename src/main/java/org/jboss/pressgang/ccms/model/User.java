@@ -111,7 +111,7 @@ public class User extends AuditedEntity implements java.io.Serializable {
 
     @Transient
     public boolean isInRole(final Integer role) {
-        for (final UserRole userRole : getUserRoles()) {
+        for (final UserRole userRole : userRoles) {
             if (userRole.getRole().getRoleId().equals(role)) return true;
         }
 
@@ -131,7 +131,7 @@ public class User extends AuditedEntity implements java.io.Serializable {
     }
 
     public void removeRole(final Integer roleId) {
-        for (final UserRole userRole : getUserRoles()) {
+        for (final UserRole userRole : userRoles) {
             if (userRole.getRole().getRoleId().equals(roleId)) {
                 getUserRoles().remove(userRole);
                 userRole.getRole().getUserRoles().remove(userRole);
@@ -143,7 +143,7 @@ public class User extends AuditedEntity implements java.io.Serializable {
     @Transient
     public String getUserRolesCommaSeperatedList() {
         String retValue = "";
-        for (final UserRole role : getUserRoles()) {
+        for (final UserRole role : userRoles) {
             if (retValue.length() != 0) retValue += ", ";
             retValue += role.getRole().getRoleName();
         }
@@ -152,13 +152,13 @@ public class User extends AuditedEntity implements java.io.Serializable {
 
     @PreRemove
     private void preDelete() {
-        getUserRoles().clear();
+        userRoles.clear();
     }
 
     @Transient
     public List<Role> getRoles() {
         final List<Role> retValue = new ArrayList<Role>();
-        for (final UserRole userRole : getUserRoles())
+        for (final UserRole userRole : userRoles)
             retValue.add(userRole.getRole());
         return retValue;
     }

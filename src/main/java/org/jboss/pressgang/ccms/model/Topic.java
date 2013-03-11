@@ -147,8 +147,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "TopicToTopicSecondOrderData", joinColumns = {@JoinColumn(name = "TopicID", unique = true)},
-            inverseJoinColumns = {@JoinColumn(name = "TopicSecondOrderDataID")})
+    @JoinTable(name = "TopicToTopicSecondOrderData", joinColumns = { @JoinColumn(name = "TopicID", unique = true) }, inverseJoinColumns = { @JoinColumn(name = "TopicSecondOrderDataID") })
     @NotAudited
     public TopicSecondOrderData getTopicSecondOrderData() {
         return topicSecondOrderData;
@@ -161,7 +160,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Column(name = "TopicText", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getTopicText() {
-        return topicText;
+        return this.topicText;
     }
 
     public void setTopicText(final String topicText) {
@@ -172,7 +171,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Column(name = "TopicTimeStamp", nullable = false, length = 0)
     @NotNull
     public Date getTopicTimeStamp() {
-        return topicTimeStamp;
+        return this.topicTimeStamp;
     }
 
     public void setTopicTimeStamp(final Date topicTimeStamp) {
@@ -183,7 +182,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @NotNull
     @Size(max = 255)
     public String getTopicTitle() {
-        return topicTitle;
+        return this.topicTitle;
     }
 
     public void setTopicTitle(final String topicTitle) {
@@ -792,8 +791,9 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         final Root<CSNode> root = query.from(CSNode.class);
         query.select(root.get("contentSpec").as(ContentSpec.class));
 
-        final Predicate topicIdMatches = criteriaBuilder.equal(root.get("topicId"), getTopicId());
-        query.where(topicIdMatches);
+        final Predicate topicIdMatches = criteriaBuilder.equal(root.get("entityId"), getTopicId());
+        final Predicate topicTypeMatches = criteriaBuilder.equal(root.get("CSNodeType"), CommonConstants.CS_NODE_TOPIC);
+        query.where(criteriaBuilder.and(topicIdMatches, topicTypeMatches));
 
         final List<ContentSpec> results = entityManager.createQuery(query).getResultList();
         return results;

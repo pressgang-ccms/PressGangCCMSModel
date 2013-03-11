@@ -199,24 +199,24 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
     @Transient
     public void removeTag(final TagToPropertyTag tagToPropertyTag) {
         tagToPropertyTag.getTag().getTagToPropertyTags().remove(tagToPropertyTag);
-        tagToPropertyTags.remove(tagToPropertyTag);
+        getTagToPropertyTags().remove(tagToPropertyTag);
     }
 
     @Transient
     public void addTag(final TagToPropertyTag tagToPropertyTag) {
-        tagToPropertyTags.add(tagToPropertyTag);
+        getTagToPropertyTags().add(tagToPropertyTag);
         tagToPropertyTag.getTag().getTagToPropertyTags().add(tagToPropertyTag);
     }
 
     @Transient
     public void removeTopic(final TopicToPropertyTag topicToPropertyTag) {
         topicToPropertyTag.getTopic().getTopicToPropertyTags().remove(topicToPropertyTag);
-        topicToPropertyTags.remove(topicToPropertyTag);
+        getTopicToPropertyTags().remove(topicToPropertyTag);
     }
 
     @Transient
     public void addTopic(final TopicToPropertyTag topicToPropertyTag) {
-        topicToPropertyTags.add(topicToPropertyTag);
+        getTopicToPropertyTags().add(topicToPropertyTag);
         topicToPropertyTag.getTopic().getTopicToPropertyTags().add(topicToPropertyTag);
     }
 
@@ -224,13 +224,13 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
     public List<PropertyTagToPropertyTagCategory> getPropertyTagToPropertyTagCategoriesList() {
         final List<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories = new ArrayList<PropertyTagToPropertyTagCategory>();
 
-        propertyTagToPropertyTagCategories.addAll(this.propertyTagToPropertyTagCategories);
+        propertyTagToPropertyTagCategories.addAll(getPropertyTagToPropertyTagCategories());
 
         return propertyTagToPropertyTagCategories;
     }
 
     public boolean removePropertyTagCategory(final PropertyTagCategory propertyTagCategory) {
-        for (final PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory : propertyTagToPropertyTagCategories) {
+        for (final PropertyTagToPropertyTagCategory propertyTagToPropertyTagCategory : getPropertyTagToPropertyTagCategories()) {
             if (propertyTagToPropertyTagCategory.getPropertyTagCategory().equals(propertyTagCategory)) {
                 propertyTagToPropertyTagCategories.remove(propertyTagToPropertyTagCategory);
                 propertyTagCategory.getPropertyTagToPropertyTagCategories().remove(propertyTagToPropertyTagCategory);

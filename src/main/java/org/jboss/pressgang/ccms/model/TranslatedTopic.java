@@ -132,4 +132,9 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
         }
         return enversTopic;
     }
+
+    @Transient
+    public void setEnversTopic(final Topic enversTopic) {
+        this.enversTopic = enversTopic;
+    }
 }

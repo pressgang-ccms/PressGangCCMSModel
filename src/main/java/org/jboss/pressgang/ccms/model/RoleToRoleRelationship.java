@@ -1,7 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Aug 11, 2011 2:31:45 PM by Hibernate Tools 3.4.0.CR1
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
@@ -58,7 +56,6 @@ public class RoleToRoleRelationship extends AuditedEntity implements java.io.Ser
         this.roleToRoleRelationshipId = roleToRoleRelationshipId;
     }
 
-    // @Column(name = "Description", length = 65535)
     @Column(name = "Description", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getDescription() {
@@ -73,7 +70,7 @@ public class RoleToRoleRelationship extends AuditedEntity implements java.io.Ser
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<RoleToRole> getRoleToRoles() {
-        return roleToRoles;
+        return this.roleToRoles;
     }
 
     public void setRoleToRoles(final Set<RoleToRole> roleToRoles) {
@@ -83,7 +80,7 @@ public class RoleToRoleRelationship extends AuditedEntity implements java.io.Ser
     @Override
     @Transient
     public Integer getId() {
-        return roleToRoleRelationshipId;
+        return this.roleToRoleRelationshipId;
     }
 
 }

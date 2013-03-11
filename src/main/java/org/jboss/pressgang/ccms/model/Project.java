@@ -122,7 +122,7 @@ public class Project extends AuditedEntity implements java.io.Serializable {
 
         final TreeMap<NameIDSortMap, ArrayList<String>> tags = new TreeMap<NameIDSortMap, ArrayList<String>>();
 
-        for (final TagToProject tagToProject : getTagToProjects()) {
+        for (final TagToProject tagToProject : tagToProjects) {
             final Tag tag = tagToProject.getTag();
             final Set<TagToCategory> tagToCategories = tag.getTagToCategories();
 
@@ -171,7 +171,7 @@ public class Project extends AuditedEntity implements java.io.Serializable {
     @Transient
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
-        for (final TagToProject tag : getTagToProjects())
+        for (final TagToProject tag : tagToProjects)
             retValue.add(tag.getTag());
 
         Collections.sort(retValue, new TagIDComparator());
@@ -184,7 +184,7 @@ public class Project extends AuditedEntity implements java.io.Serializable {
         for (final TagToProject mapping : getTagToProjects())
             mapping.getTag().getTagToProjects().remove(mapping);
 
-        getTagToProjects().clear();
+        tagToProjects.clear();
     }
 
     @Transient

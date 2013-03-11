@@ -1,7 +1,5 @@
 package org.jboss.pressgang.ccms.model;
 
-// Generated Aug 12, 2011 11:10:16 AM by Hibernate Tools 3.4.0.CR1
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
@@ -20,6 +18,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import javax.validation.constraints.NotNull;
+
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Entity
@@ -81,5 +81,4 @@ public class TopicToBugzillaBug extends AuditedEntity implements java.io.Seriali
     public Integer getId() {
         return topicToBugzillaBugId;
     }
-
 }

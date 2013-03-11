@@ -34,7 +34,7 @@ public abstract class AuditedEntity {
         return revision;
     }
 
-    public void setRevision(final Number revision) {
+    public void setRevision(Number revision) {
         this.revision = revision;
     }
 }

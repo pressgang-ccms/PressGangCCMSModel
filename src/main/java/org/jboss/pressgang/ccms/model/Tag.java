@@ -151,7 +151,6 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
         this.tagName = tagName;
     }
 
-    // @Column(name = "TagDescription", length = 65535)
     @Column(name = "TagDescription", columnDefinition = "TEXT")
     @Size(max = 65535)
     public String getTagDescription() {

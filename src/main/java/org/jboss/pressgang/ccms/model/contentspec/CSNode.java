@@ -416,21 +416,20 @@ public class CSNode extends AuditedEntity implements Serializable {
 
     @SuppressWarnings("unchecked")
     @Transient
-    public List<CSTranslatedNode> getTranslatedNodes(final EntityManager entityManager, final Number revision) {
-        final List<CSTranslatedNode> translatedNodeStrings = new ArrayList<CSTranslatedNode>();
-
+    public List<TranslatedCSNode> getTranslatedNodes(final EntityManager entityManager, final Number revision) {
         /*
-         * We have to do a query here as a @OneToMany won't work with hibernate envers since the CSTranslatedNode entity is
+         * We have to do a query here as a @OneToMany won't work with hibernate envers since the TranslatedCSNode entity is
          * audited and we need the latest results. This is because the translated node will never exist for its matching
          * audited node.
          */
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<CSTranslatedNode> query = criteriaBuilder.createQuery(CSTranslatedNode.class);
-        final Root<CSTranslatedNode> root = query.from(CSTranslatedNode.class);
+        final CriteriaQuery<TranslatedCSNode> query = criteriaBuilder.createQuery(TranslatedCSNode.class);
+        final Root<TranslatedCSNode> root = query.from(TranslatedCSNode.class);
         query.select(root);
 
         final Predicate csNodeIdMatches = criteriaBuilder.equal(root.get("CSNodeId"), csNodeId);
-        final Predicate csNodeRevisionMatches = criteriaBuilder.equal(root.get("CSNodeRevision"), revision);
+        final Predicate csNodeRevisionMatches = criteriaBuilder.lessThanOrEqualTo(root.get("CSNodeRevision").as(Integer.class),
+                (Integer) revision);
 
         if (revision == null) {
             query.where(csNodeIdMatches);

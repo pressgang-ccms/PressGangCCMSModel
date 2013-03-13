@@ -10,12 +10,17 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -386,5 +391,31 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         }
 
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transient
+    public List<TranslatedContentSpec> getTranslatedContentSpecs(final EntityManager entityManager, final Number revision) {
+        /*
+         * We have to do a query here as a @OneToMany won't work with hibernate envers since the TranslatedContentSpec entity is
+         * audited and we need the latest results. This is because the translated node will never exist for its matching
+         * audited node.
+         */
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<TranslatedContentSpec> query = criteriaBuilder.createQuery(TranslatedContentSpec.class);
+        final Root<TranslatedContentSpec> root = query.from(TranslatedContentSpec.class);
+        query.select(root);
+
+        final Predicate contentSpecIdMatches = criteriaBuilder.equal(root.get("contentSpecId"), contentSpecId);
+        final Predicate contentSpecRevisionMatches = criteriaBuilder.lessThanOrEqualTo(root.get("contentSpecRevision").as(Integer.class),
+                (Integer) revision);
+
+        if (revision == null) {
+            query.where(contentSpecIdMatches);
+        } else {
+            query.where(criteriaBuilder.and(contentSpecIdMatches, contentSpecRevisionMatches));
+        }
+
+        return entityManager.createQuery(query).getResultList();
     }
 }

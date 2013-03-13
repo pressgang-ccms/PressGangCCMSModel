@@ -15,7 +15,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,14 +36,12 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TranslatedContentSpec", uniqueConstraints = @UniqueConstraint(columnNames = {"ContentSpecID", "ContentSpecRevision"}))
 public class TranslatedContentSpec extends AuditedEntity implements Serializable {
-    public static final String SELECT_ALL_QUERY = "select translatedContentSpec from TranslatedContentSpec as translatedContentSpec";
     private static final long serialVersionUID = 115815564559221625L;
 
     private Integer translatedContentSpecId = null;
     private Integer contentSpecId = null;
     private Integer contentSpecRevision = null;
-    private Date lastPublished = null;
-    private Set<CSTranslatedNode> csTranslatedNodes = new HashSet<CSTranslatedNode>(0);
+    private Set<TranslatedCSNode> translatedCSNodes = new HashSet<TranslatedCSNode>(0);
     private ContentSpec enversContentSpec = null;
 
     @Override
@@ -84,24 +81,15 @@ public class TranslatedContentSpec extends AuditedEntity implements Serializable
         this.contentSpecRevision = contentSpecRevision;
     }
 
-    @Column(name = "LastPublished", nullable = true)
-    public Date getLastPublished() {
-        return lastPublished;
-    }
-
-    public void setLastPublished(Date lastPublished) {
-        this.lastPublished = lastPublished;
-    }
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "translatedContentSpec", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<CSTranslatedNode> getCSTranslatedNodes() {
-        return csTranslatedNodes;
+    public Set<TranslatedCSNode> getTranslatedCSNodes() {
+        return translatedCSNodes;
     }
 
-    public void setCSTranslatedNodes(Set<CSTranslatedNode> csTranslatedNodes) {
-        this.csTranslatedNodes = csTranslatedNodes;
+    public void setTranslatedCSNodes(Set<TranslatedCSNode> translatedCSNodes) {
+        this.translatedCSNodes = translatedCSNodes;
     }
 
     @Transient
@@ -119,5 +107,15 @@ public class TranslatedContentSpec extends AuditedEntity implements Serializable
     @Transient
     public void setEnversContentSpec(final ContentSpec enversContentSpec) {
         this.enversContentSpec = enversContentSpec;
+    }
+
+    public void addTranslatedNode(final TranslatedCSNode translatedNode) {
+        translatedNode.setTranslatedContentSpec(this);
+        getTranslatedCSNodes().add(translatedNode);
+    }
+
+    public void removeTranslatedNode(final TranslatedCSNode translatedNode) {
+        translatedNode.setTranslatedContentSpec(null);
+        getTranslatedCSNodes().remove(translatedNode);
     }
 }

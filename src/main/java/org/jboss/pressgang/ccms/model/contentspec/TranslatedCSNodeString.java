@@ -23,12 +23,12 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "CSTranslatedNodeString")
-public class CSTranslatedNodeString extends AuditedEntity implements java.io.Serializable {
+@Table(name = "TranslatedCSNodeString")
+public class TranslatedCSNodeString extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = -2111116884944950287L;
 
-    private Integer contentSpecTranslatedNodeStringId;
-    private CSTranslatedNode translatedNode;
+    private Integer translatedCSNodeStringId;
+    private TranslatedCSNode translatedCSNode;
     private String locale;
     private String originalString;
     private String translatedString;
@@ -36,21 +36,22 @@ public class CSTranslatedNodeString extends AuditedEntity implements java.io.Ser
 
     @Transient
     public Integer getId() {
-        return contentSpecTranslatedNodeStringId;
+        return translatedCSNodeStringId;
     }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "CSTranslatedNodeStringID", unique = true, nullable = false)
-    public Integer getCSTranslatedNodeStringId() {
-        return contentSpecTranslatedNodeStringId;
+    @Column(name = "TranslatedCSNodeStringID", unique = true, nullable = false)
+    public Integer getTranslatedCSNodeStringId() {
+        return translatedCSNodeStringId;
     }
 
-    public void setCSTranslatedNodeStringId(final Integer translatedTopicStringId) {
-        contentSpecTranslatedNodeStringId = translatedTopicStringId;
+    public void setTranslatedCSNodeStringId(final Integer translatedCSNodeStringId) {
+        this.translatedCSNodeStringId = translatedCSNodeStringId;
     }
 
     @Column(name = "Locale", nullable = false)
+    @NotNull
     public String getLocale() {
         return locale;
     }
@@ -60,14 +61,14 @@ public class CSTranslatedNodeString extends AuditedEntity implements java.io.Ser
     }
 
     @ManyToOne
-    @JoinColumn(name = "CSTranslatedNodeID", nullable = false)
+    @JoinColumn(name = "TranslatedCSNodeID", nullable = false)
     @NotNull
-    public CSTranslatedNode getCSTranslatedNode() {
-        return translatedNode;
+    public TranslatedCSNode getTranslatedCSNode() {
+        return translatedCSNode;
     }
 
-    public void setCSTranslatedNode(final CSTranslatedNode translatedNode) {
-        this.translatedNode = translatedNode;
+    public void setTranslatedCSNode(final TranslatedCSNode translatedCSNode) {
+        this.translatedCSNode = translatedCSNode;
     }
 
     @Column(name = "OriginalString", columnDefinition = "TEXT")

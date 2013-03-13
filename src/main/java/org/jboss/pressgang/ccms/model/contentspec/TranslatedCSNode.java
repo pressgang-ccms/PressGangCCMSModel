@@ -10,6 +10,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -26,6 +28,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -33,34 +36,36 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "CSTranslatedNode")
-public class CSTranslatedNode extends AuditedEntity implements java.io.Serializable {
+@Table(name = "TranslatedCSNode")
+public class TranslatedCSNode extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 5185674451816385008L;
 
-    private Integer contentSpecTranslatedNodeId;
-    private Integer contentSpecNodeId;
-    private Integer contentSpecNodeRevision;
-    private Set<CSTranslatedNodeString> csTranslatedNodeStrings = new HashSet<CSTranslatedNodeString>(0);
+    private Integer translatedCSNodeId = null;
+    private TranslatedContentSpec translatedContentSpec = null;
+    private Integer contentSpecNodeId = null;
+    private Integer contentSpecNodeRevision = null;
+    private Set<TranslatedCSNodeString> translatedCSNodeStrings = new HashSet<TranslatedCSNodeString>(0);
 
     private CSNode enversCSNode;
 
     @Transient
     public Integer getId() {
-        return contentSpecTranslatedNodeId;
+        return translatedCSNodeId;
     }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "CSTranslatedNodeID", unique = true, nullable = false)
-    public Integer getCSTranslatedNodeId() {
-        return contentSpecTranslatedNodeId;
+    @Column(name = "TranslatedCSNodeID", unique = true, nullable = false)
+    public Integer getTranslatedCSNodeId() {
+        return translatedCSNodeId;
     }
 
-    public void setCSTranslatedNodeId(final Integer translatedNodeId) {
-        contentSpecTranslatedNodeId = translatedNodeId;
+    public void setTranslatedCSNodeId(final Integer translatedCSNodeId) {
+        this.translatedCSNodeId = translatedCSNodeId;
     }
 
     @Column(name = "CSNodeID", nullable = false)
+    @NotNull
     public Integer getCSNodeId() {
         return contentSpecNodeId;
     }
@@ -70,6 +75,7 @@ public class CSTranslatedNode extends AuditedEntity implements java.io.Serializa
     }
 
     @Column(name = "CSNodeRevision", nullable = false)
+    @NotNull
     public Integer getCSNodeRevision() {
         return contentSpecNodeRevision;
     }
@@ -78,15 +84,26 @@ public class CSTranslatedNode extends AuditedEntity implements java.io.Serializa
         this.contentSpecNodeRevision = contentSpecNodeRevision;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "CSTranslatedNode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "TranslatedContentSpecID")
+    @ManyToOne(fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<CSTranslatedNodeString> getCSTranslatedNodeStrings() {
-        return csTranslatedNodeStrings;
+    public TranslatedContentSpec getTranslatedContentSpec() {
+        return translatedContentSpec;
     }
 
-    public void setCSTranslatedNodeStrings(final Set<CSTranslatedNodeString> csTranslatedNodeStrings) {
-        this.csTranslatedNodeStrings = csTranslatedNodeStrings;
+    public void setTranslatedContentSpec(TranslatedContentSpec translatedContentSpec) {
+        this.translatedContentSpec = translatedContentSpec;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "TranslatedCSNode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
+    public Set<TranslatedCSNodeString> getTranslatedCSNodeStrings() {
+        return translatedCSNodeStrings;
+    }
+
+    public void setTranslatedCSNodeStrings(final Set<TranslatedCSNodeString> translatedCSNodeStrings) {
+        this.translatedCSNodeStrings = translatedCSNodeStrings;
     }
 
     @Transient
@@ -107,17 +124,17 @@ public class CSTranslatedNode extends AuditedEntity implements java.io.Serializa
     }
 
     @Transient
-    public List<CSTranslatedNodeString> getCSTranslatedNodeStringsArray() {
-        return new ArrayList<CSTranslatedNodeString>(getCSTranslatedNodeStrings());
+    public List<TranslatedCSNodeString> getCSTranslatedNodeStringsArray() {
+        return new ArrayList<TranslatedCSNodeString>(getTranslatedCSNodeStrings());
     }
 
-    public void addTranslatedString(final CSTranslatedNodeString translatedString) {
-        translatedString.setCSTranslatedNode(this);
-        getCSTranslatedNodeStrings().add(translatedString);
+    public void addTranslatedString(final TranslatedCSNodeString translatedString) {
+        translatedString.setTranslatedCSNode(this);
+        getTranslatedCSNodeStrings().add(translatedString);
     }
 
-    public void removeTranslatedString(final CSTranslatedNodeString translatedString) {
-        translatedString.setCSTranslatedNode(null);
-        getCSTranslatedNodeStrings().remove(translatedString);
+    public void removeTranslatedString(final TranslatedCSNodeString translatedString) {
+        translatedString.setTranslatedCSNode(null);
+        getTranslatedCSNodeStrings().remove(translatedString);
     }
 }

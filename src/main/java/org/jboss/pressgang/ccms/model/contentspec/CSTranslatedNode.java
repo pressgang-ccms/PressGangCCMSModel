@@ -10,6 +10,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -26,6 +28,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -37,9 +40,10 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 public class CSTranslatedNode extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 5185674451816385008L;
 
-    private Integer contentSpecTranslatedNodeId;
-    private Integer contentSpecNodeId;
-    private Integer contentSpecNodeRevision;
+    private Integer contentSpecTranslatedNodeId = null;
+    private TranslatedContentSpec translatedContentSpec = null;
+    private Integer contentSpecNodeId = null;
+    private Integer contentSpecNodeRevision = null;
     private Set<CSTranslatedNodeString> csTranslatedNodeStrings = new HashSet<CSTranslatedNodeString>(0);
 
     private CSNode enversCSNode;
@@ -61,6 +65,7 @@ public class CSTranslatedNode extends AuditedEntity implements java.io.Serializa
     }
 
     @Column(name = "CSNodeID", nullable = false)
+    @NotNull
     public Integer getCSNodeId() {
         return contentSpecNodeId;
     }
@@ -70,12 +75,24 @@ public class CSTranslatedNode extends AuditedEntity implements java.io.Serializa
     }
 
     @Column(name = "CSNodeRevision", nullable = false)
+    @NotNull
     public Integer getCSNodeRevision() {
         return contentSpecNodeRevision;
     }
 
     public void setCSNodeRevision(final Integer contentSpecNodeRevision) {
         this.contentSpecNodeRevision = contentSpecNodeRevision;
+    }
+
+    @JoinColumn(name = "TranslatedContentSpecID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    public TranslatedContentSpec getTranslatedContentSpec() {
+        return translatedContentSpec;
+    }
+
+    public void setTranslatedContentSpec(TranslatedContentSpec translatedContentSpec) {
+        this.translatedContentSpec = translatedContentSpec;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "CSTranslatedNode", cascade = CascadeType.ALL, orphanRemoval = true)

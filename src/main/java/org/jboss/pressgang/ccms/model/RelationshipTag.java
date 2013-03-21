@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Entity
@@ -44,6 +45,7 @@ public class RelationshipTag extends AuditedEntity implements java.io.Serializab
 
     @Column(name = "RelationshipTagName", nullable = false, length = 255)
     @NotNull
+    @NotBlank
     @Size(max = 255)
     public String getRelationshipTagName() {
         return relationshipTagName;

@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -58,6 +59,7 @@ public class StringConstants extends AuditedEntity implements java.io.Serializab
 
     @Column(name = "ConstantName", nullable = false, length = 45)
     @NotNull
+    @NotBlank
     @Size(max = 45)
     public String getConstantName() {
         return constantName;

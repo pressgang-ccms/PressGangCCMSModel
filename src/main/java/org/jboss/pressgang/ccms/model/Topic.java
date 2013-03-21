@@ -49,6 +49,7 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.CSNode;
@@ -106,6 +107,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Column(name = "TopicLocale", length = 45)
     @NotNull
+    @NotBlank
     @Size(max = 45)
     public String getTopicLocale() {
         return topicLocale == null ? CommonConstants.DEFAULT_LOCALE : topicLocale;
@@ -115,7 +117,8 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         this.topicLocale = topicLocale;
     }
 
-    @Column(name = "TopicXMLDoctype")
+    @Column(name = "TopicXMLDoctype", nullable = false)
+    @NotNull
     public Integer getXmlDoctype() {
         return xmlDoctype;
     }
@@ -179,7 +182,8 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Column(name = "TopicTitle", nullable = false, length = 255)
-    @NotNull
+    @NotNull(message = "{topic.title.notNull}")
+    @NotBlank(message = "{topic.title.notBlank}")
     @Size(max = 255)
     public String getTopicTitle() {
         return this.topicTitle;
@@ -383,12 +387,12 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         return false;
     }
 
-    public void addTag(final EntityManager entityManager, final int tagID) throws CustomConstraintViolationException {
+    public void addTag(final EntityManager entityManager, final int tagID) {
         final Tag tag = entityManager.getReference(Tag.class, tagID);
         addTag(tag);
     }
 
-    public void addTag(final Tag tag) throws CustomConstraintViolationException {
+    public void addTag(final Tag tag) {
         if (filter(having(on(TopicToTag.class).getTag(), equalTo(tag)), getTopicToTags()).size() == 0) {
 
             // remove any excluded tags

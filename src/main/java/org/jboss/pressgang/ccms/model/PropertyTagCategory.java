@@ -25,6 +25,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -55,6 +56,7 @@ public class PropertyTagCategory extends AuditedEntity implements java.io.Serial
 
     @Column(name = "PropertyTagCategoryName", nullable = false, length = 255)
     @NotNull
+    @NotBlank
     @Size(max = 255)
     public String getPropertyTagCategoryName() {
         return propertyTagCategoryName;

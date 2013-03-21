@@ -19,6 +19,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 /**
@@ -70,6 +71,7 @@ public class FilterLocale extends AuditedEntity implements java.io.Serializable 
 
     @Column(name = "LocaleName", nullable = false, length = 255)
     @NotNull
+    @NotBlank
     @Size(max = 255)
     public String getLocaleName() {
         return localeName;

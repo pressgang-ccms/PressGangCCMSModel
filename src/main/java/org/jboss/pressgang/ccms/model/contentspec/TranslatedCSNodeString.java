@@ -30,7 +30,6 @@ public class TranslatedCSNodeString extends AuditedEntity implements java.io.Ser
     private Integer translatedCSNodeStringId;
     private TranslatedCSNode translatedCSNode;
     private String locale;
-    private String originalString;
     private String translatedString;
     private Boolean fuzzyTranslation = false;
 
@@ -69,16 +68,6 @@ public class TranslatedCSNodeString extends AuditedEntity implements java.io.Ser
 
     public void setTranslatedCSNode(final TranslatedCSNode translatedCSNode) {
         this.translatedCSNode = translatedCSNode;
-    }
-
-    @Column(name = "OriginalString", columnDefinition = "TEXT")
-    @Size(max = 65535)
-    public String getOriginalString() {
-        return originalString;
-    }
-
-    public void setOriginalString(final String originalString) {
-        this.originalString = originalString;
     }
 
     @Column(name = "TranslatedString", columnDefinition = "TEXT")

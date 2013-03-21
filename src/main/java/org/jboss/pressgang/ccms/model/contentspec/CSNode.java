@@ -39,6 +39,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
@@ -97,6 +98,7 @@ public class CSNode extends AuditedEntity implements Serializable {
 
     @Column(name = "NodeTitle", length = 255)
     @NotNull
+    @NotBlank
     public String getCSNodeTitle() {
         return csNodeTitle;
     }

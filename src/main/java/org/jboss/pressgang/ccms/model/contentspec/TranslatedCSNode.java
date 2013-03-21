@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ public class TranslatedCSNode extends AuditedEntity implements java.io.Serializa
     private TranslatedContentSpec translatedContentSpec = null;
     private Integer contentSpecNodeId = null;
     private Integer contentSpecNodeRevision = null;
+    private String originalString = null;
     private Set<TranslatedCSNodeString> translatedCSNodeStrings = new HashSet<TranslatedCSNodeString>(0);
 
     private CSNode enversCSNode;
@@ -82,6 +84,16 @@ public class TranslatedCSNode extends AuditedEntity implements java.io.Serializa
 
     public void setCSNodeRevision(final Integer contentSpecNodeRevision) {
         this.contentSpecNodeRevision = contentSpecNodeRevision;
+    }
+
+    @Column(name = "OriginalString", columnDefinition = "TEXT")
+    @Size(max = 65535)
+    public String getOriginalString() {
+        return originalString;
+    }
+
+    public void setOriginalString(final String originalString) {
+        this.originalString = originalString;
     }
 
     @JoinColumn(name = "TranslatedContentSpecID")

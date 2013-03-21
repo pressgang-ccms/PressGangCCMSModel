@@ -67,7 +67,7 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     public LanguageImage() {
     }
 
-    public LanguageImage(final Integer imageFileId, final String originalFileName, final byte[] imageData) {
+    public LanguageImage(final String originalFileName, final byte[] imageData) {
         this.imageData = imageData;
         this.originalFileName = originalFileName;
     }

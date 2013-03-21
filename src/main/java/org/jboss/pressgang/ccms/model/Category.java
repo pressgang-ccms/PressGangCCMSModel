@@ -30,6 +30,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
@@ -99,6 +100,7 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
 
     @Column(name = "CategoryName", nullable = false, length = 255)
     @NotNull
+    @NotBlank
     @Size(max = 255)
     public String getCategoryName() {
         return categoryName;

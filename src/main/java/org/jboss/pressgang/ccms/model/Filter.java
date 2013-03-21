@@ -24,6 +24,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.utils.constants.CommonFilterConstants;
@@ -80,6 +81,7 @@ public class Filter extends AuditedEntity implements java.io.Serializable {
 
     @Column(name = "FilterName", nullable = false, length = 255)
     @NotNull
+    @NotBlank
     @Size(max = 255)
     public String getFilterName() {
         return filterName;

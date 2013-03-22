@@ -314,4 +314,16 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
 
         return false;
     }
+
+    @Transient
+    public void addTranslatedTopicString(final TranslatedTopicString translatedTopicString) {
+        getTranslatedTopicStrings().add(translatedTopicString);
+        translatedTopicString.setTranslatedTopicData(this);
+    }
+
+    @Transient
+    public void removeTranslatedTopicString(final TranslatedTopicString translatedTopicString) {
+        getTranslatedTopicStrings().remove(translatedTopicString);
+        translatedTopicString.setTranslatedTopicData(null);
+    }
 }

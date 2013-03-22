@@ -15,12 +15,12 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import org.hibernate.validator.NotNull;
 import java.io.Serializable;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
@@ -77,7 +77,7 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
         this.relatedNode = relatedNode;
     }
 
-    @Column(name = "RelationshipType", nullable = false)
+    @Column(name = "RelationshipType", nullable = false, columnDefinition = "TINYINT")
     public Integer getRelationshipType() {
         return relationshipType;
     }

@@ -99,7 +99,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         this.condition = condition;
     }
 
-    @Column(name = "ContentSpecType", nullable = false)
+    @Column(name = "ContentSpecType", nullable = false, columnDefinition = "TINYINT")
     @NotNull
     public Integer getContentSpecType() {
         return contentSpecType;

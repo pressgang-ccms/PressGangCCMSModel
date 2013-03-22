@@ -126,7 +126,7 @@ public class CSNode extends AuditedEntity implements Serializable {
         this.additionalText = csNodeAlternativeTitle;
     }
 
-    @Column(name = "NodeType", nullable = false)
+    @Column(name = "NodeType", nullable = false, columnDefinition = "TINYINT")
     public Integer getCSNodeType() {
         return csNodeType;
     }

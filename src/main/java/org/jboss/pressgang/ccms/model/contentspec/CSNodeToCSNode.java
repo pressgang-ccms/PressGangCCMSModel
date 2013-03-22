@@ -15,7 +15,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.NotNull;
 import java.io.Serializable;
 
 import org.hibernate.annotations.Cache;

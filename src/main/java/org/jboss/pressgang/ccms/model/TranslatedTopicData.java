@@ -18,8 +18,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,6 +31,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
@@ -95,7 +95,7 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
     }
 
     @Column(name = "TranslatedXML", columnDefinition = "MEDIUMTEXT")
-    @Size(max = 16777215)
+    @Length(max = 16777215)
     public String getTranslatedXml() {
         return translatedXml;
     }
@@ -105,7 +105,7 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
     }
 
     @Column(name = "TranslatedXMLErrors", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getTranslatedXmlErrors() {
         return translatedXmlErrors;
     }
@@ -115,7 +115,7 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
     }
 
     @Column(name = "TranslatedXMLRendered", columnDefinition = "MEDIUMTEXT")
-    @Size(max = 16777215)
+    @Length(max = 16777215)
     public String getTranslatedXmlRendered() {
         return translatedXmlRendered;
     }
@@ -126,7 +126,7 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
 
     @Column(name = "TranslationLocale", nullable = false, length = 45)
     @NotNull
-    @Size(max = 45)
+    @Length(max = 45)
     public String getTranslationLocale() {
         return translationLocale;
     }

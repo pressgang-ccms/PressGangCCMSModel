@@ -10,14 +10,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.validator.NotBlank;
 
 @Entity
 @Audited
@@ -46,7 +46,7 @@ public class RelationshipTag extends AuditedEntity implements java.io.Serializab
     @Column(name = "RelationshipTagName", nullable = false, length = 255)
     @NotNull
     @NotBlank
-    @Size(max = 255)
+    @Length(max = 255)
     public String getRelationshipTagName() {
         return relationshipTagName;
     }
@@ -56,7 +56,7 @@ public class RelationshipTag extends AuditedEntity implements java.io.Serializab
     }
 
     @Column(name = "RelationshipTagDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getRelationshipTagDescription() {
         return relationshipTagDescription;
     }

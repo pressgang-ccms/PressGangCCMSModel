@@ -14,8 +14,6 @@ import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,10 +25,12 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
+import org.jboss.pressgang.ccms.model.validator.NotBlank;
 import org.jboss.pressgang.ccms.utils.structures.NameIDSortMap;
 
 @Audited
@@ -74,7 +74,7 @@ public class Project extends AuditedEntity implements java.io.Serializable {
     @Column(name = "ProjectName", nullable = false, length = 255)
     @NotNull
     @NotBlank
-    @Size(max = 255)
+    @Length(max = 255)
     public String getProjectName() {
         return projectName;
     }
@@ -84,7 +84,7 @@ public class Project extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "ProjectDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getProjectDescription() {
         return projectDescription;
     }

@@ -23,8 +23,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,11 +37,13 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.validator.NotBlank;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
@@ -117,7 +117,7 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @Column(name = "AdditionalText", columnDefinition = "TEXT", nullable = true)
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getAdditionalText() {
         return additionalText;
     }

@@ -13,8 +13,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -26,11 +24,13 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.validator.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +79,7 @@ public class TopicSourceUrl extends AuditedEntity implements java.io.Serializabl
     @Column(name = "SourceURL", nullable = false, length = 2048)
     @NotNull
     @NotBlank
-    @Size(max = 2048)
+    @Length(max = 2048)
     public String getSourceUrl() {
         return sourceUrl;
     }
@@ -91,7 +91,7 @@ public class TopicSourceUrl extends AuditedEntity implements java.io.Serializabl
     @Column(name = "Title", nullable = false, length = 255)
     @NotNull
     @NotBlank
-    @Size(max = 255)
+    @Length(max = 255)
     public String getTitle() {
         return title;
     }
@@ -101,7 +101,7 @@ public class TopicSourceUrl extends AuditedEntity implements java.io.Serializabl
     }
 
     @Column(name = "Description", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getDescription() {
         return description;
     }

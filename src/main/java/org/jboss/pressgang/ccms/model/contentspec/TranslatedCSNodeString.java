@@ -18,6 +18,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.validator.NotBlank;
 
 @Entity
 @Audited
@@ -50,7 +51,8 @@ public class TranslatedCSNodeString extends AuditedEntity implements java.io.Ser
     }
 
     @Column(name = "Locale", nullable = false)
-    @NotNull
+    @NotNull(message = "{contentspec.translatedstring.locale.notBlank}")
+    @NotBlank(message = "{contentspec.translatedstring.locale.notBlank}")
     public String getLocale() {
         return locale;
     }

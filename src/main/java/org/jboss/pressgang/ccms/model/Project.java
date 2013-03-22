@@ -72,8 +72,8 @@ public class Project extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "ProjectName", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{project.name.notBlank}")
+    @NotBlank(message = "{project.name.notBlank}")
     @Length(max = 255)
     public String getProjectName() {
         return projectName;

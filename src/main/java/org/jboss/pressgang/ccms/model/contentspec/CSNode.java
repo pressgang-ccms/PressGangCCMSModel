@@ -97,8 +97,8 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @Column(name = "NodeTitle", length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{contentspec.node.title.notBlank}")
+    @NotBlank(message = "{contentspec.node.title.notBlank}")
     public String getCSNodeTitle() {
         return csNodeTitle;
     }

@@ -107,7 +107,7 @@ public class TranslatedCSNode extends AuditedEntity implements java.io.Serializa
         this.translatedContentSpec = translatedContentSpec;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "TranslatedCSNode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "translatedCSNode", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<TranslatedCSNodeString> getTranslatedCSNodeStrings() {

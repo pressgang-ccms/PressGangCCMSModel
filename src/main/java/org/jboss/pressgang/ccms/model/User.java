@@ -71,8 +71,8 @@ public class User extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "UserName", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{user.name.notBlank}")
+    @NotBlank(message = "{user.name.notBlank}")
     @Length(max = 255)
     public String getUserName() {
         return userName;

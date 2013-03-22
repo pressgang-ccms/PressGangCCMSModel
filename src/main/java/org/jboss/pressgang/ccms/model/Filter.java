@@ -80,8 +80,8 @@ public class Filter extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "FilterName", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{filter.name.notBlank}")
+    @NotBlank(message = "{filter.name.notBlank}")
     @Length(max = 255)
     public String getFilterName() {
         return filterName;

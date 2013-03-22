@@ -58,8 +58,8 @@ public class IntegerConstants extends AuditedEntity implements java.io.Serializa
     }
 
     @Column(name = "ConstantName", nullable = false, length = 45)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{integerconstant.name.notBlank}")
+    @NotBlank(message = "{integerconstant.name.notBlank}")
     @Length(max = 45)
     public String getConstantName() {
         return constantName;

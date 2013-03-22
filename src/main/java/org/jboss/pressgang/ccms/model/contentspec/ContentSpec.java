@@ -80,10 +80,10 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     }
 
     @Column(name = "Locale", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{contentspec.locale.notBlank}")
+    @NotBlank(message = "{contentspec.locale.notBlank}")
     public String getLocale() {
-        return locale;
+        return locale == null ? CommonConstants.DEFAULT_LOCALE : locale;
     }
 
     public void setLocale(String locale) {

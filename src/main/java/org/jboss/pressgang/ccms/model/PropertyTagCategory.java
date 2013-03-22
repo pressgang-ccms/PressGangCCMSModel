@@ -55,8 +55,8 @@ public class PropertyTagCategory extends AuditedEntity implements java.io.Serial
     }
 
     @Column(name = "PropertyTagCategoryName", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{propertytagcategory.name.notBlank}")
+    @NotBlank(message = "{propertytagcategory.name.notBlank}")
     @Length(max = 255)
     public String getPropertyTagCategoryName() {
         return propertyTagCategoryName;

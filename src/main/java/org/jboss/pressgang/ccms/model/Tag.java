@@ -142,8 +142,8 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     }
 
     @Column(name = "TagName", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{tag.name.notBlank}")
+    @NotBlank(message = "{tag.name.notBlank}")
     @Length(max = 255)
     public String getTagName() {
         return tagName;

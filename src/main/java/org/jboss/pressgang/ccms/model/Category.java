@@ -99,8 +99,8 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
     }
 
     @Column(name = "CategoryName", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{category.name.notBlank}")
+    @NotBlank(message = "{category.name.notBlank}")
     @Length(max = 255)
     public String getCategoryName() {
         return categoryName;

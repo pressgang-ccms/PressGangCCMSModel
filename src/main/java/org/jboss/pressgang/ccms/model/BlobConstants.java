@@ -58,8 +58,8 @@ public class BlobConstants extends AuditedEntity implements java.io.Serializable
     }
 
     @Column(name = "ConstantName", nullable = false, length = 45)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{blobconstant.name.notBlank}")
+    @NotBlank(message = "{blobconstant.name.notBlank}")
     @Length(max = 45)
     public String getConstantName() {
         return constantName;

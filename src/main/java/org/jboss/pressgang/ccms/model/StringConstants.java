@@ -58,8 +58,8 @@ public class StringConstants extends AuditedEntity implements java.io.Serializab
     }
 
     @Column(name = "ConstantName", nullable = false, length = 45)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{stringconstant.name.notBlank}")
+    @NotBlank(message = "{stringconstant.name.notBlank}")
     @Length(max = 45)
     public String getConstantName() {
         return constantName;

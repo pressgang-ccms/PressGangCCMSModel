@@ -105,8 +105,8 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Column(name = "TopicLocale", length = 45)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{topic.locale.notBlank}")
+    @NotBlank(message = "{topic.locale.notBlank}")
     @Length(max = 45)
     public String getTopicLocale() {
         return topicLocale == null ? CommonConstants.DEFAULT_LOCALE : topicLocale;
@@ -181,7 +181,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Column(name = "TopicTitle", nullable = false, length = 255)
-    @NotNull(message = "{topic.title.notNull}")
+    @NotNull(message = "{topic.title.notBlank}")
     @NotBlank(message = "{topic.title.notBlank}")
     @Length(max = 255)
     public String getTopicTitle() {

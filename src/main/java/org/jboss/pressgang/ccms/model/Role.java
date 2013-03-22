@@ -70,8 +70,8 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "RoleName", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{role.name.notBlank}")
+    @NotBlank(message = "{role.name.notBlank}")
     @Length(max = 255)
     public String getRoleName() {
         return roleName;

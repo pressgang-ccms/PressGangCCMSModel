@@ -64,8 +64,8 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "PropertyTagName", nullable = false, length = 255)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{propertytag.name.notBlank}")
+    @NotBlank(message = "{propertytag.name.notBlank}")
     @Length(max = 255)
     public String getPropertyTagName() {
         return propertyTagName;

@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>org.jboss.pressgang.ccms</groupId>
-    <artifactId>pressgang-ccms-model-hibernate3</artifactId>
+    <artifactId>pressgang-ccms-model</artifactId>
     <version>1.1-SNAPSHOT</version>
     <name>PressGang CCMS Model</name>
 
@@ -25,8 +25,6 @@
         <lambdaj.version>2.3.3</lambdaj.version>
         <jericho.version>3.2</jericho.version>
         <htmlcleaner.version>2.2</htmlcleaner.version>
-        <hibernate.version>3.6.10.Final</hibernate.version>
-        <hibernate.search.version>3.4.1.Final</hibernate.search.version>
         <slf4j.version>1.6.4</slf4j.version>
     </properties>
 
@@ -71,7 +69,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.jboss.bom</groupId>
-                <artifactId>jboss-javaee-6.0-with-hibernate3</artifactId>
+                <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
                 <version>${jboss.bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -91,7 +89,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>
-            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -104,7 +101,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search</artifactId>
-            <version>${hibernate.search.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

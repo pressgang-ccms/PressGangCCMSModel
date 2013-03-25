@@ -11,14 +11,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
-import org.jboss.pressgang.ccms.model.validator.NotBlank;
+
 
 @Entity
 @Audited
@@ -73,7 +74,7 @@ public class TranslatedCSNodeString extends AuditedEntity implements java.io.Ser
     }
 
     @Column(name = "TranslatedString", columnDefinition = "TEXT")
-    @Length(max = 65535)
+    @Size(max = 65535)
     public String getTranslatedString() {
         return translatedString;
     }

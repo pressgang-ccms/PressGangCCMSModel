@@ -14,6 +14,8 @@ import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,11 +25,10 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
-import org.jboss.pressgang.ccms.model.validator.NotBlank;
+
 
 @Entity
 @Audited
@@ -72,7 +73,7 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     @Column(name = "RoleName", nullable = false, length = 255)
     @NotNull(message = "{role.name.notBlank}")
     @NotBlank(message = "{role.name.notBlank}")
-    @Length(max = 255)
+    @Size(max = 255)
     public String getRoleName() {
         return roleName;
     }
@@ -82,7 +83,7 @@ public class Role extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "Description", columnDefinition = "TEXT")
-    @Length(max = 65535)
+    @Size(max = 65535)
     public String getDescription() {
         return description;
     }

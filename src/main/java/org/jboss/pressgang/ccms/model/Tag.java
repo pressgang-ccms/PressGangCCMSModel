@@ -23,6 +23,8 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,15 +35,13 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToTag;
 import org.jboss.pressgang.ccms.model.sort.CategoryIDComparator;
 import org.jboss.pressgang.ccms.model.sort.ProjectIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
-import org.jboss.pressgang.ccms.model.validator.NotBlank;
 import org.jboss.pressgang.ccms.utils.common.CollectionUtilities;
 
 @Entity
@@ -144,7 +144,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     @Column(name = "TagName", nullable = false, length = 255)
     @NotNull(message = "{tag.name.notBlank}")
     @NotBlank(message = "{tag.name.notBlank}")
-    @Length(max = 255)
+    @Size(max = 255)
     public String getTagName() {
         return tagName;
     }
@@ -154,7 +154,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     }
 
     @Column(name = "TagDescription", columnDefinition = "TEXT")
-    @Length(max = 65535)
+    @Size(max = 65535)
     public String getTagDescription() {
         return tagDescription;
     }

@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.Length;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -55,7 +55,7 @@ public class TagToTagRelationship extends AuditedEntity implements java.io.Seria
     }
 
     @Column(name = "TagToTagRelationshipDescription", columnDefinition = "TEXT")
-    @Length(max = 65535)
+    @Size(max = 65535)
     public String getTagToTagRelationshipDescription() {
         return tagToTagRelationshipDescription;
     }

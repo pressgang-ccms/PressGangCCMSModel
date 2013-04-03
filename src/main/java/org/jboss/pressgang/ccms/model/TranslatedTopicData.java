@@ -162,7 +162,7 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
     }
 
     @Column(name = "TranslatedXMLCondition", nullable = false, length = 255)
-    @Length(max = 255)
+    @Size(max = 255)
     public String getTranslatedXMLCondition() {
         return translatedXMLCondition;
     }

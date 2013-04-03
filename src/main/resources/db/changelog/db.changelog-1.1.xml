@@ -358,7 +358,7 @@
         <createIndex tableName="CSNodeToCSNode_AUD" indexName="RelatedNodeID">
             <column name="RelatedNodeID"/>
         </createIndex>
-        
+
         <!-- Content Spec Node to Property Tag Joiner Table -->
         <createTable tableName="CSNodeToPropertyTag">
             <column name="CSNodeToPropertyTagID" type="int(11)" autoIncrement="true">
@@ -562,6 +562,33 @@
                                  referencedTableName="REVINFO"
                                  referencedColumnNames="REV"/>
         <createIndex tableName="TranslatedCSNode_AUD" indexName="TranslatedCSNodeID">
+            <column name="TranslatedCSNodeID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="6" author="lnewson@redhat.com" runInTransaction="true">
+        <comment>Add column to TranslatedTopicData to reference Translated Content Spec Node</comment>
+        <addColumn tableName="TranslatedTopicData">
+            <column name="TranslatedCSNodeID" type="int(11)"/>
+        </addColumn>
+        <addColumn tableName="TranslatedTopicData">
+            <column name="TranslatedXMLCondition" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="TranslatedTopicData_AUD">
+            <column name="TranslatedCSNodeID" type="int(11)"/>
+        </addColumn>
+        <addColumn tableName="TranslatedTopicData_AUD">
+            <column name="TranslatedXMLCondition" type="varchar(255)"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeID_TRANSLATED_TOPIC_DATA"
+                                 baseTableName="TranslatedTopicData"
+                                 baseColumnNames="TranslatedCSNodeID"
+                                 referencedTableName="TranslatedCSNode"
+                                 referencedColumnNames="TranslatedCSNodeID"/>
+        <dropUniqueConstraint tableName="TranslatedTopicData" constraintName="TranslatedTopicID"/>
+        <addUniqueConstraint tableName="TranslatedTopicData" columnNames="TranslatedTopicID, TranslationLocale, TranslatedCSNodeID"
+                             constraintName="TranslatedTopicID"/>
+        <createIndex tableName="TranslatedTopicData_AUD" indexName="TranslatedCSNodeID">
             <column name="TranslatedCSNodeID"/>
         </createIndex>
     </changeSet>

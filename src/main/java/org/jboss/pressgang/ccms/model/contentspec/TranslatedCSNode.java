@@ -30,6 +30,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
+import org.jboss.pressgang.ccms.model.TranslatedTopicData;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 
@@ -47,6 +48,7 @@ public class TranslatedCSNode extends AuditedEntity implements java.io.Serializa
     private Integer contentSpecNodeRevision = null;
     private String originalString = null;
     private Set<TranslatedCSNodeString> translatedCSNodeStrings = new HashSet<TranslatedCSNodeString>(0);
+    private Set<TranslatedTopicData> translatedTopicDatas = new HashSet<TranslatedTopicData>(0);
 
     private CSNode enversCSNode;
 
@@ -118,6 +120,35 @@ public class TranslatedCSNode extends AuditedEntity implements java.io.Serializa
         this.translatedCSNodeStrings = translatedCSNodeStrings;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "translatedCSNode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
+    @Size(max = 1)
+    public Set<TranslatedTopicData> getTranslatedTopicDatas() {
+        return translatedTopicDatas;
+    }
+
+    public void setTranslatedTopicDatas(final Set<TranslatedTopicData> translatedTopicDatas) {
+        this.translatedTopicDatas = translatedTopicDatas;
+    }
+
+    @Transient
+    public TranslatedTopicData getTranslatedTopicData() {
+        return getTranslatedTopicDatas().isEmpty() ? null : getTranslatedTopicDatas().iterator().next();
+    }
+
+    @Transient
+    public void setTranslatedTopicData(final TranslatedTopicData translatedTopicData) {
+        // Remove any TranslatedTopics that currently exist
+        for (final TranslatedTopicData translatedTopic : getTranslatedTopicDatas()) {
+            removeTranslatedTopicData(translatedTopic);
+        }
+        // Set the Translated Topic
+        if (translatedTopicData != null) {
+            addTranslatedTopicData(translatedTopicData);
+        }
+    }
+
     @Transient
     public CSNode getEnversCSNode(final EntityManager entityManager) {
         if (enversCSNode == null) {
@@ -148,5 +179,15 @@ public class TranslatedCSNode extends AuditedEntity implements java.io.Serializa
     public void removeTranslatedString(final TranslatedCSNodeString translatedString) {
         translatedString.setTranslatedCSNode(null);
         getTranslatedCSNodeStrings().remove(translatedString);
+    }
+
+    public void addTranslatedTopicData(final TranslatedTopicData translatedTopic) {
+        translatedTopicDatas.add(translatedTopic);
+        translatedTopic.setTranslatedCSNode(this);
+    }
+
+    public void removeTranslatedTopicData(final TranslatedTopicData translatedTopic) {
+        translatedTopicDatas.remove(translatedTopic);
+        translatedTopic.setTranslatedCSNode(null);
     }
 }

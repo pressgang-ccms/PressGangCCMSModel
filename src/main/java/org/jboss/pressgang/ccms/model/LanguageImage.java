@@ -17,8 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.swing.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -29,6 +27,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.utils.SVGIcon;
@@ -84,7 +84,7 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     }
 
     @Column(name = "OriginalFileName", length = 255)
-    @Size(max = 255)
+    @Length(max = 255)
     public String getOriginalFileName() {
         return originalFileName;
     }

@@ -25,8 +25,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -40,12 +38,12 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
@@ -54,6 +52,7 @@ import org.jboss.pressgang.ccms.model.sort.TopicIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicToTopicMainTopicIDSort;
 import org.jboss.pressgang.ccms.model.sort.TopicToTopicRelatedTopicIDSort;
 import org.jboss.pressgang.ccms.model.utils.TopicUtilities;
+import org.jboss.pressgang.ccms.model.validator.NotBlank;
 import org.jboss.pressgang.ccms.utils.common.CollectionUtilities;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
@@ -102,7 +101,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Column(name = "TopicLocale", length = 45)
     @NotNull(message = "{topic.locale.notBlank}")
     @NotBlank(message = "{topic.locale.notBlank}")
-    @Size(max = 45)
+    @Length(max = 45)
     public String getTopicLocale() {
         return topicLocale == null ? CommonConstants.DEFAULT_LOCALE : topicLocale;
     }
@@ -155,7 +154,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Column(name = "TopicText", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getTopicText() {
         return this.topicText;
     }
@@ -178,7 +177,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Column(name = "TopicTitle", nullable = false, length = 255)
     @NotNull(message = "{topic.title.notBlank}")
     @NotBlank(message = "{topic.title.notBlank}")
-    @Size(max = 255)
+    @Length(max = 255)
     public String getTopicTitle() {
         return this.topicTitle;
     }
@@ -210,7 +209,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Column(name = "TopicXML", columnDefinition = "MEDIUMTEXT")
-    @Size(max = 16777215)
+    @Length(max = 16777215)
     public String getTopicXML() {
         return topicXML;
     }
@@ -246,7 +245,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
      * Hibernate Search. The text extraction uses Jericho - http://jericho.htmlparser.net/
      */
     @Transient
-    @Field(name = "TopicSearchText", index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+    @Field(name = "TopicSearchText", index = Index.TOKENIZED, store = Store.YES)
     public String getTopicSearchText() {
         if (topicXML == null) return "";
 

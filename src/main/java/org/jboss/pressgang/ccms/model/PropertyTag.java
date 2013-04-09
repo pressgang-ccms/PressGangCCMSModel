@@ -14,8 +14,6 @@ import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,10 +23,11 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
-
+import org.jboss.pressgang.ccms.model.validator.NotBlank;
 
 @Entity
 @Audited
@@ -63,7 +62,7 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
     @Column(name = "PropertyTagName", nullable = false, length = 255)
     @NotNull(message = "{propertytag.name.notBlank}")
     @NotBlank(message = "{propertytag.name.notBlank}")
-    @Size(max = 255)
+    @Length(max = 255)
     public String getPropertyTagName() {
         return propertyTagName;
     }
@@ -73,7 +72,7 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "PropertyTagDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getPropertyTagDescription() {
         return propertyTagDescription;
     }
@@ -84,7 +83,7 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
 
     @Column(name = "PropertyTagRegex", columnDefinition = "TEXT")
     @NotNull
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getPropertyTagRegex() {
         return propertyTagRegex;
     }

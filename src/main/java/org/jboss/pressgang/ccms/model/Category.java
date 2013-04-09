@@ -18,8 +18,6 @@ import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,12 +28,13 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
-
+import org.jboss.pressgang.ccms.model.validator.NotBlank;
 
 @Entity
 @Audited
@@ -102,7 +101,7 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
     @Column(name = "CategoryName", nullable = false, length = 255)
     @NotNull(message = "{category.name.notBlank}")
     @NotBlank(message = "{category.name.notBlank}")
-    @Size(max = 255)
+    @Length(max = 255)
     public String getCategoryName() {
         return categoryName;
     }
@@ -112,7 +111,7 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
     }
 
     @Column(name = "CategoryDescription", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getCategoryDescription() {
         return categoryDescription;
     }

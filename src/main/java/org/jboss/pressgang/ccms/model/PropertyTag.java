@@ -28,8 +28,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
-import org.jboss.pressgang.ccms.model.contentspec.CSNodeToPropertyTag;
-import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToPropertyTag;
 
 
 @Entity
@@ -48,8 +46,6 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
     private boolean propertyTagCanBeNull;
     private Set<TagToPropertyTag> tagToPropertyTags = new HashSet<TagToPropertyTag>(0);
     private Set<TopicToPropertyTag> topicToPropertyTags = new HashSet<TopicToPropertyTag>(0);
-    private Set<ContentSpecToPropertyTag> contentSpecToPropertyTags = new HashSet<ContentSpecToPropertyTag>(0);
-    private Set<CSNodeToPropertyTag> csNodeToPropertyTags = new HashSet<CSNodeToPropertyTag>(0);
     private Set<PropertyTagToPropertyTagCategory> propertyTagToPropertyTagCategories = new HashSet<PropertyTagToPropertyTagCategory>(0);
     private Boolean propertyTagIsUnique;
 
@@ -127,28 +123,6 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
 
     public void setTopicToPropertyTags(final Set<TopicToPropertyTag> topicToPropertyTags) {
         this.topicToPropertyTags = topicToPropertyTags;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "propertyTag", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<ContentSpecToPropertyTag> getContentSpecToPropertyTags() {
-        return contentSpecToPropertyTags;
-    }
-
-    public void setContentSpecToPropertyTags(final Set<ContentSpecToPropertyTag> contentSpecToPropertyTags) {
-        this.contentSpecToPropertyTags = contentSpecToPropertyTags;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "propertyTag", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<CSNodeToPropertyTag> getCSNodeToPropertyTags() {
-        return csNodeToPropertyTags;
-    }
-
-    public void setCSNodeToPropertyTags(final Set<CSNodeToPropertyTag> csNodeToPropertyTags) {
-        this.csNodeToPropertyTags = csNodeToPropertyTags;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "propertyTag", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -262,17 +236,5 @@ public class PropertyTag extends AuditedEntity implements java.io.Serializable {
         }
 
         return !found;
-    }
-
-    @Transient
-    public void removeCSNode(final CSNodeToPropertyTag csNodeToPropertyTag) {
-        csNodeToPropertyTag.getCSNode().getCSNodeToPropertyTags().remove(csNodeToPropertyTag);
-        csNodeToPropertyTags.remove(csNodeToPropertyTag);
-    }
-
-    @Transient
-    public void addCSNode(final CSNodeToPropertyTag csNodeToPropertyTag) {
-        csNodeToPropertyTags.add(csNodeToPropertyTag);
-        csNodeToPropertyTag.getCSNode().getCSNodeToPropertyTags().add(csNodeToPropertyTag);
     }
 }

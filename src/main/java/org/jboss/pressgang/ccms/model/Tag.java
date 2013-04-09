@@ -38,7 +38,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
-import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToTag;
 import org.jboss.pressgang.ccms.model.sort.CategoryIDComparator;
 import org.jboss.pressgang.ccms.model.sort.ProjectIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
@@ -63,7 +62,6 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
     private Set<TagToTag> parentTagToTags = new HashSet<TagToTag>(0);
     private Set<TagToProject> tagToProjects = new HashSet<TagToProject>(0);
     private Set<TagToPropertyTag> tagToPropertyTags = new HashSet<TagToPropertyTag>(0);
-    private Set<ContentSpecToTag> contentSpecToTags = new HashSet<ContentSpecToTag>(0);
 
     public Tag() {
     }
@@ -172,17 +170,6 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
 
     public void setTopicToTags(final Set<TopicToTag> topicToTags) {
         this.topicToTags = topicToTags;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<ContentSpecToTag> getContentSpecToTags() {
-        return contentSpecToTags;
-    }
-
-    public void setContentSpecToTags(final Set<ContentSpecToTag> contentSpecToTags) {
-        this.contentSpecToTags = contentSpecToTags;
     }
 
     @Transient

@@ -12,12 +12,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 @Entity
@@ -65,7 +65,7 @@ public class TranslatedTopicString extends AuditedEntity implements java.io.Seri
     }
 
     @Column(name = "OriginalString", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getOriginalString() {
         return originalString;
     }
@@ -75,7 +75,7 @@ public class TranslatedTopicString extends AuditedEntity implements java.io.Seri
     }
 
     @Column(name = "TranslatedString", columnDefinition = "TEXT")
-    @Size(max = 65535)
+    @Length(max = 65535)
     public String getTranslatedString() {
         return translatedString;
     }

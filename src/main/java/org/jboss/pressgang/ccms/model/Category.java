@@ -36,7 +36,6 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
 
-
 @Entity
 @Audited
 @Cacheable

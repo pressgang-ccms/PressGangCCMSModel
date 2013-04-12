@@ -19,7 +19,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
-
 @Entity
 @Audited
 @Cacheable

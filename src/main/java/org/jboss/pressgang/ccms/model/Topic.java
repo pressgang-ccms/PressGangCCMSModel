@@ -174,10 +174,10 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         this.topicTimeStamp = topicTimeStamp;
     }
 
-    @Column(name = "TopicTitle", nullable = false, length = 1024)
+    @Column(name = "TopicTitle", nullable = false, length = 767)
     @NotNull(message = "{topic.title.notBlank}")
     @NotBlank(message = "{topic.title.notBlank}")
-    @Length(max = 1024)
+    @Length(max = 767)
     public String getTopicTitle() {
         return this.topicTitle;
     }

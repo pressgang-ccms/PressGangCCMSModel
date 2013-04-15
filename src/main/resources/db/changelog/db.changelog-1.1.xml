@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="1" author="lnewson@redhat.com" runInTransaction="true">
+        <comment>Add new Content Spec and Joiner tables</comment>
+        <!-- Content Spec Tables -->
+        <createTable tableName="ContentSpec">
+            <column name="ContentSpecID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="ContentSpecType" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LastPublished" type="datetime"/>
+            <column name="Locale" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GlobalCondition" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="ContentSpec_AUD">
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="ContentSpecType" type="tinyint"/>
+            <column name="LastPublished" type="datetime"/>
+            <column name="Locale" type="varchar(255)"/>
+            <column name="GlobalCondition" type="varchar(255)"/>
+        </createTable>
+        <addPrimaryKey tableName="ContentSpec_AUD" columnNames="ContentSpecID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CS"
+                                 baseTableName="ContentSpec_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CS"
+                                 baseTableName="ContentSpec_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+
+        <!-- Content Spec To Project Joiner Tables -->
+        <createTable tableName="ContentSpecToProject">
+            <column name="ContentSpecToProjectID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ProjectID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_ContentSpecID"
+                                 baseTableName="ContentSpecToProject"
+                                 baseColumnNames="ContentSpecID"
+                                 referencedTableName="ContentSpec"
+                                 referencedColumnNames="ContentSpecID"/>
+        <addForeignKeyConstraint constraintName="FK_ProjectID"
+                                 baseTableName="ContentSpecToProject"
+                                 baseColumnNames="ProjectID"
+                                 referencedTableName="Project"
+                                 referencedColumnNames="ProjectID"/>
+
+        <createTable tableName="ContentSpecToProject_AUD">
+            <column name="ContentSpecToProjectID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="ContentSpecID" type="int(11)"/>
+            <column name="ProjectID" type="int(11)"/>
+        </createTable>
+        <addPrimaryKey tableName="ContentSpecToProject_AUD" columnNames="ContentSpecToProjectID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CS_PROJECT"
+                                 baseTableName="ContentSpecToProject_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CS_PROJECT"
+                                 baseTableName="ContentSpecToProject_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="ContentSpecToProject_AUD" indexName="ContentSpecID">
+            <column name="ContentSpecID"/>
+        </createIndex>
+        <createIndex tableName="ContentSpecToProject_AUD" indexName="ProjectID">
+            <column name="ProjectID"/>
+        </createIndex>
+
+        <!-- Content Spec Node to Property Tag Joiner Table -->
+        <createTable tableName="ContentSpecToPropertyTag">
+            <column name="ContentSpecToPropertyTagID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PropertyTagID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Value" type="text"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_ContentSpecID_CS_PROP_TAG"
+                                 baseTableName="ContentSpecToPropertyTag"
+                                 baseColumnNames="ContentSpecID"
+                                 referencedTableName="ContentSpec"
+                                 referencedColumnNames="ContentSpecID"/>
+        <addForeignKeyConstraint constraintName="FK_PropertyTagID_CS_PROP_TAG"
+                                 baseTableName="ContentSpecToPropertyTag"
+                                 baseColumnNames="PropertyTagID"
+                                 referencedTableName="PropertyTag"
+                                 referencedColumnNames="PropertyTagID"/>
+
+        <createTable tableName="ContentSpecToPropertyTag_AUD">
+            <column name="ContentSpecToPropertyTagID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="ContentSpecID" type="int(11)"/>
+            <column name="PropertyTagID" type="int(11)"/>
+            <column name="Value" type="text"/>
+        </createTable>
+        <addPrimaryKey tableName="ContentSpecToPropertyTag_AUD" columnNames="ContentSpecToPropertyTagID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CS_PROP_TAG"
+                                 baseTableName="ContentSpecToPropertyTag_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CS_PROP_TAG"
+                                 baseTableName="ContentSpecToPropertyTag_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="ContentSpecToPropertyTag_AUD" indexName="ContentSpecID">
+            <column name="ContentSpecID"/>
+        </createIndex>
+        <createIndex tableName="ContentSpecToPropertyTag_AUD" indexName="PropertyTagID">
+            <column name="PropertyTagID"/>
+        </createIndex>
+
+        <!-- Content Spec Node to Tag Joiner Table -->
+        <createTable tableName="ContentSpecToTag">
+            <column name="ContentSpecToTagID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TagID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_ContentSpecID_CS_TAG"
+                                 baseTableName="ContentSpecToTag"
+                                 baseColumnNames="ContentSpecID"
+                                 referencedTableName="ContentSpec"
+                                 referencedColumnNames="ContentSpecID"/>
+        <addForeignKeyConstraint constraintName="FK_TagID_CS_TAG"
+                                 baseTableName="ContentSpecToTag"
+                                 baseColumnNames="TagID"
+                                 referencedTableName="Tag"
+                                 referencedColumnNames="TagID"/>
+
+        <createTable tableName="ContentSpecToTag_AUD">
+            <column name="ContentSpecToTagID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="ContentSpecID" type="int(11)"/>
+            <column name="TagID" type="int(11)"/>
+        </createTable>
+        <addPrimaryKey tableName="ContentSpecToTag_AUD" columnNames="ContentSpecToTagID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CS_TAG"
+                                 baseTableName="ContentSpecToTag_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CS_TAG"
+                                 baseTableName="ContentSpecToTag_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="ContentSpecToTag_AUD" indexName="ContentSpecID">
+            <column name="ContentSpecID"/>
+        </createIndex>
+        <createIndex tableName="ContentSpecToTag_AUD" indexName="TagID">
+            <column name="TagID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="2" author="lnewson@redhat.com" runInTransaction="true">
+        <comment>Add new ContentSpec Node and Joiner tables</comment>
+        <!-- Content Spec Node Tables-->
+        <createTable tableName="ContentSpecNode">
+            <column name="ContentSpecNodeID" autoIncrement="true" type="int(11)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="NodeTitle" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NodeTargetID" type="varchar(255)"/>
+            <column name="NodeType" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NodeCondition" type="varchar(255)"/>
+            <column name="AdditionalText" type="text"/>
+            <column name="EntityID" type="int(11)"/>
+            <column name="EntityRevision" type="int(11)"/>
+            <column name="ContentSpecID" type="int(11)"/>
+            <column name="ParentID" type="int(11)"/>
+            <column name="PreviousNodeID" type="int(11)"/>
+            <column name="NextNodeID" type="int(11)"/>
+        </createTable>
+        <addUniqueConstraint tableName="ContentSpecNode" columnNames="ContentSpecID, PreviousNodeID"/>
+        <addUniqueConstraint tableName="ContentSpecNode" columnNames="ContentSpecID, NextNodeID"/>
+        <addForeignKeyConstraint constraintName="FK_ContentSpecID_CS_NODE"
+                                 baseTableName="ContentSpecNode"
+                                 baseColumnNames="ContentSpecID"
+                                 referencedTableName="ContentSpec"
+                                 referencedColumnNames="ContentSpecID"/>
+        <addForeignKeyConstraint constraintName="FK_ParentID_CS_NODE"
+                                 baseTableName="ContentSpecNode"
+                                 baseColumnNames="ParentID"
+                                 referencedTableName="ContentSpecNode"
+                                 referencedColumnNames="ContentSpecNodeID"/>
+        <addForeignKeyConstraint constraintName="FK_PreviousNodeID_CS_NODE"
+                                 baseTableName="ContentSpecNode"
+                                 baseColumnNames="PreviousNodeID"
+                                 referencedTableName="ContentSpecNode"
+                                 referencedColumnNames="ContentSpecNodeID"/>
+        <addForeignKeyConstraint constraintName="FK_NextNodeID_CS_NODE"
+                                 baseTableName="ContentSpecNode"
+                                 baseColumnNames="NextNodeID"
+                                 referencedTableName="ContentSpecNode"
+                                 referencedColumnNames="ContentSpecNodeID"/>
+
+        <createTable tableName="ContentSpecNode_AUD">
+            <column name="ContentSpecNodeID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="NodeTitle" type="varchar(255)"/>
+            <column name="NodeTargetID" type="varchar(255)"/>
+            <column name="NodeType" type="tinyint"/>
+            <column name="NodeCondition" type="varchar(255)"/>
+            <column name="AdditionalText" type="text"/>
+            <column name="EntityID" type="int(11)"/>
+            <column name="EntityRevision" type="int(11)"/>
+            <column name="ContentSpecID" type="int(11)"/>
+            <column name="ParentID" type="int(11)"/>
+            <column name="PreviousNodeID" type="int(11)"/>
+            <column name="NextNodeID" type="int(11)"/>
+        </createTable>
+        <addPrimaryKey tableName="ContentSpecNode_AUD" columnNames="ContentSpecNodeID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CS_NODE"
+                                 baseTableName="ContentSpecNode_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CS_NODE"
+                                 baseTableName="ContentSpecNode_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="ContentSpecNode_AUD" indexName="ContentSpecID">
+            <column name="ContentSpecID"/>
+        </createIndex>
+        <createIndex tableName="ContentSpecNode_AUD" indexName="ParentID">
+            <column name="ParentID"/>
+        </createIndex>
+        <createIndex tableName="ContentSpecNode_AUD" indexName="PreviousNodeID">
+            <column name="PreviousNodeID"/>
+        </createIndex>
+        <createIndex tableName="ContentSpecNode_AUD" indexName="NextNodeID">
+            <column name="NextNodeID"/>
+        </createIndex>
+
+        <!-- Content Spec Node to Content Spec Node Joiner Table -->
+        <createTable tableName="CSNodeToCSNode">
+            <column name="CSNodeToCSNodeID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="MainNodeID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RelatedNodeID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RelationshipType" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Sort" type="int(11)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_MainNodeID_CS_NODE_TO_NODE"
+                                 baseTableName="CSNodeToCSNode"
+                                 baseColumnNames="MainNodeID"
+                                 referencedTableName="ContentSpecNode"
+                                 referencedColumnNames="ContentSpecNodeID"/>
+        <addForeignKeyConstraint constraintName="FK_RelatedNodeID_CS_NODE_TO_NODE"
+                                 baseTableName="CSNodeToCSNode"
+                                 baseColumnNames="RelatedNodeID"
+                                 referencedTableName="ContentSpecNode"
+                                 referencedColumnNames="ContentSpecNodeID"/>
+
+        <createTable tableName="CSNodeToCSNode_AUD">
+            <column name="CSNodeToCSNodeID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="MainNodeID" type="int(11)"/>
+            <column name="RelatedNodeID" type="int(11)"/>
+            <column name="RelationshipType" type="tinyint"/>
+            <column name="Sort" type="int(11)"/>
+        </createTable>
+        <addPrimaryKey tableName="CSNodeToCSNode_AUD" columnNames="CSNodeToCSNodeID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CS_NODE_TO_NODE"
+                                 baseTableName="CSNodeToCSNode_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CS_NODE_TO_NODE"
+                                 baseTableName="CSNodeToCSNode_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="CSNodeToCSNode_AUD" indexName="MainNodeID">
+            <column name="MainNodeID"/>
+        </createIndex>
+        <createIndex tableName="CSNodeToCSNode_AUD" indexName="RelatedNodeID">
+            <column name="RelatedNodeID"/>
+        </createIndex>
+
+        <!-- Content Spec Node to Property Tag Joiner Table -->
+        <createTable tableName="CSNodeToPropertyTag">
+            <column name="CSNodeToPropertyTagID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="CSNodeID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PropertyTagID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Value" type="text"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_CSNodeID_CS_NODE_PROP_TAG"
+                                 baseTableName="CSNodeToPropertyTag"
+                                 baseColumnNames="CSNodeID"
+                                 referencedTableName="ContentSpecNode"
+                                 referencedColumnNames="ContentSpecNodeID"/>
+        <addForeignKeyConstraint constraintName="FK_PropertyTagID_CS_NODE_PROP_TAG"
+                                 baseTableName="CSNodeToPropertyTag"
+                                 baseColumnNames="PropertyTagID"
+                                 referencedTableName="PropertyTag"
+                                 referencedColumnNames="PropertyTagID"/>
+
+        <createTable tableName="CSNodeToPropertyTag_AUD">
+            <column name="CSNodeToPropertyTagID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="CSNodeID" type="int(11)"/>
+            <column name="PropertyTagID" type="int(11)"/>
+            <column name="Value" type="text"/>
+        </createTable>
+        <addPrimaryKey tableName="CSNodeToPropertyTag_AUD" columnNames="CSNodeToPropertyTagID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CS_NODE_PROP_TAG"
+                                 baseTableName="CSNodeToPropertyTag_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CS_NODE_PROP_TAG"
+                                 baseTableName="CSNodeToPropertyTag_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="CSNodeToPropertyTag_AUD" indexName="CSNodeID">
+            <column name="CSNodeID"/>
+        </createIndex>
+        <createIndex tableName="CSNodeToPropertyTag_AUD" indexName="PropertyTagID">
+            <column name="PropertyTagID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="3" author="lnewson@redhat.com" runInTransaction="true">
+        <comment>Add new Translated Content Spec Tables</comment>
+        <!-- Translated Content Spec Tables -->
+        <createTable tableName="TranslatedContentSpec">
+            <column name="TranslatedContentSpecID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ContentSpecRevision" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="TranslatedContentSpec" columnNames="ContentSpecID, ContentSpecRevision"/>
+
+        <createTable tableName="TranslatedContentSpec_AUD">
+            <column name="TranslatedContentSpecID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="ContentSpecID" type="int(11)"/>
+            <column name="ContentSpecRevision" type="int(11)"/>
+        </createTable>
+        <addPrimaryKey tableName="TranslatedContentSpec_AUD" columnNames="TranslatedContentSpecID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_TRANSLATED_CS"
+                                 baseTableName="TranslatedContentSpec_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_TRANSLATED_CS"
+                                 baseTableName="TranslatedContentSpec_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="TranslatedContentSpec_AUD" indexName="ContentSpecID">
+            <column name="ContentSpecID"/>
+            <column name="ContentSpecRevision"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="4" author="lnewson@redhat.com" runInTransaction="true">
+        <comment>Add new Translated Content Spec Node Tables</comment>
+        <!-- Translated Content Spec Node Tables -->
+        <createTable tableName="TranslatedCSNode">
+            <column name="TranslatedCSNodeID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="CSNodeID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CSNodeRevision" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OriginalString" type="text"/>
+            <column name="TranslatedContentSpecID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="TranslatedCSNode" columnNames="CSNodeID, CSNodeRevision"/>
+        <addForeignKeyConstraint constraintName="FK_TranslatedContentSpecID_TRANSLATED_CS_NODE"
+                                 baseTableName="TranslatedCSNode"
+                                 baseColumnNames="TranslatedContentSpecID"
+                                 referencedTableName="TranslatedContentSpec"
+                                 referencedColumnNames="TranslatedContentSpecID"/>
+
+        <createTable tableName="TranslatedCSNode_AUD">
+            <column name="TranslatedCSNodeID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="CSNodeID" type="int(11)"/>
+            <column name="CSNodeRevision" type="int(11)"/>
+            <column name="OriginalString" type="text"/>
+            <column name="TranslatedContentSpecID" type="int(11)"/>
+        </createTable>
+        <addPrimaryKey tableName="TranslatedCSNode_AUD" columnNames="TranslatedCSNodeID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_TRANSLATED_CS_NODE"
+                                 baseTableName="TranslatedCSNode_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_TRANSLATED_CS_NODE"
+                                 baseTableName="TranslatedCSNode_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="TranslatedCSNode_AUD" indexName="TranslatedContentSpecID">
+            <column name="TranslatedContentSpecID"/>
+        </createIndex>
+
+        <!-- Translated Node String Tables -->
+        <createTable tableName="TranslatedCSNodeString">
+            <column name="TranslatedCSNodeStringID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="Locale" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TranslatedString" type="text"/>
+            <column name="FuzzyTranslation" type="bit(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TranslatedCSNodeID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeID_TRANSLATED_CS_NODE_STRING"
+                                 baseTableName="TranslatedCSNodeString"
+                                 baseColumnNames="TranslatedCSNodeStringID"
+                                 referencedTableName="TranslatedCSNode"
+                                 referencedColumnNames="TranslatedCSNodeID"/>
+
+        <createTable tableName="TranslatedCSNodeString_AUD">
+            <column name="TranslatedCSNodeStringID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="Locale" type="varchar(255)"/>
+            <column name="TranslatedString" type="text"/>
+            <column name="FuzzyTranslation" type="bit(1)"/>
+            <column name="TranslatedCSNodeID" type="int(11)"/>
+        </createTable>
+        <addPrimaryKey tableName="TranslatedCSNodeString_AUD" columnNames="TranslatedCSNodeStringID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_TRANSLATED_CS_NODE_STRING"
+                                 baseTableName="TranslatedCSNodeString_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_TRANSLATED_CS_NODE_STRING"
+                                 baseTableName="TranslatedCSNodeString_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="TranslatedCSNode_AUD" indexName="TranslatedCSNodeID">
+            <column name="TranslatedCSNodeID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="6" author="lnewson@redhat.com" runInTransaction="true">
+        <comment>Add column to TranslatedTopicData to reference Translated Content Spec Node</comment>
+        <addColumn tableName="TranslatedTopicData">
+            <column name="TranslatedCSNodeID" type="int(11)"/>
+        </addColumn>
+        <addColumn tableName="TranslatedTopicData">
+            <column name="TranslatedXMLCondition" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="TranslatedTopicData_AUD">
+            <column name="TranslatedCSNodeID" type="int(11)"/>
+        </addColumn>
+        <addColumn tableName="TranslatedTopicData_AUD">
+            <column name="TranslatedXMLCondition" type="varchar(255)"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeID_TRANSLATED_TOPIC_DATA"
+                                 baseTableName="TranslatedTopicData"
+                                 baseColumnNames="TranslatedCSNodeID"
+                                 referencedTableName="TranslatedCSNode"
+                                 referencedColumnNames="TranslatedCSNodeID"/>
+        <dropUniqueConstraint tableName="TranslatedTopicData" constraintName="TranslatedTopicID"/>
+        <addUniqueConstraint tableName="TranslatedTopicData" columnNames="TranslatedTopicID, TranslationLocale, TranslatedCSNodeID"
+                             constraintName="TranslatedTopicID"/>
+        <createIndex tableName="TranslatedTopicData_AUD" indexName="TranslatedCSNodeID">
+            <column name="TranslatedCSNodeID"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

@@ -25,6 +25,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -46,6 +50,8 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.contentspec.CSNode;
+import org.jboss.pressgang.ccms.model.contentspec.ContentSpec;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicIDComparator;
@@ -779,5 +785,20 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         }
 
         return translatedTopicDatas;
+    }
+
+    @Transient
+    public List<ContentSpec> getContentSpecs(final EntityManager entityManager) {
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ContentSpec> query = criteriaBuilder.createQuery(ContentSpec.class);
+        final Root<CSNode> root = query.from(CSNode.class);
+        query.select(root.get("contentSpec").as(ContentSpec.class));
+
+        final Predicate topicIdMatches = criteriaBuilder.equal(root.get("entityId"), getTopicId());
+        final Predicate topicTypeMatches = criteriaBuilder.equal(root.get("CSNodeType"), CommonConstants.CS_NODE_TOPIC);
+        query.where(criteriaBuilder.and(topicIdMatches, topicTypeMatches));
+
+        final List<ContentSpec> results = entityManager.createQuery(query).getResultList();
+        return results;
     }
 }

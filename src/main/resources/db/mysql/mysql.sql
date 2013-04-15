@@ -1130,7 +1130,7 @@ CREATE TABLE IF NOT EXISTS `Tag_AUD` (
 
 CREATE TABLE IF NOT EXISTS `Topic` (
   `TopicID`         INT(11)      NOT NULL AUTO_INCREMENT,
-  `TopicTitle`      VARCHAR(255) NOT NULL,
+  `TopicTitle`      VARCHAR(1024) NOT NULL,
   `TopicText`       TEXT,
   `TopicTimeStamp`  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `TopicXML`        MEDIUMTEXT,
@@ -1456,7 +1456,7 @@ CREATE TABLE IF NOT EXISTS `Topic_AUD` (
   `REVTYPE`         TINYINT(4) DEFAULT NULL,
   `TopicText`       TEXT,
   `TopicTimeStamp`  DATETIME DEFAULT NULL,
-  `TopicTitle`      VARCHAR(255) DEFAULT NULL,
+  `TopicTitle`      VARCHAR(1024) DEFAULT NULL,
   `TopicXML`        MEDIUMTEXT,
   `TopicLocale`     VARCHAR(255) DEFAULT NULL,
   `TopicXMLDoctype` INT(11) DEFAULT NULL,

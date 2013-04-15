@@ -1139,7 +1139,7 @@ CREATE TABLE IF NOT EXISTS `Topic` (
   PRIMARY KEY (`TopicID`),
   KEY `fk_Topic_1` (`TopicID`),
   KEY `FK4D3DD0FE2436E96` (`TopicID`),
-  KEY `TopicTitle` (`TopicTitle`)
+  KEY `TopicTitle` (`TopicTitle`(255))
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;

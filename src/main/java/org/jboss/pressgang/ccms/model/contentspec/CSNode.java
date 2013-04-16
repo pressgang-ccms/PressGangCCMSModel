@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -267,18 +268,8 @@ public class CSNode extends AuditedEntity implements Serializable {
 
     @Transient
     public void removeChild(final CSNode child) {
-        final List<CSNode> removeNodes = new ArrayList<CSNode>();
-
-        for (final CSNode childNode : children) {
-            if (childNode.equals(child)) {
-                removeNodes.add(childNode);
-            }
-        }
-
-        for (final CSNode removeNode : removeNodes) {
-            children.remove(removeNode);
-            removeNode.setParent(null);
-        }
+        children.remove(child);
+        child.setParent(null);
     }
 
     @Transient
@@ -391,9 +382,13 @@ public class CSNode extends AuditedEntity implements Serializable {
         }
 
         for (final CSNodeToPropertyTag mapping : removeList) {
-            csNodeToPropertyTags.remove(mapping);
-            mapping.getPropertyTag().getCSNodeToPropertyTags().remove(mapping);
+            removePropertyTag(mapping);
         }
+    }
+
+    public void removePropertyTag(final CSNodeToPropertyTag mapping) {
+        csNodeToPropertyTags.remove(mapping);
+        mapping.getPropertyTag().getCSNodeToPropertyTags().remove(mapping);
     }
 
     @Transient
@@ -450,6 +445,51 @@ public class CSNode extends AuditedEntity implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         validateNode();
+    }
+
+    @PreRemove
+    protected void preRemove() {
+        // Remove any children
+        for (final CSNode node : children) {
+            removeChild(node);
+        }
+
+        // Remove the parent
+        if (parent != null) {
+            parent.removeChild(this);
+        }
+
+        // Remove the node and all children
+        if (contentSpec != null) {
+            getContentSpec().removeChildAndAllChildren(this);
+        }
+
+        // Remove relationships
+        for (final CSNodeToCSNode node : relatedToNodes) {
+            removeRelatedTo(node);
+        }
+        for (final CSNodeToCSNode node : relatedFromNodes) {
+            removeRelatedFrom(node);
+        }
+
+        // Remove Property Tags
+        for (final CSNodeToPropertyTag propertyTag : csNodeToPropertyTags) {
+            removePropertyTag(propertyTag);
+        }
+
+        // Remove the next/previous
+        if (next != null && previous != null) {
+            next.setPrevious(previous);
+            previous.setNext(next);
+            next = null;
+            previous = null;
+        } else if (next != null) {
+            next.setPrevious(null);
+            next = null;
+        } else if (previous != null) {
+            previous.setNext(null);
+            previous = null;
+        }
     }
 
     @Transient

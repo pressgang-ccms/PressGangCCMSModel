@@ -193,7 +193,6 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
         for (final CSNode removeNode : removeNodes) {
             csNodes.remove(removeNode);
-            removeNode.setParent(null);
             removeNode.setContentSpec(null);
 
             // Remove all the children for the node

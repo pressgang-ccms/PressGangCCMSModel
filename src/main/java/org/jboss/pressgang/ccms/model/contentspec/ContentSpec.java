@@ -15,13 +15,18 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,6 +63,9 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     private String locale = CommonConstants.DEFAULT_LOCALE;
     private String condition = null;
     private Date lastPublished = null;
+    private Date lastModified = null;
+    private String errors = null;
+    private String failedContentSpec = null;
     private Set<ContentSpecToPropertyTag> contentSpecToPropertyTags = new HashSet<ContentSpecToPropertyTag>(0);
     private Set<CSNode> csNodes = new HashSet<CSNode>(0);
     private Set<ContentSpecToTag> contentSpecToTags = new HashSet<ContentSpecToTag>(0);
@@ -142,6 +150,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         this.contentSpecToTags = contentSpecToTags;
     }
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "LastPublished")
     public Date getLastPublished() {
         return lastPublished;
@@ -149,6 +158,42 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     public void setLastPublished(Date lastPublished) {
         this.lastPublished = lastPublished;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LastModified")
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    @Column(name = "Errors", columnDefinition = "TEXT")
+    @Size(max = 65535)
+    public String getErrors() {
+        return errors;
+    }
+
+    public void setErrors(String errors) {
+        this.errors = errors;
+    }
+
+    @Column(name = "FailedSpec", columnDefinition = "MEDIUMTEXT")
+    @Size(max = 16777215)
+    public String getFailedContentSpec() {
+        return failedContentSpec;
+    }
+
+    public void setFailedContentSpec(String failedContentSpec) {
+        this.failedContentSpec = failedContentSpec;
+    }
+
+    @PrePersist
+    @PreUpdate
+    protected void setLastModified() {
+        lastModified = new Date();
     }
 
     @Transient

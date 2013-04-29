@@ -167,7 +167,7 @@ public class TranslatedCSNode extends AuditedEntity implements java.io.Serializa
     }
 
     @Transient
-    public List<TranslatedCSNodeString> getCSTranslatedNodeStringsArray() {
+    public List<TranslatedCSNodeString> getTranslatedCSNodeStringsArray() {
         return new ArrayList<TranslatedCSNodeString>(getTranslatedCSNodeStrings());
     }
 

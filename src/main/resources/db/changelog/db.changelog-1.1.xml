@@ -15,10 +15,13 @@
                 <constraints nullable="false"/>
             </column>
             <column name="LastPublished" type="datetime"/>
+            <column name="LastModified" type="datetime"/>
             <column name="Locale" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="GlobalCondition" type="varchar(255)"/>
+            <column name="Errors" type="TEXT"/>
+            <column name="FailedSpec" type="MEDIUMTEXT"/>
         </createTable>
 
         <createTable tableName="ContentSpec_AUD">
@@ -32,8 +35,11 @@
             <column name="REVEND" type="int(11)"/>
             <column name="ContentSpecType" type="tinyint"/>
             <column name="LastPublished" type="datetime"/>
+            <column name="LastModified" type="datetime"/>
             <column name="Locale" type="varchar(255)"/>
             <column name="GlobalCondition" type="varchar(255)"/>
+            <column name="Errors" type="TEXT"/>
+            <column name="FailedSpec" type="MEDIUMTEXT"/>
         </createTable>
         <addPrimaryKey tableName="ContentSpec_AUD" columnNames="ContentSpecID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_CS"
@@ -46,59 +52,6 @@
                                  baseColumnNames="REVEND"
                                  referencedTableName="REVINFO"
                                  referencedColumnNames="REV"/>
-
-        <!-- Content Spec To Project Joiner Tables -->
-        <createTable tableName="ContentSpecToProject">
-            <column name="ContentSpecToProjectID" type="int(11)" autoIncrement="true">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="ContentSpecID" type="int(11)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ProjectID" type="int(11)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addForeignKeyConstraint constraintName="FK_ContentSpecID"
-                                 baseTableName="ContentSpecToProject"
-                                 baseColumnNames="ContentSpecID"
-                                 referencedTableName="ContentSpec"
-                                 referencedColumnNames="ContentSpecID"/>
-        <addForeignKeyConstraint constraintName="FK_ProjectID"
-                                 baseTableName="ContentSpecToProject"
-                                 baseColumnNames="ProjectID"
-                                 referencedTableName="Project"
-                                 referencedColumnNames="ProjectID"/>
-
-        <createTable tableName="ContentSpecToProject_AUD">
-            <column name="ContentSpecToProjectID" type="int(11)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REV" type="int(11)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="ContentSpecID" type="int(11)"/>
-            <column name="ProjectID" type="int(11)"/>
-        </createTable>
-        <addPrimaryKey tableName="ContentSpecToProject_AUD" columnNames="ContentSpecToProjectID, REV"/>
-        <addForeignKeyConstraint constraintName="FK_REV_CS_PROJECT"
-                                 baseTableName="ContentSpecToProject_AUD"
-                                 baseColumnNames="REV"
-                                 referencedTableName="REVINFO"
-                                 referencedColumnNames="REV"/>
-        <addForeignKeyConstraint constraintName="FK_REVEND_CS_PROJECT"
-                                 baseTableName="ContentSpecToProject_AUD"
-                                 baseColumnNames="REVEND"
-                                 referencedTableName="REVINFO"
-                                 referencedColumnNames="REV"/>
-        <createIndex tableName="ContentSpecToProject_AUD" indexName="ContentSpecID">
-            <column name="ContentSpecID"/>
-        </createIndex>
-        <createIndex tableName="ContentSpecToProject_AUD" indexName="ProjectID">
-            <column name="ProjectID"/>
-        </createIndex>
 
         <!-- Content Spec Node to Property Tag Joiner Table -->
         <createTable tableName="ContentSpecToPropertyTag">
@@ -229,11 +182,8 @@
             <column name="EntityRevision" type="int(11)"/>
             <column name="ContentSpecID" type="int(11)"/>
             <column name="ParentID" type="int(11)"/>
-            <column name="PreviousNodeID" type="int(11)"/>
             <column name="NextNodeID" type="int(11)"/>
         </createTable>
-        <addUniqueConstraint tableName="ContentSpecNode" columnNames="ContentSpecID, PreviousNodeID"/>
-        <addUniqueConstraint tableName="ContentSpecNode" columnNames="ContentSpecID, NextNodeID"/>
         <addForeignKeyConstraint constraintName="FK_ContentSpecID_CS_NODE"
                                  baseTableName="ContentSpecNode"
                                  baseColumnNames="ContentSpecID"
@@ -242,11 +192,6 @@
         <addForeignKeyConstraint constraintName="FK_ParentID_CS_NODE"
                                  baseTableName="ContentSpecNode"
                                  baseColumnNames="ParentID"
-                                 referencedTableName="ContentSpecNode"
-                                 referencedColumnNames="ContentSpecNodeID"/>
-        <addForeignKeyConstraint constraintName="FK_PreviousNodeID_CS_NODE"
-                                 baseTableName="ContentSpecNode"
-                                 baseColumnNames="PreviousNodeID"
                                  referencedTableName="ContentSpecNode"
                                  referencedColumnNames="ContentSpecNodeID"/>
         <addForeignKeyConstraint constraintName="FK_NextNodeID_CS_NODE"
@@ -273,7 +218,6 @@
             <column name="EntityRevision" type="int(11)"/>
             <column name="ContentSpecID" type="int(11)"/>
             <column name="ParentID" type="int(11)"/>
-            <column name="PreviousNodeID" type="int(11)"/>
             <column name="NextNodeID" type="int(11)"/>
         </createTable>
         <addPrimaryKey tableName="ContentSpecNode_AUD" columnNames="ContentSpecNodeID, REV"/>
@@ -292,9 +236,6 @@
         </createIndex>
         <createIndex tableName="ContentSpecNode_AUD" indexName="ParentID">
             <column name="ParentID"/>
-        </createIndex>
-        <createIndex tableName="ContentSpecNode_AUD" indexName="PreviousNodeID">
-            <column name="PreviousNodeID"/>
         </createIndex>
         <createIndex tableName="ContentSpecNode_AUD" indexName="NextNodeID">
             <column name="NextNodeID"/>
@@ -570,14 +511,10 @@
         <comment>Add column to TranslatedTopicData to reference Translated Content Spec Node</comment>
         <addColumn tableName="TranslatedTopicData">
             <column name="TranslatedCSNodeID" type="int(11)"/>
-        </addColumn>
-        <addColumn tableName="TranslatedTopicData">
             <column name="TranslatedXMLCondition" type="varchar(255)"/>
         </addColumn>
         <addColumn tableName="TranslatedTopicData_AUD">
             <column name="TranslatedCSNodeID" type="int(11)"/>
-        </addColumn>
-        <addColumn tableName="TranslatedTopicData_AUD">
             <column name="TranslatedXMLCondition" type="varchar(255)"/>
         </addColumn>
         <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeID_TRANSLATED_TOPIC_DATA"

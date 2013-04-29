@@ -13,13 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -51,8 +51,7 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "ContentSpecNode", uniqueConstraints = {@UniqueConstraint(columnNames = {"ContentSpecID", "NextNodeID"}), @UniqueConstraint(
-        columnNames = {"ContentSpecID", "PreviousNodeID"})})
+@Table(name = "ContentSpecNode")
 public class CSNode extends AuditedEntity implements Serializable {
 
     private static final long serialVersionUID = -5074781793940947664L;
@@ -159,25 +158,50 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @JoinColumn(name = "NextNodeID")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     public CSNode getNext() {
         return next;
     }
 
     public void setNext(CSNode next) {
-        this.next = next;
+        setNextInternal(next);
+        if (next != null) {
+            next.setPreviousInternal(this);
+        }
     }
 
-    @JoinColumn(name = "PreviousNodeID")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Transient
+    public void setNextInternal(CSNode next) {
+        if (this.next != next) {
+            if (this.next != null) {
+                this.next.previous = null;
+            }
+            this.next = next;
+        }
+    }
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "next")
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     public CSNode getPrevious() {
         return previous;
     }
 
     public void setPrevious(CSNode previous) {
-        this.previous = previous;
+        setPreviousInternal(previous);
+        if (previous != null) {
+            previous.setNextInternal(this);
+        }
+    }
+
+    @Transient
+    protected void setPreviousInternal(CSNode previous) {
+        if (this.previous != previous) {
+            if (this.previous != null) {
+                this.previous.next = null;
+            }
+            this.previous = previous;
+        }
     }
 
     @Column(name = "EntityID")
@@ -438,17 +462,34 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @PrePersist
-    protected void prePersist() {
-        validateNode();
-    }
-
     @PreUpdate
-    protected void preUpdate() {
+    protected void preSave() {
         validateNode();
+
+        // Set the content specs last modified date if one of it's nodes change
+        if (contentSpec != null) {
+            contentSpec.setLastModified();
+        }
     }
 
     @PreRemove
     protected void preRemove() {
+        // Remove the next/previous
+        if (next != null && previous != null) {
+            if (next.previous == this) {
+                next.previous = this.previous;
+            }
+            if (previous.next == this) {
+                previous.next = this.next;
+            }
+        } else if (next != null && next.previous == this) {
+            next.previous = null;
+        } else if (previous != null && previous.next == this) {
+            previous.next = null;
+        }
+        next = null;
+        previous = null;
+        
         // Remove any children
         for (final CSNode node : children) {
             removeChild(node);
@@ -475,20 +516,6 @@ public class CSNode extends AuditedEntity implements Serializable {
         // Remove Property Tags
         for (final CSNodeToPropertyTag propertyTag : csNodeToPropertyTags) {
             removePropertyTag(propertyTag);
-        }
-
-        // Remove the next/previous
-        if (next != null && previous != null) {
-            next.setPrevious(previous);
-            previous.setNext(next);
-            next = null;
-            previous = null;
-        } else if (next != null) {
-            next.setPrevious(null);
-            next = null;
-        } else if (previous != null) {
-            previous.setNext(null);
-            previous = null;
         }
     }
 

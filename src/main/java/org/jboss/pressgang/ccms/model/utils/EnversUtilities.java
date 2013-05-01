@@ -35,14 +35,22 @@ public class EnversUtilities {
      * @return Returns a collection of revisions
      */
     public static <T extends AuditedEntity> Map<Number, T> getRevisionEntities(final EntityManager entityManager, final T entity) {
+        return getRevisionEntities(entityManager, (Class<T>) entity.getClass(), entity.getId());
+    }
+
+    /**
+     * @return Returns a collection of revisions
+     */
+    public static <T extends AuditedEntity> Map<Number, T> getRevisionEntities(final EntityManager entityManager,
+            final Class<T> entityClass, final Integer id) {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
-        final List<Number> revisions = reader.getRevisions(entity.getClass(), entity.getId());
+        final List<Number> revisions = reader.getRevisions(entityClass, id);
         Collections.sort(revisions, Collections.reverseOrder());
 
         /* Use a LinkedHashMap to preserver the order */
         final Map<Number, T> retValue = new LinkedHashMap<Number, T>();
         for (final Number revision : revisions)
-            retValue.put(revision, getRevision(reader, entity, revision));
+            retValue.put(revision, getRevision(reader, entityClass, id, revision));
 
         return retValue;
     }
@@ -64,12 +72,28 @@ public class EnversUtilities {
      */
     public static <T extends AuditedEntity> T getRevision(final EntityManager entityManager, final T entity, final Number revision) {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
-        return getRevision(reader, entity, revision);
+        return getRevision(reader, (Class<T>) entity.getClass(), entity.getId(), revision);
+    }
+
+    /**
+     * @param entityManager
+     * @param revision
+     * @return
+     */
+    public static <T extends AuditedEntity> T getRevision(final EntityManager entityManager, final Class<T> entityClass, final Integer id,
+            final Number revision) {
+        final AuditReader reader = AuditReaderFactory.get(entityManager);
+        return getRevision(reader, entityClass, id, revision);
+    }
+
+    private static <T extends AuditedEntity> T getRevision(final AuditReader reader, final T entity, final Number revision) {
+        return getRevision(reader, (Class<T>) entity.getClass(), entity.getId(), revision);
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends AuditedEntity> T getRevision(final AuditReader reader, final T entity, final Number revision) {
-        final T revEntity = (T) reader.find(entity.getClass(), entity.getId(), revision);
+    private static <T extends AuditedEntity> T getRevision(final AuditReader reader, final Class<T> entityClass, final Integer id,
+            final Number revision) {
+        final T revEntity = (T) reader.find(entityClass, id, revision);
         if (revEntity == null) return null;
 
         final Date revisionLastModified = reader.getRevisionDate(revision);

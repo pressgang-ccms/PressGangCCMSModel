@@ -214,15 +214,17 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         final List<CSNode> removeNodes = new ArrayList<CSNode>();
 
         for (final CSNode childNode : csNodes) {
-            if (childNode.getId().equals(child.getId())) {
+            if (childNode.getId() != null && childNode.getId().equals(child.getId())) {
                 removeNodes.add(childNode);
             }
         }
 
         for (final CSNode removeNode : removeNodes) {
             csNodes.remove(removeNode);
-            removeNode.setParent(null);
             removeNode.setContentSpec(null);
+            if (removeNode.getParent() != null) {
+                removeNode.getParent().removeChild(child);
+            }
         }
     }
 
@@ -230,8 +232,9 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     public void removeChildAndAllChildren(final CSNode child) {
         final List<CSNode> removeNodes = new ArrayList<CSNode>();
 
+        // Find the node (or possibly nodes) to remove
         for (final CSNode childNode : csNodes) {
-            if (childNode.getId().equals(child.getId())) {
+            if (childNode.getId() != null && childNode.getId().equals(child.getId())) {
                 removeNodes.add(childNode);
             }
         }

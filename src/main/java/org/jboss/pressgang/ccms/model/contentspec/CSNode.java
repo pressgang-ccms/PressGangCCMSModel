@@ -29,6 +29,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -165,6 +166,16 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     public void setNext(CSNode next) {
+        this.next = next;
+    }
+
+    /**
+     * Sets the Next Node and cleans up any old references.
+     *
+     * @param next The next node.
+     */
+    @Transient
+    public void setNextAndClean(CSNode next) {
         setNextInternal(next);
         if (next != null) {
             next.setPreviousInternal(this);
@@ -172,7 +183,7 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @Transient
-    public void setNextInternal(CSNode next) {
+    protected void setNextInternal(CSNode next) {
         if (this.next != next) {
             if (this.next != null) {
                 this.next.previous = null;
@@ -188,6 +199,16 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     public void setPrevious(CSNode previous) {
+        this.previous = previous;
+    }
+
+    /**
+     * Sets the Previous Node and cleans up any old references.
+     *
+     * @param previous The previous node.
+     */
+    @Transient
+    public void setPreviousAndClean(CSNode previous) {
         setPreviousInternal(previous);
         if (previous != null) {
             previous.setNextInternal(this);
@@ -242,7 +263,7 @@ public class CSNode extends AuditedEntity implements Serializable {
         this.children = children;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mainNode", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mainNode", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<CSNodeToCSNode> getRelatedToNodes() {
@@ -253,7 +274,7 @@ public class CSNode extends AuditedEntity implements Serializable {
         this.relatedFromNodes = relatedFromNodes;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "relatedNode", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "relatedNode", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Set<CSNodeToCSNode> getRelatedFromNodes() {
@@ -294,12 +315,18 @@ public class CSNode extends AuditedEntity implements Serializable {
     public void removeChild(final CSNode child) {
         children.remove(child);
         child.setParent(null);
+        if (contentSpec != null) {
+            contentSpec.removeChild(child);
+        }
     }
 
     @Transient
     public void addChild(final CSNode child) {
         children.add(child);
         child.setParent(this);
+        if (contentSpec != null) {
+            this.contentSpec.addChild(child);
+        }
     }
 
     @Transient
@@ -491,8 +518,11 @@ public class CSNode extends AuditedEntity implements Serializable {
         previous = null;
         
         // Remove any children
-        for (final CSNode node : children) {
-            removeChild(node);
+        final Iterator<CSNode> childIter = children.iterator();
+        while (childIter.hasNext()) {
+            final CSNode child = childIter.next();
+            child.setParent(null);
+            childIter.remove();
         }
 
         // Remove the parent

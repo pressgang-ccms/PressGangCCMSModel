@@ -86,10 +86,6 @@ public class EnversUtilities {
         return getRevision(reader, entityClass, id, revision);
     }
 
-    private static <T extends AuditedEntity> T getRevision(final AuditReader reader, final T entity, final Number revision) {
-        return getRevision(reader, (Class<T>) entity.getClass(), entity.getId(), revision);
-    }
-
     @SuppressWarnings("unchecked")
     private static <T extends AuditedEntity> T getRevision(final AuditReader reader, final Class<T> entityClass, final Integer id,
             final Number revision) {
@@ -105,8 +101,13 @@ public class EnversUtilities {
     }
 
     public static <T extends AuditedEntity> Number getLatestRevision(final EntityManager entityManager, final T entity) {
+        return getLatestRevision(entityManager, entity.getClass(), entity.getId());
+    }
+
+    public static <T extends AuditedEntity> Number getLatestRevision(final EntityManager entityManager, final Class<T> entityClass,
+            final Integer id) {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
-        final List<Number> retValue = reader.getRevisions(entity.getClass(), entity.getId());
+        final List<Number> retValue = reader.getRevisions(entityClass, id);
         Collections.sort(retValue, Collections.reverseOrder());
         return retValue.size() != 0 ? retValue.get(0) : -1;
     }

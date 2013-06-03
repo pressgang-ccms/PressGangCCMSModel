@@ -173,4 +173,14 @@ public class ImageFile extends AuditedEntity implements java.io.Serializable {
             }
         }
     }
+
+    public void addLanguageImage(final LanguageImage languageImage) {
+        languageImages.add(languageImage);
+        languageImage.setImageFile(this);
+    }
+
+    public void removeLanguageImage(final LanguageImage languageImage) {
+        languageImages.remove(languageImage);
+        languageImage.setImageFile(null);
+    }
 }

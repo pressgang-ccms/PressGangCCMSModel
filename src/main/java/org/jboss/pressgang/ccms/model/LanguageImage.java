@@ -29,6 +29,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.utils.SVGIcon;
@@ -226,7 +227,8 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     }
 
     @Column(name = "Locale", nullable = false)
-    @NotNull
+    @NotNull(message = "languageimage.locale.notBlank")
+    @NotBlank(message = "languageimage.locale.notBlank")
     public String getLocale() {
         return locale;
     }

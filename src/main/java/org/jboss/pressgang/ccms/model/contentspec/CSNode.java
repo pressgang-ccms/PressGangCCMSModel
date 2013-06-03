@@ -145,6 +145,10 @@ public class CSNode extends AuditedEntity implements Serializable {
 
     public void setContentSpec(ContentSpec contentSpec) {
         this.contentSpec = contentSpec;
+
+        for (final CSNode child : children) {
+            child.setContentSpec(contentSpec);
+        }
     }
 
     @JoinColumn(name = "ParentID")

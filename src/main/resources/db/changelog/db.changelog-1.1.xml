@@ -530,4 +530,96 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="7" author="lnewson@redhat.com" runInTransaction="true">
+        <comment>Add new File Tables</comment>
+        <!-- File Table -->
+        <createTable tableName="File">
+            <column name="FileID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="FileName" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FilePath" type="varchar(512)"/>
+            <column name="Description" type="varchar(512)"/>
+        </createTable>
+
+        <!-- File Revision Table -->
+        <createTable tableName="File_AUD">
+            <column name="FileID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="FileName" type="varchar(255)"/>
+            <column name="FilePath" type="varchar(512)"/>
+            <column name="Description" type="varchar(512)"/>
+        </createTable>
+        <addPrimaryKey tableName="File_AUD" columnNames="FileID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_FILE"
+                                 baseTableName="File_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_FILE"
+                                 baseTableName="File_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+    </changeSet>
+
+    <changeSet id="8" author="lnewson@redhat.com" runInTransaction="true">
+        <comment>Add new Language File Tables</comment>
+        <!-- Language File Table -->
+        <createTable tableName="LanguageFile">
+            <column name="LanguageFileID" type="int(11)" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="Locale" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FileData" type="longblob"/>
+            <column name="FileID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_FileID_LANGUAGE_FILE"
+                                 baseTableName="LanguageFile"
+                                 baseColumnNames="FileID"
+                                 referencedTableName="File"
+                                 referencedColumnNames="FileID"/>
+
+        <!-- Language File Revision Table -->
+        <createTable tableName="LanguageFile_AUD">
+            <column name="LanguageFileID" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="REVEND" type="int(11)"/>
+            <column name="Locale" type="varchar(20)"/>
+            <column name="FileData" type="longblob"/>
+            <column name="FileID" type="int(11)"/>
+        </createTable>
+        <addPrimaryKey tableName="LanguageFile_AUD" columnNames="LanguageFileID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_LANGUAGE_FILE"
+                                 baseTableName="LanguageFile_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_LANGUAGE_FILE"
+                                 baseTableName="LanguageFile_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="LanguageFile_AUD" indexName="FileID">
+            <column name="FileID"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>

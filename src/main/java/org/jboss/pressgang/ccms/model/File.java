@@ -41,6 +41,7 @@ public class File extends AuditedEntity implements Serializable {
     private String fileName = null;
     private String filePath = null;
     private String description = null;
+    private Boolean explodeArchive = false;
     private Set<LanguageFile> languageFiles = new HashSet<LanguageFile>();
 
     @Override
@@ -80,10 +81,10 @@ public class File extends AuditedEntity implements Serializable {
     public void setFilePath(String filePath) {
         if (filePath == null) {
             this.filePath = null;
-        } else if (filePath.endsWith("/") || filePath.endsWith("\\")) {
-            this.filePath = filePath;
+        } else if (filePath.trim().isEmpty() || filePath.endsWith("/") || filePath.endsWith("\\")) {
+            this.filePath = filePath.trim();
         } else {
-            this.filePath = filePath + "/";
+            this.filePath = filePath.trim() + "/";
         }
     }
 
@@ -93,8 +94,17 @@ public class File extends AuditedEntity implements Serializable {
         return description;
     }
 
-    public void setDescription(final String filterDescription) {
-        this.description = filterDescription;
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    @Column(name = "ExplodeArchive", columnDefinition = "BIT", length = 1)
+    public Boolean getExplodeArchive() {
+        return explodeArchive;
+    }
+
+    public void setExplodeArchive(Boolean explodeArchive) {
+        this.explodeArchive = explodeArchive;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "file", cascade = CascadeType.ALL, orphanRemoval = true)

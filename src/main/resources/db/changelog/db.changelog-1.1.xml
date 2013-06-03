@@ -542,6 +542,7 @@
             </column>
             <column name="FilePath" type="varchar(512)"/>
             <column name="Description" type="varchar(512)"/>
+            <column name="ExplodeArchive" type="bit(1)" defaultValue="0"/>
         </createTable>
 
         <!-- File Revision Table -->
@@ -557,6 +558,7 @@
             <column name="FileName" type="varchar(255)"/>
             <column name="FilePath" type="varchar(512)"/>
             <column name="Description" type="varchar(512)"/>
+            <column name="ExplodeArchive" type="bit(1)"/>
         </createTable>
         <addPrimaryKey tableName="File_AUD" columnNames="FileID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_FILE"

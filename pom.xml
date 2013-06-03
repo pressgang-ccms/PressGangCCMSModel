@@ -21,7 +21,7 @@
     <properties>
         <pressgang.ccms.version>1.1-SNAPSHOT</pressgang.ccms.version>
         <jboss.bom.version>1.0.2.Final</jboss.bom.version>
-        <batik.version>1.6-1</batik.version>
+        <batik.version>1.7</batik.version>
         <lambdaj.version>2.3.3</lambdaj.version>
         <jericho.version>3.2</jericho.version>
         <htmlcleaner.version>2.2</htmlcleaner.version>
@@ -110,13 +110,13 @@
         <!-- Logging Libraries -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
 
         <!-- Other Dependencies -->
         <dependency>
-            <groupId>batik</groupId>
+            <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
             <version>${batik.version}</version>
         </dependency>

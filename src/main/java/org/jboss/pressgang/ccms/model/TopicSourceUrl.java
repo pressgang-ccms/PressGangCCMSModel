@@ -27,6 +27,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.slf4j.Logger;
@@ -117,6 +119,45 @@ public class TopicSourceUrl extends AuditedEntity implements java.io.Serializabl
 
     public void setTopicToTopicSourceUrls(final Set<TopicToTopicSourceUrl> topicToTopicSourceUrls) {
         this.topicToTopicSourceUrls = topicToTopicSourceUrls;
+    }
+
+    /**
+     * If the user has left the title field empty, try to download the page and get the title from the HTML.
+     */
+    @PrePersist
+    @PreUpdate
+    private void setTitle() {
+        try {
+            if (title == null || title.trim().length() == 0 && (sourceUrl != null && !sourceUrl.trim().isEmpty())) {
+                /* Some common string replacements to make in the titles */
+                final Map<String, String> replaceList = new HashMap<String, String>();
+                replaceList.put("&nbsp;", " ");
+
+                // create an instance of HtmlCleaner
+                final HtmlCleaner cleaner = new HtmlCleaner();
+
+                // clean the source url
+                final TagNode node = cleaner.clean(new URL(getSourceUrl()));
+
+                // find the first title node
+                final TagNode title = node.findElementByName("title", true);
+
+                if (title != null) {
+                    // clean up the title
+                    String titleText = title.getText().toString();
+
+                    for (final String replace : replaceList.keySet())
+                        titleText = titleText.replaceAll(replace, replaceList.get(replace));
+
+                    titleText = titleText.trim();
+
+                    // assign it to the entity
+                    this.title = titleText;
+                }
+            }
+        } catch (final IOException ex) {
+            log.error("Probably a problem with HTMLCleaner", ex);
+        }
     }
 
     @Override

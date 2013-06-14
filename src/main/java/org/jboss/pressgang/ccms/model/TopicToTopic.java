@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -63,7 +64,7 @@ public class TopicToTopic extends AuditedEntity implements java.io.Serializable 
         this.mainTopic = mainTopic;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "RelatedTopicID", nullable = false)
     @NotNull
     public Topic getRelatedTopic() {

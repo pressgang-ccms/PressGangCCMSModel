@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,7 +62,7 @@ public class TagToCategory extends AuditedEntity implements java.io.Serializable
         this.tagToCategoryId = tagToCategoryId;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "TagID", nullable = false)
     @NotNull
     public Tag getTag() {
@@ -72,7 +73,7 @@ public class TagToCategory extends AuditedEntity implements java.io.Serializable
         this.tag = tag;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "CategoryID", nullable = false)
     @NotNull
     public Category getCategory() {

@@ -85,7 +85,7 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
         this.translatedXmlRenderedUpdated = translatedXmlRenderedUpdated;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "TranslatedTopicID", nullable = false)
     @NotNull
     public TranslatedTopic getTranslatedTopic() {

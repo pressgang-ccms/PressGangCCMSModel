@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -53,7 +54,7 @@ public class TranslatedTopicString extends AuditedEntity implements java.io.Seri
         this.translatedTopicStringID = translatedTopicStringID;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "TranslatedTopicDataID", nullable = false)
     @NotNull
     public TranslatedTopicData getTranslatedTopicData() {

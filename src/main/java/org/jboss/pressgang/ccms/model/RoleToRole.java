@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -57,7 +58,7 @@ public class RoleToRole extends AuditedEntity implements java.io.Serializable {
         this.roleToRoleId = roleToRoleId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "RelationshipType", nullable = false)
     @NotNull
     public RoleToRoleRelationship getRoleToRoleRelationship() {
@@ -68,7 +69,7 @@ public class RoleToRole extends AuditedEntity implements java.io.Serializable {
         this.roleToRoleRelationship = roleToRoleRelationship;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "PrimaryRole", nullable = false)
     @NotNull
     public Role getPrimaryRole() {
@@ -79,7 +80,7 @@ public class RoleToRole extends AuditedEntity implements java.io.Serializable {
         this.primaryRole = primaryRole;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "SecondaryRole", nullable = false)
     @NotNull
     public Role getSecondaryRole() {

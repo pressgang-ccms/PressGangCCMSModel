@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -49,7 +50,7 @@ public class TagToPropertyTag extends ToPropertyTag<TagToPropertyTag> implements
         this.tagToPropertyTagID = tagToPropertyTagID;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "TagID", nullable = false)
     @NotNull
     public Tag getTag() {
@@ -61,7 +62,7 @@ public class TagToPropertyTag extends ToPropertyTag<TagToPropertyTag> implements
     }
 
     @Override
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "PropertyTagID", nullable = false)
     @NotNull
     public PropertyTag getPropertyTag() {

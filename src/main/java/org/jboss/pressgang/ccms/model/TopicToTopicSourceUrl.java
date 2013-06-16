@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,7 +55,7 @@ public class TopicToTopicSourceUrl extends AuditedEntity implements java.io.Seri
         this.topicToTopicSourceUrlid = topicToTopicSourceUrlid;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "TopicSourceURLID", nullable = false)
     @NotNull
     public TopicSourceUrl getTopicSourceUrl() {
@@ -81,5 +82,4 @@ public class TopicToTopicSourceUrl extends AuditedEntity implements java.io.Seri
     public Integer getId() {
         return topicToTopicSourceUrlid;
     }
-
 }

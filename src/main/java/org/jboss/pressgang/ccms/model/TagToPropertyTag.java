@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -49,7 +51,7 @@ public class TagToPropertyTag extends ToPropertyTag<TagToPropertyTag> implements
         this.tagToPropertyTagID = tagToPropertyTagID;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "TagID", nullable = false)
     @NotNull
     public Tag getTag() {
@@ -61,7 +63,7 @@ public class TagToPropertyTag extends ToPropertyTag<TagToPropertyTag> implements
     }
 
     @Override
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "PropertyTagID", nullable = false)
     @NotNull
     public PropertyTag getPropertyTag() {
@@ -100,9 +102,12 @@ public class TagToPropertyTag extends ToPropertyTag<TagToPropertyTag> implements
              */
             final Long count;
             if (revision == null) {
-                final String query = TagToPropertyTag.SELECT_SIZE_QUERY + " WHERE tagToPropertyTag.propertyTag = " + propertyTag.getId()
-                        + " AND tagToPropertyTag.value = '" + getValue() + "'";
-                count = (Long) entityManager.createQuery(query).getSingleResult();
+                final String query = TagToPropertyTag.SELECT_SIZE_QUERY + " WHERE tagToPropertyTag.propertyTag = :propertyTagId AND " +
+                        "tagToPropertyTag.value = :value";
+                final Query entityQuery = entityManager.createQuery(query);
+                entityQuery.setParameter("value", getValue());
+                entityQuery.setParameter("propertyTagId", getPropertyTag().getId());
+                count = (Long) entityQuery.getSingleResult();
             } else {
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
                 final AuditQueryCreator queryCreator = reader.createQuery();

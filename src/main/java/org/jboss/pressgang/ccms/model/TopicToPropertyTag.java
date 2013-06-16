@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -49,7 +51,7 @@ public class TopicToPropertyTag extends ToPropertyTag<TopicToPropertyTag> implem
         this.TopicToPropertyTagID = TopicToPropertyTagID;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "TopicID", nullable = false)
     @NotNull
     public Topic getTopic() {
@@ -61,7 +63,7 @@ public class TopicToPropertyTag extends ToPropertyTag<TopicToPropertyTag> implem
     }
 
     @Override
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "PropertyTagID", nullable = false)
     @NotNull
     public PropertyTag getPropertyTag() {
@@ -99,15 +101,18 @@ public class TopicToPropertyTag extends ToPropertyTag<TopicToPropertyTag> implem
              */
             final Long count;
             if (revision == null) {
-                final String query = TopicToPropertyTag.SELECT_SIZE_QUERY + " WHERE topicToPropertyTag.propertyTag = " + propertyTag
-                        .getId() + " AND topicToPropertyTag.value = '" + getValue() + "'";
-                count = (Long) entityManager.createQuery(query).getSingleResult();
+                final String query = TopicToPropertyTag.SELECT_SIZE_QUERY + " WHERE topicToPropertyTag.propertyTag = :propertyTagId AND " +
+                        "topicToPropertyTag.value = :value";
+                final Query entityQuery = entityManager.createQuery(query);
+                entityQuery.setParameter("value", getValue());
+                entityQuery.setParameter("propertyTagId", getPropertyTag().getId());
+                count = (Long) entityQuery.getSingleResult();
             } else {
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
                 final AuditQueryCreator queryCreator = reader.createQuery();
                 final AuditQuery query = queryCreator.forEntitiesAtRevision(TopicToPropertyTag.class, revision).addProjection(
                         AuditEntity.id().count("topicToPropertyTagID")).add(
-                        AuditEntity.relatedId("propertyTag").eq(propertyTag.getId())).add(AuditEntity.property("value").eq(getValue()));
+                        AuditEntity.relatedId("propertyTag").eq(getPropertyTag().getId())).add(AuditEntity.property("value").eq(getValue()));
                 query.setCacheable(true);
                 count = (Long) query.getSingleResult();
             }

@@ -5,6 +5,7 @@ package org.jboss.pressgang.ccms.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -58,7 +59,7 @@ public class TagToTag extends AuditedEntity implements java.io.Serializable {
         this.tagToTagId = tagToTagId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "RelationshipType", nullable = false)
     @NotNull
     public TagToTagRelationship getTagToTagRelationship() {
@@ -69,7 +70,7 @@ public class TagToTag extends AuditedEntity implements java.io.Serializable {
         this.tagToTagRelationship = tagToTagRelationship;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "PrimaryTagID", nullable = false)
     @NotNull
     public Tag getPrimaryTag() {
@@ -80,7 +81,7 @@ public class TagToTag extends AuditedEntity implements java.io.Serializable {
         this.primaryTag = primaryTag;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "SecondaryTagID", nullable = false)
     @NotNull
     public Tag getSecondaryTag() {

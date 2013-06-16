@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -36,7 +37,7 @@ public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> impl
     public static String SELECT_ALL_QUERY = "SELECT csNodeToPropertyTag FROM CSNodeToPropertyTag AS csNodeToPropertyTag";
     public static String SELECT_SIZE_QUERY = "SELECT COUNT(csNodeToPropertyTag) FROM CSNodeToPropertyTag AS csNodeToPropertyTag";
 
-    private Integer csNodeToPropertyTagID;
+    private Integer csNodeToPropertyTagId;
     private CSNode csNode;
 
     public CSNodeToPropertyTag() {
@@ -46,11 +47,11 @@ public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> impl
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "CSNodeToPropertyTagID", unique = true, nullable = false)
     public Integer getCSNodeToPropertyTagID() {
-        return csNodeToPropertyTagID;
+        return csNodeToPropertyTagId;
     }
 
     public void setCSNodeToPropertyTagID(final Integer csNodeToPropertyTagID) {
-        this.csNodeToPropertyTagID = csNodeToPropertyTagID;
+        this.csNodeToPropertyTagId = csNodeToPropertyTagID;
     }
 
     @ManyToOne
@@ -92,7 +93,7 @@ public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> impl
     @Override
     @Transient
     public Integer getId() {
-        return csNodeToPropertyTagID;
+        return csNodeToPropertyTagId;
     }
 
     @Override
@@ -103,15 +104,19 @@ public class CSNodeToPropertyTag extends ToPropertyTag<CSNodeToPropertyTag> impl
              */
             final Long count;
             if (revision == null) {
-                final String query = CSNodeToPropertyTag.SELECT_SIZE_QUERY + " WHERE csNodeToPropertyTag.propertyTag = " + propertyTag
-                        .getId() + " AND csNodeToPropertyTag.value = '" + getValue() + "'";
-                count = (Long) entityManager.createQuery(query).getSingleResult();
+                final String query = CSNodeToPropertyTag.SELECT_SIZE_QUERY + " WHERE csNodeToPropertyTag.propertyTag = :propertyTagId AND" +
+                        " csNodeToPropertyTag.value = :value";
+                final Query entityQuery = entityManager.createQuery(query);
+                entityQuery.setParameter("value", getValue());
+                entityQuery.setParameter("propertyTagId", getPropertyTag().getId());
+                count = (Long) entityQuery.getSingleResult();
             } else {
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
                 final AuditQueryCreator queryCreator = reader.createQuery();
                 final AuditQuery query = queryCreator.forEntitiesAtRevision(CSNodeToPropertyTag.class, revision).addProjection(
-                        AuditEntity.id().count("csNodeToPropertyTagID")).add(
-                        AuditEntity.relatedId("propertyTag").eq(propertyTag.getId())).add(AuditEntity.property("value").eq(getValue()));
+                        AuditEntity.id().count("csNodeToPropertyTagId")).add(
+                        AuditEntity.relatedId("propertyTag").eq(getPropertyTag().getId())).add(
+                        AuditEntity.property("value").eq(getValue()));
                 query.setCacheable(true);
                 count = (Long) query.getSingleResult();
             }

@@ -101,8 +101,8 @@ public class TopicToPropertyTag extends ToPropertyTag<TopicToPropertyTag> implem
              */
             final Long count;
             if (revision == null) {
-                final String query = TopicToPropertyTag.SELECT_SIZE_QUERY + " WHERE topicToPropertyTag.propertyTag = :propertyTagId AND " +
-                        "topicToPropertyTag.value = :value";
+                final String query = TopicToPropertyTag.SELECT_SIZE_QUERY + " WHERE topicToPropertyTag.propertyTag.propertyTagId = " +
+                        ":propertyTagId AND topicToPropertyTag.value = :value";
                 final Query entityQuery = entityManager.createQuery(query);
                 entityQuery.setParameter("value", getValue());
                 entityQuery.setParameter("propertyTagId", getPropertyTag().getId());
@@ -112,7 +112,8 @@ public class TopicToPropertyTag extends ToPropertyTag<TopicToPropertyTag> implem
                 final AuditQueryCreator queryCreator = reader.createQuery();
                 final AuditQuery query = queryCreator.forEntitiesAtRevision(TopicToPropertyTag.class, revision).addProjection(
                         AuditEntity.id().count("topicToPropertyTagID")).add(
-                        AuditEntity.relatedId("propertyTag").eq(getPropertyTag().getId())).add(AuditEntity.property("value").eq(getValue()));
+                        AuditEntity.relatedId("propertyTag").eq(getPropertyTag().getId())).add(
+                        AuditEntity.property("value").eq(getValue()));
                 query.setCacheable(true);
                 count = (Long) query.getSingleResult();
             }

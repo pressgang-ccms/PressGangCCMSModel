@@ -102,8 +102,8 @@ public class TagToPropertyTag extends ToPropertyTag<TagToPropertyTag> implements
              */
             final Long count;
             if (revision == null) {
-                final String query = TagToPropertyTag.SELECT_SIZE_QUERY + " WHERE tagToPropertyTag.propertyTag = :propertyTagId AND " +
-                        "tagToPropertyTag.value = :value";
+                final String query = TagToPropertyTag.SELECT_SIZE_QUERY + " WHERE tagToPropertyTag.propertyTag.propertyTagId = " +
+                        ":propertyTagId AND tagToPropertyTag.value = :value";
                 final Query entityQuery = entityManager.createQuery(query);
                 entityQuery.setParameter("value", getValue());
                 entityQuery.setParameter("propertyTagId", getPropertyTag().getId());

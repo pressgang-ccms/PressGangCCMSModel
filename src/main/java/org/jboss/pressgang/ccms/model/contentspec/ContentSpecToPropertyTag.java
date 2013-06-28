@@ -104,8 +104,8 @@ public class ContentSpecToPropertyTag extends ToPropertyTag<ContentSpecToPropert
              */
             final Long count;
             if (revision == null) {
-                final String query = ContentSpecToPropertyTag.SELECT_SIZE_QUERY + " WHERE contentSpecToPropertyTag.propertyTag = " +
-                        ":propertyTagId AND contentSpecToPropertyTag.value = :value";
+                final String query = ContentSpecToPropertyTag.SELECT_SIZE_QUERY + " WHERE contentSpecToPropertyTag.propertyTag" +
+                        ".propertyTagId = :propertyTagId AND contentSpecToPropertyTag.value = :value";
                 final Query entityQuery = entityManager.createQuery(query);
                 entityQuery.setParameter("value", getValue());
                 entityQuery.setParameter("propertyTagId", getPropertyTag().getId());

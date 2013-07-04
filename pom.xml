@@ -131,9 +131,9 @@
             <version>${jericho.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.htmlcleaner</groupId>
-            <artifactId>htmlcleaner</artifactId>
-            <version>${htmlcleaner.version}</version>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
         </dependency>
     </dependencies>
 </project>

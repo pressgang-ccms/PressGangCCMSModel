@@ -16,11 +16,9 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.swing.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +28,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
+import org.imgscalr.Scalr;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.utils.SVGIcon;
@@ -150,8 +149,11 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
 
             if (getMimeType().equals(SVG_MIME_TYPE)) {
                 SVGIcon svgIcon = null;
-                if (resize) svgIcon = new SVGIcon(new ByteArrayInputStream(imageData), THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-                else svgIcon = new SVGIcon(new ByteArrayInputStream(imageData));
+                if (resize) {
+                    svgIcon = new SVGIcon(new ByteArrayInputStream(imageData), THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+                } else {
+                    svgIcon = new SVGIcon(new ByteArrayInputStream(imageData));
+                }
 
                 outImage = new BufferedImage(svgIcon.getIconWidth(), svgIcon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
                 final Graphics2D g2d = outImage.createGraphics();
@@ -160,38 +162,19 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
                 svgIcon.paintIcon(null, g2d, 0, 0);
                 g2d.dispose();
             } else {
-                final ImageIcon imageIcon = new ImageIcon(imageData);
-                final Image inImage = imageIcon.getImage();
-
-                double scale = 1.0d;
-                if (resize) {
-                    /*
-                     * the final image will be at most THUMBNAIL_SIZE pixels high and/or wide
-                     */
-                    final double heightScale = (double) THUMBNAIL_SIZE / (double) inImage.getHeight(null);
-                    final double widthScale = (double) THUMBNAIL_SIZE / (double) inImage.getWidth(null);
-                    scale = Math.min(heightScale, widthScale);
-                }
-
-                final int newWidth = (int) (imageIcon.getIconWidth() * scale);
-                final int newHeight = (int) (imageIcon.getIconHeight() * scale);
-                outImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
-                final Graphics2D g2d = outImage.createGraphics();
-
-                final AffineTransform tx = new AffineTransform();
-
-                if (scale < 1.0d) tx.scale(scale, scale);
-
-                g2d.drawImage(inImage, tx, null);
-                g2d.dispose();
+                final BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
+                outImage = Scalr.resize(img, Scalr.Method.AUTOMATIC, THUMBNAIL_SIZE, THUMBNAIL_SIZE, Scalr.OP_ANTIALIAS);
             }
 
+            // Determine the output format
+            final String extension = getExtension();
+            final String formatName = extension == null || extension.equalsIgnoreCase("svg") ? "JPG" : extension.toUpperCase();
+
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(outImage, "JPG", baos);
+            ImageIO.write(outImage, formatName, baos);
             final byte[] bytesOut = baos.toByteArray();
 
             return Base64.encodeBase64(bytesOut);
-
         } catch (final Exception ex) {
             log.error("An error creating an image thumbnail", ex);
         }
@@ -221,7 +204,7 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     @PreUpdate
     private void updateImageData() throws CustomConstraintViolationException {
         thumbnail = createImage(true);
-        imageDataBase64 = createImage(false);
+        imageDataBase64 = Base64.encodeBase64(imageData);
 
         imageFile.validate();
     }
@@ -239,9 +222,8 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
 
     @Transient
     public String getMimeType() {
-        final int lastPeriodIndex = originalFileName.lastIndexOf(".");
-        if (lastPeriodIndex != -1 && lastPeriodIndex < originalFileName.length() - 1) {
-            final String extension = originalFileName.substring(lastPeriodIndex + 1);
+        final String extension = getExtension();
+        if (extension != null) {
             if (extension.equalsIgnoreCase("JPG")) return JPG_MIME_TYPE;
             if (extension.equalsIgnoreCase("GIF")) return GIF_MIME_TYPE;
             if (extension.equalsIgnoreCase("PNG")) return PNG_MIME_TYPE;
@@ -249,6 +231,16 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
         }
 
         return "application/octet-stream";
+    }
+
+    @Transient
+    public String getExtension() {
+        final int lastPeriodIndex = originalFileName.lastIndexOf(".");
+        if (lastPeriodIndex != -1 && lastPeriodIndex < originalFileName.length() - 1) {
+            return originalFileName.substring(lastPeriodIndex + 1);
+        }
+
+        return null;
     }
 
     @Transient

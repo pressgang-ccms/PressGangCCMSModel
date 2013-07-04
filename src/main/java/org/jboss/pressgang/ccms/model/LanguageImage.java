@@ -166,12 +166,8 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
                 outImage = Scalr.resize(img, Scalr.Method.AUTOMATIC, THUMBNAIL_SIZE, THUMBNAIL_SIZE, Scalr.OP_ANTIALIAS);
             }
 
-            // Determine the output format
-            final String extension = getExtension();
-            final String formatName = extension == null || extension.equalsIgnoreCase("svg") ? "JPG" : extension.toUpperCase();
-
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(outImage, formatName, baos);
+            ImageIO.write(outImage, getFormatName(), baos);
             final byte[] bytesOut = baos.toByteArray();
 
             return Base64.encodeBase64(bytesOut);
@@ -241,6 +237,20 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
         }
 
         return null;
+    }
+
+    @Transient
+    private String getFormatName() {
+        final String extension = getExtension();
+        if (extension != null) {
+            if (extension.equalsIgnoreCase("png")) {
+                return "PNG";
+            } else if (extension.equalsIgnoreCase("gif")) {
+                return "GIF";
+            }
+        }
+
+        return "JPG";
     }
 
     @Transient

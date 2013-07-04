@@ -44,6 +44,7 @@ public class File extends AuditedEntity implements Serializable {
     private Boolean explodeArchive = false;
     private Set<LanguageFile> languageFiles = new HashSet<LanguageFile>();
 
+    @Transient
     @Override
     public Integer getId() {
         return fileId;

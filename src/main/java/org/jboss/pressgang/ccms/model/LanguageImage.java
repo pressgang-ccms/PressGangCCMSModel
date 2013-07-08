@@ -206,8 +206,8 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     }
 
     @Column(name = "Locale", nullable = false)
-    @NotNull(message = "languageimage.locale.notBlank")
-    @NotBlank(message = "languageimage.locale.notBlank")
+    @NotNull(message = "{languageimage.locale.notBlank}")
+    @NotBlank(message = "{languageimage.locale.notBlank}")
     public String getLocale() {
         return locale;
     }

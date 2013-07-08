@@ -74,8 +74,8 @@ public class LanguageFile extends AuditedEntity implements Serializable {
     }
 
     @Column(name = "Locale", nullable = false, length = 20)
-    @NotNull(message = "languagefile.locale.notBlank")
-    @NotBlank(message = "languagefile.locale.notBlank")
+    @NotNull(message = "{languagefile.locale.notBlank}")
+    @NotBlank(message = "{languagefile.locale.notBlank}")
     @Size(max = 20)
     public String getLocale() {
         return locale;

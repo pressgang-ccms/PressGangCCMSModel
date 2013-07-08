@@ -65,8 +65,8 @@ public class File extends AuditedEntity implements Serializable {
 
     @Column(name = "FileName", nullable = false, length = 255)
     @Size(max = 255)
-    @NotNull(message = "file.filename.notBlank")
-    @NotBlank(message = "file.filename.notBlank")
+    @NotNull(message = "{file.filename.notBlank}")
+    @NotBlank(message = "{file.filename.notBlank}")
     public String getFileName() {
         return fileName;
     }

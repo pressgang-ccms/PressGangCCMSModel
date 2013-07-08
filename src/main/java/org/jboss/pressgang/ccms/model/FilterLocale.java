@@ -70,8 +70,8 @@ public class FilterLocale extends AuditedEntity implements java.io.Serializable 
     }
 
     @Column(name = "LocaleName", nullable = false, length = 255)
-    @NotNull(message = "filter.locale.name.notBlank")
-    @NotBlank(message = "filter.locale.name.notBlank")
+    @NotNull(message = "{filter.locale.name.notBlank}")
+    @NotBlank(message = "{filter.locale.name.notBlank}")
     @Size(max = 255)
     public String getLocaleName() {
         return localeName;

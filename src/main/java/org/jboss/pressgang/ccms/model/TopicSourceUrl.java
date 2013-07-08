@@ -66,8 +66,8 @@ public class TopicSourceUrl extends AuditedEntity implements java.io.Serializabl
     }
 
     @Column(name = "SourceURL", nullable = false, length = 2048)
-    @NotNull
-    @NotBlank
+    @NotNull(message = "{topicsourceurl.url.notBlank}")
+    @NotBlank(message = "{topicsourceurl.url.notBlank}")
     @Size(max = 2048)
     public String getSourceUrl() {
         return sourceUrl;

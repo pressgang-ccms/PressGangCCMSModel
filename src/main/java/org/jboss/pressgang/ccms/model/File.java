@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -143,5 +145,13 @@ public class File extends AuditedEntity implements Serializable {
     public void removeLanguageFile(final LanguageFile languageFile) {
         languageFiles.remove(languageFile);
         languageFile.setFile(null);
+    }
+
+    @PrePersist
+    @PreUpdate
+    protected void fixFilePath() {
+        if (filePath != null && !filePath.isEmpty() && !(filePath.endsWith("/") || filePath.endsWith("\""))) {
+            filePath += "/";
+        }
     }
 }

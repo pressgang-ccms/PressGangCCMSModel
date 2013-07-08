@@ -68,7 +68,7 @@ public class FilterTag extends AuditedEntity implements java.io.Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TagID", nullable = false)
-    @NotNull
+    @NotNull(message = "filter.tag.notNull")
     public Tag getTag() {
         return tag;
     }

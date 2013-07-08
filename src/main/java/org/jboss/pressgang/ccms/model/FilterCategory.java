@@ -73,7 +73,7 @@ public class FilterCategory extends AuditedEntity implements java.io.Serializabl
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CategoryID", nullable = false)
-    @NotNull
+    @NotNull(message = "filter.category.notNull")
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     public Category getCategory() {

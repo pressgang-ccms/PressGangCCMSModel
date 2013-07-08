@@ -82,7 +82,8 @@ public class FilterField extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "Value", nullable = false, columnDefinition = "TEXT")
-    @NotNull
+    @NotNull(message = "filter.field.name.notBlank")
+    @NotBlank(message = "filter.field.name.notBlank")
     @Size(max = 65535)
     public String getValue() {
         return value;

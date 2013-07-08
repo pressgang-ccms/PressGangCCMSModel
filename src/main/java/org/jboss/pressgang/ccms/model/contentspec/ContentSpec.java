@@ -108,7 +108,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     }
 
     @Column(name = "ContentSpecType", nullable = false, columnDefinition = "TINYINT")
-    @NotNull
+    @NotNull(message = "contentspec.type.notNull")
     public Integer getContentSpecType() {
         return contentSpecType;
     }

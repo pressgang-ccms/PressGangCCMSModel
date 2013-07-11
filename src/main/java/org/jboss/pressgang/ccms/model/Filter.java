@@ -47,6 +47,7 @@ public class Filter extends AuditedEntity implements java.io.Serializable {
     private Integer filterId;
     private String filterName;
     private String filterDescription;
+    private Integer filterClassType;
     private Set<FilterTag> filterTags = new HashSet<FilterTag>(0);
     private Set<FilterCategory> filterCategories = new HashSet<FilterCategory>(0);
     private Set<FilterField> filterFields = new HashSet<FilterField>(0);
@@ -99,6 +100,16 @@ public class Filter extends AuditedEntity implements java.io.Serializable {
 
     public void setFilterDescription(final String filterDescription) {
         this.filterDescription = filterDescription;
+    }
+
+    @Column(name = "FilterClassType")
+    @NotNull
+    public Integer getFilterClassType() {
+        return filterClassType;
+    }
+
+    public void setFilterClassType(Integer filterClassType) {
+        this.filterClassType = filterClassType;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "filter", orphanRemoval = true, cascade = CascadeType.ALL)

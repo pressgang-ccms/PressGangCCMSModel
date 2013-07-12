@@ -1153,7 +1153,6 @@ CREATE TABLE IF NOT EXISTS `Topic` (
 CREATE TABLE IF NOT EXISTS `TopicSecondOrderData` (
   `TopicSecondOrderDataID` INT(11) NOT NULL AUTO_INCREMENT,
   `TopicXMLErrors`         TEXT,
-  `TopicHTMLView`          MEDIUMTEXT,
   `TopicID`                INT(11) NOT NULL,
   PRIMARY KEY (`TopicSecondOrderDataID`)
 )
@@ -1171,7 +1170,6 @@ CREATE TABLE IF NOT EXISTS `TopicSecondOrderData_AUD` (
   `REV`                    INT(11) NOT NULL,
   `REVEND`                 INT(11) DEFAULT NULL,
   `REVTYPE`                TINYINT(4) DEFAULT NULL,
-  `TopicHTMLView`          MEDIUMTEXT,
   `TopicXMLErrors`         TEXT,
   `TopicSecondOrderDataID` INT(11) NOT NULL,
   PRIMARY KEY (`TopicSecondOrderDataID`, `REV`),
@@ -1493,8 +1491,6 @@ CREATE TABLE IF NOT EXISTS `TranslatedTopicData` (
   `TranslatedTopicDataID`        INT(11)     NOT NULL AUTO_INCREMENT,
   `TranslatedXML`                MEDIUMTEXT,
   `TranslatedXMLErrors`          TEXT,
-  `TranslatedXMLRendered`        MEDIUMTEXT,
-  `TranslatedXMLRenderedUpdated` DATETIME DEFAULT NULL,
   `TranslationLocale`            VARCHAR(45) NOT NULL,
   `TranslationPercentage`        INT(11)     NOT NULL,
   `TranslatedTopicID`            INT(11)     NOT NULL,
@@ -1518,8 +1514,6 @@ CREATE TABLE IF NOT EXISTS `TranslatedTopicData_AUD` (
   `REVEND`                       INT(11) DEFAULT NULL,
   `TranslatedXML`                MEDIUMTEXT,
   `TranslatedXMLErrors`          TEXT,
-  `TranslatedXMLRendered`        MEDIUMTEXT,
-  `TranslatedXMLRenderedUpdated` DATETIME DEFAULT NULL,
   `TranslationLocale`            VARCHAR(45) DEFAULT NULL,
   `TranslationPercentage`        INT(11) DEFAULT NULL,
   `TranslatedTopicID`            INT(11) DEFAULT NULL,

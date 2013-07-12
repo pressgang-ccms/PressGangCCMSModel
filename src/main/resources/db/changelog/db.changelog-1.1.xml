@@ -683,18 +683,26 @@
     <changeSet id="19" author="lnewson@redhat.com">
         <comment>Remove Topic XML rendering information</comment>
         <dropColumn tableName="TopicSecondOrderData" columnName="TopicHTMLView"/>
+    </changeSet>
+
+    <changeSet id="20" author="lnewson@redhat.com">
+        <comment>Remove Translated Topic XML rendering information</comment>
         <dropColumn tableName="TranslatedTopicData" columnName="TranslatedXMLRendered"/>
         <dropColumn tableName="TranslatedTopicData" columnName="TranslatedXMLRenderedUpdated"/>
     </changeSet>
 
-    <changeSet id="20" author="lnewson@redhat.com">
+    <changeSet id="22" author="lnewson@redhat.com">
         <comment>Remove Topic XML revision rendering information</comment>
         <dropColumn tableName="TopicSecondOrderData_AUD" columnName="TopicHTMLView"/>
+    </changeSet>
+
+    <changeSet id="23" author="lnewson@redhat.com">
+        <comment>Remove Translated Topic XML revision rendering information</comment>
         <dropColumn tableName="TranslatedTopicData_AUD" columnName="TranslatedXMLRendered"/>
         <dropColumn tableName="TranslatedTopicData_AUD" columnName="TranslatedXMLRenderedUpdated"/>
     </changeSet>
 
-    <changeSet id="21" author="lnewson@redhat.com">
+    <changeSet id="24" author="lnewson@redhat.com">
         <comment>Add a column to Translated Topic Data to reference Translated Content Spec Node</comment>
         <addColumn tableName="TranslatedTopicData">
             <column name="TranslatedCSNodeID" type="int(11)">
@@ -714,7 +722,7 @@
                              constraintName="TranslatedTopicID"/>
     </changeSet>
 
-    <changeSet id="22" author="lnewson@redhat.com">
+    <changeSet id="25" author="lnewson@redhat.com">
         <comment>Add a column to Translated Topic Data AUD to reference Translated Content Spec Node AUD</comment>
         <addColumn tableName="TranslatedTopicData_AUD">
             <column name="TranslatedCSNodeID" type="int(11)">
@@ -729,7 +737,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="23" author="lnewson@redhat.com">
+    <changeSet id="26" author="lnewson@redhat.com">
         <comment>Add new File table</comment>
         <createTable tableName="File">
             <column name="FileID" type="int(11)" autoIncrement="true">
@@ -750,7 +758,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="24" author="lnewson@redhat.com">
+    <changeSet id="27" author="lnewson@redhat.com">
         <comment>Add new File revision table</comment>
         <createTable tableName="File_AUD">
             <column name="FileID" type="int(11)">
@@ -791,7 +799,7 @@
                                  referencedColumnNames="REV"/>
     </changeSet>
 
-    <changeSet id="25" author="lnewson@redhat.com">
+    <changeSet id="28" author="lnewson@redhat.com">
         <comment>Add new Language File table</comment>
         <createTable tableName="LanguageFile">
             <column name="LanguageFileID" type="int(11)" autoIncrement="true">
@@ -815,7 +823,7 @@
                                  referencedColumnNames="FileID"/>
     </changeSet>
 
-    <changeSet id="26" author="lnewson@redhat.com">
+    <changeSet id="29" author="lnewson@redhat.com">
         <comment>Add new Language File revision table</comment>
         <createTable tableName="LanguageFile_AUD">
             <column name="LanguageFileID" type="int(11)">
@@ -859,13 +867,17 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="27" author="lnewson@redhat.com">
+    <changeSet id="30" author="lnewson@redhat.com">
         <comment>Add the FilterClassType column for filters</comment>
         <addColumn tableName="Filter">
             <column name="FilterClassType" type="tinyint" valueNumeric="0">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="31" author="lnewson@redhat.com">
+        <comment>Add the FilterClassType column for filter revisions</comment>
         <addColumn tableName="Filter_AUD">
             <column name="FilterClassType" type="tinyint" valueNumeric="0">
                 <constraints nullable="true"/>

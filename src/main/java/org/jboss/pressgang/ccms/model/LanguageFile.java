@@ -33,6 +33,7 @@ public class LanguageFile extends AuditedEntity implements Serializable {
 
     private Integer languageFileId = null;
     private String locale;
+    private String originalFileName = null;
     private byte[] fileData;
     private File file = null;
 
@@ -60,6 +61,16 @@ public class LanguageFile extends AuditedEntity implements Serializable {
 
     public void setFileData(byte[] fileData) {
         this.fileData = fileData;
+    }
+
+    @Column(name = "OriginalFileName", length = 255)
+    @Size(max = 255)
+    public String getOriginalFileName() {
+        return originalFileName;
+    }
+
+    public void setOriginalFileName(final String originalFileName) {
+        this.originalFileName = originalFileName;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

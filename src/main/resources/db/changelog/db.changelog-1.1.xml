@@ -584,6 +584,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="FileData" type="longblob"/>
+            <column name="OriginalFileName" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="FileID" type="int(11)">
                 <constraints nullable="false"/>
             </column>
@@ -606,6 +609,7 @@
             <column name="REVEND" type="int(11)"/>
             <column name="Locale" type="varchar(20)"/>
             <column name="FileData" type="longblob"/>
+            <column name="OriginalFileName" type="varchar(255)" />
             <column name="FileID" type="int(11)"/>
         </createTable>
         <addPrimaryKey tableName="LanguageFile_AUD" columnNames="LanguageFileID, REV"/>

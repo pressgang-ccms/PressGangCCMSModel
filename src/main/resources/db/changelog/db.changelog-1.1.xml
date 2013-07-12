@@ -4,9 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-    <changeSet id="1" author="lnewson@redhat.com" runInTransaction="true">
-        <comment>Add new Content Spec and Joiner tables</comment>
-        <!-- Content Spec Tables -->
+    <changeSet id="1" author="lnewson@redhat.com">
+        <comment>Add new Content Spec table</comment>
         <createTable tableName="ContentSpec">
             <column name="ContentSpecID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -14,16 +13,27 @@
             <column name="ContentSpecType" type="tinyint">
                 <constraints nullable="false"/>
             </column>
-            <column name="LastPublished" type="datetime"/>
-            <column name="LastModified" type="datetime"/>
+            <column name="LastPublished" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LastModified" type="datetime">
+                <constraints nullable="true"/>
+            </column>
             <column name="Locale" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="GlobalCondition" type="varchar(255)"/>
-            <column name="Errors" type="TEXT"/>
-            <column name="FailedSpec" type="MEDIUMTEXT"/>
+            <column name="Errors" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="FailedSpec" type="MEDIUMTEXT">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
+    </changeSet>
 
+    <changeSet id="2" author="lnewson@redhat.com">
+        <comment>Add new Content Spec revision table</comment>
         <createTable tableName="ContentSpec_AUD">
             <column name="ContentSpecID" type="int(11)">
                 <constraints nullable="false"/>
@@ -31,15 +41,33 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="ContentSpecType" type="tinyint"/>
-            <column name="LastPublished" type="datetime"/>
-            <column name="LastModified" type="datetime"/>
-            <column name="Locale" type="varchar(255)"/>
-            <column name="GlobalCondition" type="varchar(255)"/>
-            <column name="Errors" type="TEXT"/>
-            <column name="FailedSpec" type="MEDIUMTEXT"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecType" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LastPublished" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LastModified" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Locale" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="GlobalCondition" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Errors" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="FailedSpec" type="MEDIUMTEXT">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="ContentSpec_AUD" columnNames="ContentSpecID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_CS"
@@ -52,8 +80,10 @@
                                  baseColumnNames="REVEND"
                                  referencedTableName="REVINFO"
                                  referencedColumnNames="REV"/>
+    </changeSet>
 
-        <!-- Content Spec Node to Property Tag Joiner Table -->
+    <changeSet id="3" author="lnewson@redhat.com">
+        <comment>Add new Content Spec to Property Tag joiner table</comment>
         <createTable tableName="ContentSpecToPropertyTag">
             <column name="ContentSpecToPropertyTagID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -76,7 +106,10 @@
                                  baseColumnNames="PropertyTagID"
                                  referencedTableName="PropertyTag"
                                  referencedColumnNames="PropertyTagID"/>
+    </changeSet>
 
+    <changeSet id="4" author="lnewson@redhat.com">
+        <comment>Add new Content Spec to Property Tag revision joiner table</comment>
         <createTable tableName="ContentSpecToPropertyTag_AUD">
             <column name="ContentSpecToPropertyTagID" type="int(11)">
                 <constraints nullable="false"/>
@@ -84,10 +117,18 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="ContentSpecID" type="int(11)"/>
-            <column name="PropertyTagID" type="int(11)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="PropertyTagID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
             <column name="Value" type="text"/>
         </createTable>
         <addPrimaryKey tableName="ContentSpecToPropertyTag_AUD" columnNames="ContentSpecToPropertyTagID, REV"/>
@@ -107,8 +148,10 @@
         <createIndex tableName="ContentSpecToPropertyTag_AUD" indexName="PropertyTagID">
             <column name="PropertyTagID"/>
         </createIndex>
+    </changeSet>
 
-        <!-- Content Spec Node to Tag Joiner Table -->
+    <changeSet id="5" author="lnewson@redhat.com">
+        <comment>Add new Content Spec to Tag joiner table</comment>
         <createTable tableName="ContentSpecToTag">
             <column name="ContentSpecToTagID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -130,7 +173,10 @@
                                  baseColumnNames="TagID"
                                  referencedTableName="Tag"
                                  referencedColumnNames="TagID"/>
+    </changeSet>
 
+    <changeSet id="6" author="lnewson@redhat.com">
+        <comment>Add new Content Spec to Tag revision joiner table</comment>
         <createTable tableName="ContentSpecToTag_AUD">
             <column name="ContentSpecToTagID" type="int(11)">
                 <constraints nullable="false"/>
@@ -138,10 +184,18 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="ContentSpecID" type="int(11)"/>
-            <column name="TagID" type="int(11)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TagID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="ContentSpecToTag_AUD" columnNames="ContentSpecToTagID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_CS_TAG"
@@ -162,9 +216,8 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="2" author="lnewson@redhat.com" runInTransaction="true">
-        <comment>Add new ContentSpec Node and Joiner tables</comment>
-        <!-- Content Spec Node Tables-->
+    <changeSet id="7" author="lnewson@redhat.com">
+        <comment>Add new Content Spec Node table</comment>
         <createTable tableName="ContentSpecNode">
             <column name="ContentSpecNodeID" autoIncrement="true" type="int(11)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -172,17 +225,33 @@
             <column name="NodeTitle" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="NodeTargetID" type="varchar(255)"/>
+            <column name="NodeTargetID" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
             <column name="NodeType" type="tinyint">
                 <constraints nullable="false"/>
             </column>
-            <column name="NodeCondition" type="varchar(255)"/>
-            <column name="AdditionalText" type="text"/>
-            <column name="EntityID" type="int(11)"/>
-            <column name="EntityRevision" type="int(11)"/>
-            <column name="ContentSpecID" type="int(11)"/>
-            <column name="ParentID" type="int(11)"/>
-            <column name="NextNodeID" type="int(11)"/>
+            <column name="NodeCondition" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="AdditionalText" type="text">
+                <constraints nullable="true"/>
+            </column>
+            <column name="EntityID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="EntityRevision" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ParentID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="NextNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addForeignKeyConstraint constraintName="FK_ContentSpecID_CS_NODE"
                                  baseTableName="ContentSpecNode"
@@ -199,7 +268,10 @@
                                  baseColumnNames="NextNodeID"
                                  referencedTableName="ContentSpecNode"
                                  referencedColumnNames="ContentSpecNodeID"/>
+    </changeSet>
 
+    <changeSet id="8" author="lnewson@redhat.com">
+        <comment>Add new Content Spec Node revision table</comment>
         <createTable tableName="ContentSpecNode_AUD">
             <column name="ContentSpecNodeID" type="int(11)">
                 <constraints nullable="false"/>
@@ -207,18 +279,42 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="NodeTitle" type="varchar(255)"/>
-            <column name="NodeTargetID" type="varchar(255)"/>
-            <column name="NodeType" type="tinyint"/>
-            <column name="NodeCondition" type="varchar(255)"/>
-            <column name="AdditionalText" type="text"/>
-            <column name="EntityID" type="int(11)"/>
-            <column name="EntityRevision" type="int(11)"/>
-            <column name="ContentSpecID" type="int(11)"/>
-            <column name="ParentID" type="int(11)"/>
-            <column name="NextNodeID" type="int(11)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="NodeTitle" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="NodeTargetID" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="NodeType" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="NodeCondition" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="AdditionalText" type="text">
+                <constraints nullable="true"/>
+            </column>
+            <column name="EntityID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="EntityRevision" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ParentID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="NextNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="ContentSpecNode_AUD" columnNames="ContentSpecNodeID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_CS_NODE"
@@ -240,8 +336,10 @@
         <createIndex tableName="ContentSpecNode_AUD" indexName="NextNodeID">
             <column name="NextNodeID"/>
         </createIndex>
+    </changeSet>
 
-        <!-- Content Spec Node to Content Spec Node Joiner Table -->
+    <changeSet id="9" author="lnewson@redhat.com">
+        <comment>Add new Content Spec Node to Content Spec Node joiner table</comment>
         <createTable tableName="CSNodeToCSNode">
             <column name="CSNodeToCSNodeID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -267,7 +365,10 @@
                                  baseColumnNames="RelatedNodeID"
                                  referencedTableName="ContentSpecNode"
                                  referencedColumnNames="ContentSpecNodeID"/>
+    </changeSet>
 
+    <changeSet id="10" author="lnewson@redhat.com">
+        <comment>Add new Content Spec Node to Content Spec Node revision joiner table</comment>
         <createTable tableName="CSNodeToCSNode_AUD">
             <column name="CSNodeToCSNodeID" type="int(11)">
                 <constraints nullable="false"/>
@@ -275,12 +376,24 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="MainNodeID" type="int(11)"/>
-            <column name="RelatedNodeID" type="int(11)"/>
-            <column name="RelationshipType" type="tinyint"/>
-            <column name="Sort" type="int(11)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="MainNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="RelatedNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="RelationshipType" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Sort" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="CSNodeToCSNode_AUD" columnNames="CSNodeToCSNodeID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_CS_NODE_TO_NODE"
@@ -299,8 +412,10 @@
         <createIndex tableName="CSNodeToCSNode_AUD" indexName="RelatedNodeID">
             <column name="RelatedNodeID"/>
         </createIndex>
+    </changeSet>
 
-        <!-- Content Spec Node to Property Tag Joiner Table -->
+    <changeSet id="11" author="lnewson@redhat.com">
+        <comment>Add new Content Spec Node to PropertyTag joiner table</comment>
         <createTable tableName="CSNodeToPropertyTag">
             <column name="CSNodeToPropertyTagID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -323,7 +438,10 @@
                                  baseColumnNames="PropertyTagID"
                                  referencedTableName="PropertyTag"
                                  referencedColumnNames="PropertyTagID"/>
+    </changeSet>
 
+    <changeSet id="12" author="lnewson@redhat.com">
+        <comment>Add new Content Spec Node to PropertyTag revision joiner table</comment>
         <createTable tableName="CSNodeToPropertyTag_AUD">
             <column name="CSNodeToPropertyTagID" type="int(11)">
                 <constraints nullable="false"/>
@@ -331,11 +449,21 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="CSNodeID" type="int(11)"/>
-            <column name="PropertyTagID" type="int(11)"/>
-            <column name="Value" type="text"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="CSNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="PropertyTagID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Value" type="text">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="CSNodeToPropertyTag_AUD" columnNames="CSNodeToPropertyTagID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_CS_NODE_PROP_TAG"
@@ -356,9 +484,8 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="3" author="lnewson@redhat.com" runInTransaction="true">
-        <comment>Add new Translated Content Spec Tables</comment>
-        <!-- Translated Content Spec Tables -->
+    <changeSet id="13" author="lnewson@redhat.com">
+        <comment>Add new Translated Content Spec table</comment>
         <createTable tableName="TranslatedContentSpec">
             <column name="TranslatedContentSpecID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -371,7 +498,10 @@
             </column>
         </createTable>
         <addUniqueConstraint tableName="TranslatedContentSpec" columnNames="ContentSpecID, ContentSpecRevision"/>
+    </changeSet>
 
+    <changeSet id="14" author="lnewson@redhat.com">
+        <comment>Add new Translated Content Spec revision table</comment>
         <createTable tableName="TranslatedContentSpec_AUD">
             <column name="TranslatedContentSpecID" type="int(11)">
                 <constraints nullable="false"/>
@@ -379,10 +509,18 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="ContentSpecID" type="int(11)"/>
-            <column name="ContentSpecRevision" type="int(11)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecRevision" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="TranslatedContentSpec_AUD" columnNames="TranslatedContentSpecID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_TRANSLATED_CS"
@@ -401,9 +539,8 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="4" author="lnewson@redhat.com" runInTransaction="true">
-        <comment>Add new Translated Content Spec Node Tables</comment>
-        <!-- Translated Content Spec Node Tables -->
+    <changeSet id="15" author="lnewson@redhat.com">
+        <comment>Add new Translated Content Spec Node table</comment>
         <createTable tableName="TranslatedCSNode">
             <column name="TranslatedCSNodeID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -425,7 +562,10 @@
                                  baseColumnNames="TranslatedContentSpecID"
                                  referencedTableName="TranslatedContentSpec"
                                  referencedColumnNames="TranslatedContentSpecID"/>
+    </changeSet>
 
+    <changeSet id="16" author="lnewson@redhat.com">
+        <comment>Add new Translated Content Spec Node revision table</comment>
         <createTable tableName="TranslatedCSNode_AUD">
             <column name="TranslatedCSNodeID" type="int(11)">
                 <constraints nullable="false"/>
@@ -433,12 +573,24 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="CSNodeID" type="int(11)"/>
-            <column name="CSNodeRevision" type="int(11)"/>
-            <column name="OriginalString" type="text"/>
-            <column name="TranslatedContentSpecID" type="int(11)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="CSNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="CSNodeRevision" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="OriginalString" type="text">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TranslatedContentSpecID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="TranslatedCSNode_AUD" columnNames="TranslatedCSNodeID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_TRANSLATED_CS_NODE"
@@ -454,8 +606,10 @@
         <createIndex tableName="TranslatedCSNode_AUD" indexName="TranslatedContentSpecID">
             <column name="TranslatedContentSpecID"/>
         </createIndex>
+    </changeSet>
 
-        <!-- Translated Node String Tables -->
+    <changeSet id="17" author="lnewson@redhat.com">
+        <comment>Add new Translated Content Spec Node String table</comment>
         <createTable tableName="TranslatedCSNodeString">
             <column name="TranslatedCSNodeStringID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -463,7 +617,9 @@
             <column name="Locale" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="TranslatedString" type="text"/>
+            <column name="TranslatedString" type="text">
+                <constraints nullable="true"/>
+            </column>
             <column name="FuzzyTranslation" type="bit(1)">
                 <constraints nullable="false"/>
             </column>
@@ -476,7 +632,10 @@
                                  baseColumnNames="TranslatedCSNodeStringID"
                                  referencedTableName="TranslatedCSNode"
                                  referencedColumnNames="TranslatedCSNodeID"/>
+    </changeSet>
 
+    <changeSet id="18" author="lnewson@redhat.com">
+        <comment>Add new Translated Content Spec Node String revision table</comment>
         <createTable tableName="TranslatedCSNodeString_AUD">
             <column name="TranslatedCSNodeStringID" type="int(11)">
                 <constraints nullable="false"/>
@@ -484,12 +643,24 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="Locale" type="varchar(255)"/>
-            <column name="TranslatedString" type="text"/>
-            <column name="FuzzyTranslation" type="bit(1)"/>
-            <column name="TranslatedCSNodeID" type="int(11)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Locale" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TranslatedString" type="text">
+                <constraints nullable="true"/>
+            </column>
+            <column name="FuzzyTranslation" type="bit(1)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TranslatedCSNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="TranslatedCSNodeString_AUD" columnNames="TranslatedCSNodeStringID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_TRANSLATED_CS_NODE_STRING"
@@ -507,15 +678,15 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="6" author="lnewson@redhat.com" runInTransaction="true">
-        <comment>Add column to TranslatedTopicData to reference Translated Content Spec Node</comment>
+    <changeSet id="19" author="lnewson@redhat.com">
+        <comment>Add a column to Translated Topic Data to reference Translated Content Spec Node</comment>
         <addColumn tableName="TranslatedTopicData">
-            <column name="TranslatedCSNodeID" type="int(11)"/>
-            <column name="TranslatedXMLCondition" type="varchar(255)"/>
-        </addColumn>
-        <addColumn tableName="TranslatedTopicData_AUD">
-            <column name="TranslatedCSNodeID" type="int(11)"/>
-            <column name="TranslatedXMLCondition" type="varchar(255)"/>
+            <column name="TranslatedCSNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TranslatedXMLCondition" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
         </addColumn>
         <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeID_TRANSLATED_TOPIC_DATA"
                                  baseTableName="TranslatedTopicData"
@@ -525,14 +696,25 @@
         <dropUniqueConstraint tableName="TranslatedTopicData" constraintName="TranslatedTopicID"/>
         <addUniqueConstraint tableName="TranslatedTopicData" columnNames="TranslatedTopicID, TranslationLocale, TranslatedCSNodeID"
                              constraintName="TranslatedTopicID"/>
+    </changeSet>
+
+    <changeSet id="20" author="lnewson@redhat.com">
+        <comment>Add a column to Translated Topic Data AUD to reference Translated Content Spec Node AUD</comment>
+        <addColumn tableName="TranslatedTopicData_AUD">
+            <column name="TranslatedCSNodeID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TranslatedXMLCondition" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
         <createIndex tableName="TranslatedTopicData_AUD" indexName="TranslatedCSNodeID">
             <column name="TranslatedCSNodeID"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="7" author="lnewson@redhat.com" runInTransaction="true">
-        <comment>Add new File Tables</comment>
-        <!-- File Table -->
+    <changeSet id="21" author="lnewson@redhat.com">
+        <comment>Add new File table</comment>
         <createTable tableName="File">
             <column name="FileID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -540,12 +722,20 @@
             <column name="FileName" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="FilePath" type="varchar(512)"/>
-            <column name="Description" type="varchar(512)"/>
-            <column name="ExplodeArchive" type="bit(1)" defaultValue="0"/>
+            <column name="FilePath" type="varchar(512)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Description" type="varchar(512)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ExplodeArchive" type="bit(1)" defaultValue="0">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
+    </changeSet>
 
-        <!-- File Revision Table -->
+    <changeSet id="22" author="lnewson@redhat.com">
+        <comment>Add new File revision table</comment>
         <createTable tableName="File_AUD">
             <column name="FileID" type="int(11)">
                 <constraints nullable="false"/>
@@ -553,12 +743,24 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="FileName" type="varchar(255)"/>
-            <column name="FilePath" type="varchar(512)"/>
-            <column name="Description" type="varchar(512)"/>
-            <column name="ExplodeArchive" type="bit(1)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="FileName" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="FilePath" type="varchar(512)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Description" type="varchar(512)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ExplodeArchive" type="bit(1)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="File_AUD" columnNames="FileID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_FILE"
@@ -573,9 +775,8 @@
                                  referencedColumnNames="REV"/>
     </changeSet>
 
-    <changeSet id="8" author="lnewson@redhat.com" runInTransaction="true">
-        <comment>Add new Language File Tables</comment>
-        <!-- Language File Table -->
+    <changeSet id="23" author="lnewson@redhat.com">
+        <comment>Add new Language File table</comment>
         <createTable tableName="LanguageFile">
             <column name="LanguageFileID" type="int(11)" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -596,8 +797,10 @@
                                  baseColumnNames="FileID"
                                  referencedTableName="File"
                                  referencedColumnNames="FileID"/>
+    </changeSet>
 
-        <!-- Language File Revision Table -->
+    <changeSet id="24" author="lnewson@redhat.com">
+        <comment>Add new Language File revision table</comment>
         <createTable tableName="LanguageFile_AUD">
             <column name="LanguageFileID" type="int(11)">
                 <constraints nullable="false"/>
@@ -605,12 +808,24 @@
             <column name="REV" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint"/>
-            <column name="REVEND" type="int(11)"/>
-            <column name="Locale" type="varchar(20)"/>
-            <column name="FileData" type="longblob"/>
-            <column name="OriginalFileName" type="varchar(255)" />
-            <column name="FileID" type="int(11)"/>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Locale" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="FileData" type="longblob">
+                <constraints nullable="true"/>
+            </column>
+            <column name="OriginalFileName" type="varchar(255)" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="FileID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="LanguageFile_AUD" columnNames="LanguageFileID, REV"/>
         <addForeignKeyConstraint constraintName="FK_REV_LANGUAGE_FILE"
@@ -628,15 +843,17 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="9" author="lnewson@redhat.com" runInTransaction="true">
+    <changeSet id="25" author="lnewson@redhat.com">
         <comment>Add the FilterClassType column for filters</comment>
         <addColumn tableName="Filter">
-            <column name="FilterClassType" type="int" value="0">
+            <column name="FilterClassType" type="int" valueNumeric="0">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
         <addColumn tableName="Filter_AUD">
-            <column name="FilterClassType" type="int" value="0"/>
+            <column name="FilterClassType" type="int" valueNumeric="0">
+                <constraints nullable="true"/>
+            </column>
         </addColumn>
     </changeSet>
 

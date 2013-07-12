@@ -25,7 +25,6 @@ public class TopicSecondOrderData extends AuditedEntity implements java.io.Seria
     private static final long serialVersionUID = 3393132758855818345L;
 
     private Integer topicSecondOrderDataId;
-    private String topicHTMLView;
     private String topicXMLErrors;
 
     public TopicSecondOrderData() {
@@ -44,16 +43,6 @@ public class TopicSecondOrderData extends AuditedEntity implements java.io.Seria
 
     public void setTopicSecondOrderDataId(final Integer topicSecondOrderDataId) {
         this.topicSecondOrderDataId = topicSecondOrderDataId;
-    }
-
-    @Column(name = "TopicHTMLView", columnDefinition = "MEDIUMTEXT")
-    @Size(max = 16777215)
-    public String getTopicHTMLView() {
-        return topicHTMLView;
-    }
-
-    public void setTopicHTMLView(final String topicHTMLView) {
-        this.topicHTMLView = topicHTMLView;
     }
 
     @Column(name = "TopicXMLErrors", columnDefinition = "TEXT")

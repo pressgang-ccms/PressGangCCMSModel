@@ -262,19 +262,6 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Transient
-    public String getTopicRendered() {
-        if (topicSecondOrderData == null) return null;
-
-        return topicSecondOrderData.getTopicHTMLView();
-    }
-
-    public void setTopicRendered(final String value) {
-        if (topicSecondOrderData == null) topicSecondOrderData = new TopicSecondOrderData();
-
-        topicSecondOrderData.setTopicHTMLView(value);
-    }
-
-    @Transient
     public String getTopicXMLErrors() {
         if (topicSecondOrderData == null) return null;
 

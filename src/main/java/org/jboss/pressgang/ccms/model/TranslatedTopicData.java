@@ -55,11 +55,9 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
     private TranslatedCSNode translatedCSNode;
     private String translatedXml;
     private String translatedXmlErrors;
-    private String translatedXmlRendered;
     private String translationLocale;
     private String translatedXMLCondition;
     private Set<TranslatedTopicString> translatedTopicStrings = new HashSet<TranslatedTopicString>(0);
-    private Date translatedXmlRenderedUpdated;
     private Integer translationPercentage = 0;
 
     @Transient
@@ -76,16 +74,6 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
 
     public void setTranslatedTopicDataId(Integer translatedTopicDataId) {
         this.translatedTopicDataId = translatedTopicDataId;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "TranslatedXMLRenderedUpdated", nullable = true, length = 0)
-    public Date getTranslatedXmlRenderedUpdated() {
-        return translatedXmlRenderedUpdated;
-    }
-
-    public void setTranslatedXmlRenderedUpdated(final Date translatedXmlRenderedUpdated) {
-        this.translatedXmlRenderedUpdated = translatedXmlRenderedUpdated;
     }
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -129,16 +117,6 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
         this.translatedXmlErrors = translatedXmlErrors;
     }
 
-    @Column(name = "TranslatedXMLRendered", columnDefinition = "MEDIUMTEXT")
-    @Size(max = 16777215)
-    public String getTranslatedXmlRendered() {
-        return translatedXmlRendered;
-    }
-
-    public void setTranslatedXmlRendered(final String translatedXmlRendered) {
-        this.translatedXmlRendered = translatedXmlRendered;
-    }
-
     @Column(name = "TranslationLocale", nullable = false, length = 45)
     @NotNull(message = "{translatedtopic.locale.notBlank}")
     @NotBlank(message = "{translatedtopic.locale.notBlank}")
@@ -180,16 +158,6 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
 
     public void setTranslatedTopicStrings(final Set<TranslatedTopicString> translatedTopicStrings) {
         this.translatedTopicStrings = translatedTopicStrings;
-    }
-
-    @Transient
-    public String getFormattedTranslatedXmlRenderedUpdated() {
-        if (translatedXmlRenderedUpdated != null) {
-            final SimpleDateFormat formatter = new SimpleDateFormat(CommonConstants.FILTER_DISPLAY_DATE_FORMAT);
-            return formatter.format(translatedXmlRenderedUpdated);
-        }
-
-        return new String();
     }
 
     @Transient
@@ -328,7 +296,6 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
         translatedTopicData.setTranslatedTopicDataId(topic.getId() * -1);
         translatedTopicData.setTranslatedXml(topic.getTopicXML());
         translatedTopicData.setTranslationPercentage(100);
-        translatedTopicData.setTranslatedXmlRendered(topic.getTopicRendered());
         translatedTopicData.setTranslationLocale(topic.getTopicLocale());
 
         return translatedTopicData;

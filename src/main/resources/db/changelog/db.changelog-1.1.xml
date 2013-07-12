@@ -22,7 +22,9 @@
             <column name="Locale" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="GlobalCondition" type="varchar(255)"/>
+            <column name="GlobalCondition" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="Errors" type="TEXT">
                 <constraints nullable="true"/>
             </column>
@@ -846,12 +848,12 @@
     <changeSet id="25" author="lnewson@redhat.com">
         <comment>Add the FilterClassType column for filters</comment>
         <addColumn tableName="Filter">
-            <column name="FilterClassType" type="int" valueNumeric="0">
+            <column name="FilterClassType" type="tinyint" valueNumeric="0">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
         <addColumn tableName="Filter_AUD">
-            <column name="FilterClassType" type="int" valueNumeric="0">
+            <column name="FilterClassType" type="tinyint" valueNumeric="0">
                 <constraints nullable="true"/>
             </column>
         </addColumn>

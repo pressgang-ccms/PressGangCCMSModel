@@ -102,7 +102,7 @@ public class Filter extends AuditedEntity implements java.io.Serializable {
         this.filterDescription = filterDescription;
     }
 
-    @Column(name = "FilterClassType")
+    @Column(name = "FilterClassType", columnDefinition = "TINYINT")
     @NotNull
     public Integer getFilterClassType() {
         return filterClassType;

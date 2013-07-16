@@ -23,7 +23,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="GlobalCondition" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="Errors" type="TEXT">
                 <constraints nullable="true"/>

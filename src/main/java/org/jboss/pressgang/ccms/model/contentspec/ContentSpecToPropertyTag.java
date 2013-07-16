@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model.contentspec;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -60,7 +61,7 @@ public class ContentSpecToPropertyTag extends ToPropertyTag<ContentSpecToPropert
         this.contentSpecToPropertyTagId = contentSpecToPropertyTagId;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "ContentSpecID", nullable = false)
     @NotNull
     public ContentSpec getContentSpec() {
@@ -72,7 +73,7 @@ public class ContentSpecToPropertyTag extends ToPropertyTag<ContentSpecToPropert
     }
 
     @Override
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "PropertyTagID", nullable = false)
     @NotNull
     public PropertyTag getPropertyTag() {

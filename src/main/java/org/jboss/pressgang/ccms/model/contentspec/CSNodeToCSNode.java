@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model.contentspec;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -55,7 +56,7 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
         this.csNodeToCSNodeId = csNodeToCSNodeId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "MainNodeID", nullable = false)
     @NotNull
     public CSNode getMainNode() {
@@ -66,7 +67,7 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
         this.mainNode = mainNode;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "RelatedNodeID", nullable = false)
     @NotNull
     public CSNode getRelatedNode() {

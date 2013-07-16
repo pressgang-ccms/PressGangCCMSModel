@@ -152,7 +152,7 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @JoinColumn(name = "ParentID")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     public CSNode getParent() {
         return parent;

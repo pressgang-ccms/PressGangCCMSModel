@@ -448,8 +448,10 @@ public class CSNode extends AuditedEntity implements Serializable {
 
     @Transient
     public Topic getTopic(final EntityManager entityManager) {
-        if (getCSNodeType() != CommonConstants.CS_NODE_TOPIC) return null;
-        if (entityId == null) return null;
+        if (!(getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_INNER_TOPIC)))
+            return null;
+        if (entityId == null)
+            return null;
 
         if (topic == null) {
             if (entityRevision == null) {
@@ -561,7 +563,8 @@ public class CSNode extends AuditedEntity implements Serializable {
 
         if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && !getChildren().isEmpty()) {
             throw new PersistenceException("Meta Data nodes cannot have children nodes.");
-        } else if (getCSNodeType() == CommonConstants.CS_NODE_TOPIC && !getChildren().isEmpty()) {
+        } else if ((getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_INNER_TOPIC))
+                && !getChildren().isEmpty()) {
             throw new PersistenceException("Topic nodes cannot have children nodes.");
         }
     }

@@ -863,4 +863,16 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="27" author="lnewson@redhat.com">
+        <comment>Add an index to the ContentSpecNode tables to make querying entities faster.</comment>
+        <createIndex tableName="ContentSpecNode" indexName="Entity">
+            <column name="EntityID"/>
+            <column name="EntityRevision"/>
+        </createIndex>
+        <createIndex tableName="ContentSpecNode_AUD" indexName="Entity">
+            <column name="EntityID"/>
+            <column name="EntityRevision"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>

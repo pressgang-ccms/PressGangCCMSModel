@@ -297,8 +297,23 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
         for (final ContentSpecToTag contentSpecToTag : contentSpecToTags) {
-            final Tag tag = contentSpecToTag.getTag();
-            retValue.add(tag);
+            if (!contentSpecToTag.getBookTag()) {
+                retValue.add(contentSpecToTag.getTag());
+            }
+        }
+
+        Collections.sort(retValue, new TagIDComparator());
+
+        return retValue;
+    }
+
+    @Transient
+    public List<Tag> getBookTags() {
+        final List<Tag> retValue = new ArrayList<Tag>();
+        for (final ContentSpecToTag contentSpecToTag : contentSpecToTags) {
+            if (contentSpecToTag.getBookTag()) {
+                retValue.add(contentSpecToTag.getTag());
+            }
         }
 
         Collections.sort(retValue, new TagIDComparator());
@@ -307,6 +322,10 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     }
 
     public void addTag(final Tag tag) throws CustomConstraintViolationException {
+        addTag(tag, false);
+    }
+
+    protected void addTag(final Tag tag, boolean isBookTag) throws CustomConstraintViolationException {
         if (filter(having(on(ContentSpecToTag.class).getTag(), equalTo(tag)), getContentSpecToTags()).size() == 0) {
 
             // remove any excluded tags
@@ -316,14 +335,17 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
                 removeTag(excludeTag);
             }
 
-            // Remove other tags if the category is mutually exclusive
+            // Throw an error if other tags if exist for the category and it's mutually exclusive
             for (final TagToCategory category : tag.getTagToCategories()) {
                 if (category.getCategory().isMutuallyExclusive()) {
                     for (final Tag categoryTag : category.getCategory().getTags()) {
                         if (categoryTag.equals(tag)) continue;
 
-                        // Check if the Category Tag exists in this topic
-                        if (filter(having(on(ContentSpecToTag.class).getTag(), equalTo(categoryTag)), getContentSpecToTags()).size() != 0) {
+                        // Check if the Category Tag exists in this content spec
+                        final List<ContentSpecToTag> mappingEntities = filter(
+                                having(on(ContentSpecToTag.class).getTag(), equalTo(categoryTag)), getContentSpecToTags());
+                        if (mappingEntities.size() != 0 && filter(having(on(ContentSpecToTag.class).getBookTag(), equalTo(isBookTag)),
+                                mappingEntities).size() != 0) {
                             throw new CustomConstraintViolationException(
                                     "Adding Tag " + tag.getTagName() + " (" + tag.getId() + ") failed due to a mutually exclusive " +
                                             "constraint violation.");
@@ -332,19 +354,37 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
                 }
             }
 
-            final ContentSpecToTag mapping = new ContentSpecToTag(this, tag);
+            final ContentSpecToTag mapping = new ContentSpecToTag(this, tag, isBookTag);
             contentSpecToTags.add(mapping);
             tag.getContentSpecToTags().add(mapping);
         }
     }
 
+    public void addBookTag(final Tag tag) throws CustomConstraintViolationException {
+        addTag(tag, true);
+    }
+
     public void removeTag(final Tag tag) {
+        removeTag(tag, false);
+    }
+
+    public void removeBookTag(final Tag tag) {
+        removeTag(tag, true);
+    }
+
+    protected void removeTag(final Tag tag, final boolean isBookTag) {
+        // Filter down to the matching tags
         final List<ContentSpecToTag> mappingEntities = filter(having(on(ContentSpecToTag.class).getTag(), equalTo(tag)),
                 getContentSpecToTags());
         if (mappingEntities.size() != 0) {
-            for (final ContentSpecToTag mapping : mappingEntities) {
-                contentSpecToTags.remove(mapping);
-                mapping.getTag().getContentSpecToTags().remove(mapping);
+            // filter to book or content spec tags
+            final List<ContentSpecToTag> matchingEntities = filter(having(on(ContentSpecToTag.class).getBookTag(), equalTo(isBookTag)),
+                    mappingEntities);
+            if (matchingEntities.size() != 0) {
+                for (final ContentSpecToTag mapping : matchingEntities) {
+                    contentSpecToTags.remove(mapping);
+                    mapping.getTag().getContentSpecToTags().remove(mapping);
+                }
             }
         }
     }

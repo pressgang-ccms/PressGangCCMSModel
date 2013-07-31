@@ -32,13 +32,15 @@ public class ContentSpecToTag extends AuditedEntity implements java.io.Serializa
     private Integer contentSpecToTagId;
     private ContentSpec contentSpec;
     private Tag tag;
+    private Boolean bookTag;
 
     public ContentSpecToTag() {
     }
 
-    public ContentSpecToTag(final ContentSpec contentSpec, final Tag tag) {
+    public ContentSpecToTag(final ContentSpec contentSpec, final Tag tag, final boolean isBookTag) {
         this.contentSpec = contentSpec;
         this.tag = tag;
+        this.bookTag = isBookTag;
     }
 
     @Id
@@ -74,10 +76,19 @@ public class ContentSpecToTag extends AuditedEntity implements java.io.Serializa
         this.tag = tag;
     }
 
+    @Column(name = "BookTag", columnDefinition = "BIT", length = 1, nullable = false)
+    @NotNull
+    public Boolean getBookTag() {
+        return bookTag;
+    }
+
+    public void setBookTag(Boolean bookTag) {
+        this.bookTag = bookTag;
+    }
+
     @Override
     @Transient
     public Integer getId() {
         return contentSpecToTagId;
     }
-
 }

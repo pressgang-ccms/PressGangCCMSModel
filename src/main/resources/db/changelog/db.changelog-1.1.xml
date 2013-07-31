@@ -164,6 +164,9 @@
             <column name="TagID" type="int(11)">
                 <constraints nullable="false"/>
             </column>
+            <column name="BookTag" type="bit">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addForeignKeyConstraint constraintName="FK_ContentSpecID_CS_TAG"
                                  baseTableName="ContentSpecToTag"
@@ -196,6 +199,9 @@
                 <constraints nullable="true"/>
             </column>
             <column name="TagID" type="int(11)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="BookTag" type="bit">
                 <constraints nullable="true"/>
             </column>
         </createTable>

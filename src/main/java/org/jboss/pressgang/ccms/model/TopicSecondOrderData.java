@@ -16,12 +16,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
-@Audited
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TopicSecondOrderData")
-public class TopicSecondOrderData extends AuditedEntity implements java.io.Serializable {
+public class TopicSecondOrderData implements java.io.Serializable {
     private static final long serialVersionUID = 3393132758855818345L;
 
     private Integer topicSecondOrderDataId;
@@ -55,7 +54,6 @@ public class TopicSecondOrderData extends AuditedEntity implements java.io.Seria
         this.topicXMLErrors = topicXMLErrors;
     }
 
-    @Override
     @Transient
     public Integer getId() {
         return topicSecondOrderDataId;

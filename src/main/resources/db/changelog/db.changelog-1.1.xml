@@ -881,4 +881,9 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="28" author="lnewson@redhat.com">
+        <comment>Remove TopicSecondOrderData auditing table</comment>
+        <dropTable tableName="TopicSecondOrderData_AUD" />
+    </changeSet>
+
 </databaseChangeLog>

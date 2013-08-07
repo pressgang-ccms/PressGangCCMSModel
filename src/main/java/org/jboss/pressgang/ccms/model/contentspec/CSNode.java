@@ -322,7 +322,12 @@ public class CSNode extends AuditedEntity implements Serializable {
 
     @Transient
     public void removeChild(final CSNode child, boolean removeChildren) {
-        children.remove(child);
+        for (final Iterator<CSNode> iter = children.iterator(); iter.hasNext();) {
+            final CSNode childNode = iter.next();
+            if (childNode.equals(child)) {
+                iter.remove();
+            }
+        }
         child.setParent(null);
         if (contentSpec != null) {
             if (removeChildren) {

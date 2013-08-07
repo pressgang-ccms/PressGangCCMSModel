@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -230,25 +231,21 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Transient
     public void removeChildAndAllChildren(final CSNode child) {
-        final List<CSNode> removeNodes = new ArrayList<CSNode>();
-
         // Find the node (or possibly nodes) to remove
-        for (final CSNode childNode : csNodes) {
+        for (final Iterator<CSNode> iter = csNodes.iterator(); iter.hasNext();) {
+            final CSNode childNode = iter.next();
             if (childNode.getId() != null && childNode.getId().equals(child.getId())) {
-                removeNodes.add(childNode);
-            }
-        }
+                iter.remove();
+                childNode.setContentSpec(null);
+                if (childNode.getParent() != null) {
+                    childNode.getParent().removeChild(child);
+                }
 
-        for (final CSNode removeNode : removeNodes) {
-            csNodes.remove(removeNode);
-            removeNode.setContentSpec(null);
-            if (removeNode.getParent() != null) {
-                removeNode.getParent().removeChild(child);
-            }
-
-            // Remove all the children for the node
-            for (final CSNode childChildNode : removeNode.getChildren()) {
-                removeChildAndAllChildren(childChildNode);
+                // Remove all the children for the node
+                final Set<CSNode> children = new HashSet<CSNode>(childNode.getChildren());
+                for (final CSNode childChildNode : children) {
+                    removeChildAndAllChildren(childChildNode);
+                }
             }
         }
     }

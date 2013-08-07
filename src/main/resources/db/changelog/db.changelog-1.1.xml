@@ -559,12 +559,14 @@
             <column name="CSNodeRevision" type="int(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="OriginalString" type="text"/>
+            <column name="OriginalString" type="text">
+                <constraints nullable="true"/>
+            </column>
             <column name="TranslatedContentSpecID" type="int(11)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addUniqueConstraint tableName="TranslatedCSNode" columnNames="CSNodeID, CSNodeRevision"/>
+        <addUniqueConstraint tableName="TranslatedCSNode" columnNames="CSNodeID, CSNodeRevision, TranslatedContentSpecID"/>
         <addForeignKeyConstraint constraintName="FK_TranslatedContentSpecID_TRANSLATED_CS_NODE"
                                  baseTableName="TranslatedCSNode"
                                  baseColumnNames="TranslatedContentSpecID"
@@ -828,7 +830,7 @@
             <column name="FileData" type="longblob">
                 <constraints nullable="true"/>
             </column>
-            <column name="OriginalFileName" type="varchar(255)" >
+            <column name="OriginalFileName" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
             <column name="FileID" type="int(11)">
@@ -883,7 +885,7 @@
 
     <changeSet id="28" author="lnewson@redhat.com">
         <comment>Remove TopicSecondOrderData auditing table</comment>
-        <dropTable tableName="TopicSecondOrderData_AUD" />
+        <dropTable tableName="TopicSecondOrderData_AUD"/>
     </changeSet>
 
 </databaseChangeLog>

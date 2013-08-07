@@ -317,19 +317,34 @@ public class CSNode extends AuditedEntity implements Serializable {
 
     @Transient
     public void removeChild(final CSNode child) {
+        removeChild(child, true);
+    }
+
+    @Transient
+    public void removeChild(final CSNode child, boolean removeChildren) {
         children.remove(child);
         child.setParent(null);
         if (contentSpec != null) {
-            contentSpec.removeChild(child);
+            if (removeChildren) {
+                contentSpec.removeChildAndAllChildren(child);
+            } else {
+                contentSpec.removeChild(child);
+            }
         }
     }
 
     @Transient
     public void addChild(final CSNode child) {
+        if (child.getParent() != null && !child.getParent().equals(this)) {
+            child.getParent().removeChild(child);
+        }
+        if (child.getContentSpec() != null) {
+            child.getContentSpec().removeChild(child);
+        }
         children.add(child);
         child.setParent(this);
         if (contentSpec != null) {
-            this.contentSpec.addChild(child);
+            contentSpec.addChild(child);
         }
     }
 
@@ -502,56 +517,6 @@ public class CSNode extends AuditedEntity implements Serializable {
         // Set the content specs last modified date if one of it's nodes change
         if (contentSpec != null) {
             contentSpec.setLastModified();
-        }
-    }
-
-    @PreRemove
-    protected void preRemove() {
-        // Remove the next/previous
-        if (next != null && previous != null) {
-            if (next.previous == this) {
-                next.previous = this.previous;
-            }
-            if (previous.next == this) {
-                previous.next = this.next;
-            }
-        } else if (next != null && next.previous == this) {
-            next.previous = null;
-        } else if (previous != null && previous.next == this) {
-            previous.next = null;
-        }
-        next = null;
-        previous = null;
-        
-        // Remove any children
-        final Iterator<CSNode> childIter = children.iterator();
-        while (childIter.hasNext()) {
-            final CSNode child = childIter.next();
-            child.setParent(null);
-            childIter.remove();
-        }
-
-        // Remove the parent
-        if (parent != null) {
-            parent.removeChild(this);
-        }
-
-        // Remove the node and all children
-        if (contentSpec != null) {
-            getContentSpec().removeChildAndAllChildren(this);
-        }
-
-        // Remove relationships
-        for (final CSNodeToCSNode node : relatedToNodes) {
-            removeRelatedTo(node);
-        }
-        for (final CSNodeToCSNode node : relatedFromNodes) {
-            removeRelatedFrom(node);
-        }
-
-        // Remove Property Tags
-        for (final CSNodeToPropertyTag propertyTag : csNodeToPropertyTags) {
-            removePropertyTag(propertyTag);
         }
     }
 

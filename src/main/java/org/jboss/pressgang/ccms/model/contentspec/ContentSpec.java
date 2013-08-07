@@ -242,6 +242,9 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         for (final CSNode removeNode : removeNodes) {
             csNodes.remove(removeNode);
             removeNode.setContentSpec(null);
+            if (removeNode.getParent() != null) {
+                removeNode.getParent().removeChild(child);
+            }
 
             // Remove all the children for the node
             for (final CSNode childChildNode : removeNode.getChildren()) {
@@ -252,8 +255,21 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Transient
     public void addChild(final CSNode child) {
+        if (child.getContentSpec() != null && !child.getContentSpec().equals(this)) {
+            child.getContentSpec().removeChild(child);
+        }
+
         csNodes.add(child);
         child.setContentSpec(this);
+
+        // Make sure all the children are transferred as well
+        for (final CSNode childChild : child.getChildren()) {
+            if (csNodes.contains(childChild) && childChild.getContentSpec().equals(this)) {
+                continue;
+            } else {
+                addChild(childChild);
+            }
+        }
     }
 
     @Transient

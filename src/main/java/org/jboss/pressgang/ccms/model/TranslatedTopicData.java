@@ -14,15 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.text.SimpleDateFormat;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,8 +34,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.TranslatedCSNode;
+import org.jboss.pressgang.ccms.model.interfaces.HasTranslatedStrings;
 import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
-import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
 @Audited
@@ -46,7 +43,7 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TranslatedTopicData",
         uniqueConstraints = @UniqueConstraint(columnNames = {"TranslatedTopicID", "TranslationLocale", "TranslatedCSNodeID"}))
-public class TranslatedTopicData extends AuditedEntity implements java.io.Serializable {
+public class TranslatedTopicData extends AuditedEntity implements HasTranslatedStrings<TranslatedTopicString>, Serializable {
     private static final long serialVersionUID = 7470594104954257672L;
     public static final String SELECT_ALL_QUERY = "select translatedTopicData from TranslatedTopicData translatedTopicData";
 
@@ -313,13 +310,15 @@ public class TranslatedTopicData extends AuditedEntity implements java.io.Serial
     }
 
     @Transient
-    public void addTranslatedTopicString(final TranslatedTopicString translatedTopicString) {
+    @Override
+    public void addTranslatedString(final TranslatedTopicString translatedTopicString) {
         getTranslatedTopicStrings().add(translatedTopicString);
         translatedTopicString.setTranslatedTopicData(this);
     }
 
     @Transient
-    public void removeTranslatedTopicString(final TranslatedTopicString translatedTopicString) {
+    @Override
+    public void removeTranslatedString(final TranslatedTopicString translatedTopicString) {
         getTranslatedTopicStrings().remove(translatedTopicString);
         translatedTopicString.setTranslatedTopicData(null);
     }

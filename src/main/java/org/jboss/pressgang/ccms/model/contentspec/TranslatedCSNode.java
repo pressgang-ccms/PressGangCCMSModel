@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,13 +34,14 @@ import org.hibernate.envers.query.AuditQuery;
 import org.jboss.pressgang.ccms.model.TranslatedTopicData;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.interfaces.HasTranslatedStrings;
 
 @Entity
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TranslatedCSNode")
-public class TranslatedCSNode extends AuditedEntity implements java.io.Serializable {
+public class TranslatedCSNode extends AuditedEntity implements HasTranslatedStrings<TranslatedCSNodeString>, Serializable {
     private static final long serialVersionUID = 5185674451816385008L;
 
     private Integer translatedCSNodeId = null;

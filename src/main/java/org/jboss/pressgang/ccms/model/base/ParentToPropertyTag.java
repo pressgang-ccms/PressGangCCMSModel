@@ -4,17 +4,16 @@ import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.jboss.pressgang.ccms.model.PropertyTag;
+import org.jboss.pressgang.ccms.model.interfaces.HasProperties;
 import org.jboss.pressgang.ccms.model.sort.ParentToPropertyTagIDComparator;
 
 /**
  * This class provides consistent access to property tags
  */
-public abstract class ParentToPropertyTag<T extends AuditedEntity, U extends ToPropertyTag<U>> extends AuditedEntity {
-    protected abstract Set<U> getPropertyTags();
-
+public abstract class ParentToPropertyTag<T extends AuditedEntity, U extends ToPropertyTag<U>> extends AuditedEntity implements
+        HasProperties<U> {
     @Transient
     public String getProperties() {
         final List<U> tags = new ArrayList<U>(getPropertyTags());
@@ -62,5 +61,11 @@ public abstract class ParentToPropertyTag<T extends AuditedEntity, U extends ToP
         }
 
         return null;
+    }
+
+    @Override
+    @Transient
+    public List<U> getPropertyTagsList() {
+        return new ArrayList<U>(getPropertyTags());
     }
 }

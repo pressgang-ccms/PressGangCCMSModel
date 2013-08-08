@@ -189,7 +189,7 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
         return tagsList;
     }
 
-    public boolean removeTagRelationship(final Tag childTag) {
+    public boolean removeTag(final Tag childTag) {
         final List<TagToCategory> children = filter(having(on(TagToCategory.class).getTag(), equalTo(childTag)), getTagToCategories());
         for (final TagToCategory child : children) {
             getTagToCategories().remove(child);
@@ -199,7 +199,7 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
         return children.size() != 0;
     }
 
-    public boolean addTagRelationship(final Tag childTag, final Integer sort) {
+    public boolean addTag(final Tag childTag, final Integer sort) {
         final List<TagToCategory> children = filter(having(on(TagToCategory.class).getTag(), equalTo(childTag)), getTagToCategories());
 
         /* If this tag is not mapped at all, add it */
@@ -214,8 +214,8 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
         return false;
     }
 
-    public boolean addTagRelationship(final Tag childTag) {
-        return addTagRelationship(childTag, null);
+    public boolean addTag(final Tag childTag) {
+        return addTag(childTag, null);
     }
 
     @PreRemove
@@ -233,13 +233,13 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
     }
 
     @Transient
-    public void addTagRelationship(final TagToCategory tagToCategory) {
+    public void addTag(final TagToCategory tagToCategory) {
         tagToCategory.getTag().getTagToCategories().add(tagToCategory);
         tagToCategories.add(tagToCategory);
     }
 
     @Transient
-    public void removeTagRelationship(final TagToCategory tagToCategory) {
+    public void removeTag(final TagToCategory tagToCategory) {
         tagToCategory.getTag().getTagToCategories().remove(tagToCategory);
         tagToCategories.remove(tagToCategory);
     }

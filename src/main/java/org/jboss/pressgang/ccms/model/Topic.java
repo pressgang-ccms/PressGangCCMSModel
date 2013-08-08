@@ -31,6 +31,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -55,6 +56,9 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.CSNode;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpec;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
+import org.jboss.pressgang.ccms.model.interfaces.HasProperties;
+import org.jboss.pressgang.ccms.model.interfaces.HasTags;
+import org.jboss.pressgang.ccms.model.interfaces.HasTwoWayRelationships;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TopicToTopicMainTopicIDSort;
@@ -69,7 +73,8 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "Topic")
-public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implements java.io.Serializable {
+public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implements HasTags, HasTwoWayRelationships<TopicToTopic>,
+        Serializable {
     public static final String SELECT_ALL_QUERY = "SELECT topic FROM Topic as Topic";
     private static final long serialVersionUID = 5580473587657911655L;
 
@@ -344,12 +349,17 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     public boolean addRelationshipFrom(final Topic relatedTopic, final RelationshipTag relationshipTag) {
         if (!isRelatedTo(relatedTopic, relationshipTag)) {
             final TopicToTopic topicToTopic = new TopicToTopic(relatedTopic, this, relationshipTag);
-            getChildTopicToTopics().add(topicToTopic);
-            relatedTopic.getParentTopicToTopics().add(topicToTopic);
+            addRelationshipFrom(topicToTopic);
             return true;
         }
 
         return false;
+    }
+
+    @Override
+    public void addRelationshipFrom(final TopicToTopic relationship) {
+        getChildTopicToTopics().add(relationship);
+        relationship.getRelatedTopic().getParentTopicToTopics().add(relationship);
     }
 
     public boolean addRelationshipTo(final EntityManager entityManager, final Integer topicId, final Integer relationshipTagId) {
@@ -366,12 +376,17 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     public boolean addRelationshipTo(final Topic relatedTopic, final RelationshipTag relationshipTag) {
         if (!isRelatedTo(relatedTopic, relationshipTag)) {
             final TopicToTopic topicToTopic = new TopicToTopic(this, relatedTopic, relationshipTag);
-            getParentTopicToTopics().add(topicToTopic);
-            relatedTopic.getChildTopicToTopics().add(topicToTopic);
+            addRelationshipTo(topicToTopic);
             return true;
         }
 
         return false;
+    }
+
+    @Override
+    public void addRelationshipTo(final TopicToTopic relationship) {
+        getParentTopicToTopics().add(relationship);
+        relationship.getRelatedTopic().getChildTopicToTopics().add(relationship);
     }
 
     public void addTag(final EntityManager entityManager, final int tagID) {
@@ -379,6 +394,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         addTag(tag);
     }
 
+    @Override
     public void addTag(final Tag tag) {
         if (filter(having(on(TopicToTag.class).getTag(), equalTo(tag)), getTopicToTags()).size() == 0) {
 
@@ -481,6 +497,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Transient
+    @Override
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
         for (final TopicToTag topicToTag : topicToTags) {
@@ -490,17 +507,6 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
         Collections.sort(retValue, new TagIDComparator());
 
-        return retValue;
-    }
-
-    /**
-     * This is necessary because a4j:repeat does not work with a Set
-     */
-    @Transient
-    public ArrayList<Tag> getTagsArray() {
-        final ArrayList<Tag> retValue = new ArrayList<Tag>();
-        for (final TopicToTag topicToTag : topicToTags)
-            retValue.add(topicToTag.getTag());
         return retValue;
     }
 
@@ -539,22 +545,18 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
             final RelationshipTag relationshipTag = topicToTopic.getRelationshipTag();
 
             if (relatedTopic.getTopicId().equals(relatedTopicId) && relationshipTag.getRelationshipTagId().equals(relationshipTagId)) {
-                /* remove the relationship from this topic */
-                getParentTopicToTopics().remove(topicToTopic);
-
-                /* now remove the relationship from the other topic */
-                for (final TopicToTopic childTopicToTopic : relatedTopic.getChildTopicToTopics()) {
-                    if (childTopicToTopic.getMainTopic().equals(this)) {
-                        relatedTopic.getChildTopicToTopics().remove(childTopicToTopic);
-                        break;
-                    }
-                }
-
+                removeRelationshipTo(topicToTopic);
                 return true;
             }
         }
 
         return false;
+    }
+
+    @Override
+    public void removeRelationshipTo(final TopicToTopic relationship) {
+        getParentTopicToTopics().remove(relationship);
+        relationship.getRelatedTopic().getChildTopicToTopics().remove(relationship);
     }
 
     public boolean removeRelationshipFrom(final Topic topic, final RelationshipTag relationshipTag) {
@@ -567,22 +569,18 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
             final RelationshipTag relationshipTag = topicToTopic.getRelationshipTag();
 
             if (relatedTopic.getTopicId().equals(relatedTopicId) && relationshipTag.getRelationshipTagId().equals(relationshipTagId)) {
-                /* remove the relationship from this topic */
-                getChildTopicToTopics().remove(topicToTopic);
-
-                /* now remove the relationship from the other topic */
-                for (final TopicToTopic parentTopicToTopic : relatedTopic.getParentTopicToTopics()) {
-                    if (parentTopicToTopic.getMainTopic().equals(this)) {
-                        relatedTopic.getParentTopicToTopics().remove(parentTopicToTopic);
-                        break;
-                    }
-                }
-
+                removeRelationshipFrom(topicToTopic);
                 return true;
             }
         }
 
         return false;
+    }
+
+    @Override
+    public void removeRelationshipFrom(final TopicToTopic relationship) {
+        getChildTopicToTopics().remove(relationship);
+        relationship.getRelatedTopic().getParentTopicToTopics().remove(relationship);
     }
 
     public void removeTag(final int tagID) {
@@ -595,8 +593,13 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         }
     }
 
+    @Override
     public void removeTag(final Tag tag) {
         removeTag(tag.getTagId());
+    }
+
+    public void removeTopicSourceUrl(final TopicSourceUrl topicSourceUrl) {
+        removeTopicSourceUrl(topicSourceUrl.getId());
     }
 
     public void removeTopicSourceUrl(final int id) {
@@ -646,23 +649,6 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     @Transient
-    public List<TopicToPropertyTag> getTopicToPropertyTagsArray() {
-        final List<TopicToPropertyTag> topicToPropertyTags = CollectionUtilities.toArrayList(this.topicToPropertyTags);
-        return topicToPropertyTags;
-    }
-
-    @Transient
-    public List<PropertyTag> getPropertyTagsArray() {
-        final List<PropertyTag> retValue = new ArrayList<PropertyTag>();
-        for (final TopicToPropertyTag mapping : topicToPropertyTags) {
-            final PropertyTag entity = mapping.getPropertyTag();
-            retValue.add(entity);
-        }
-
-        return retValue;
-    }
-
-    @Transient
     public List<TopicSourceUrl> getTopicSourceUrls() {
         final List<TopicSourceUrl> retValue = new ArrayList<TopicSourceUrl>();
         for (final TopicToTopicSourceUrl mapping : topicToTopicSourceUrls) {
@@ -686,15 +672,17 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Override
     @Transient
-    protected Set<TopicToPropertyTag> getPropertyTags() {
+    public Set<TopicToPropertyTag> getPropertyTags() {
         return topicToPropertyTags;
     }
 
+    @Override
     public void removePropertyTag(final TopicToPropertyTag topicToPropertyTag) {
         topicToPropertyTags.remove(topicToPropertyTag);
         topicToPropertyTag.getPropertyTag().getTopicToPropertyTags().remove(topicToPropertyTag);
     }
 
+    @Override
     public void addPropertyTag(final TopicToPropertyTag topicToPropertyTag) {
         topicToPropertyTags.add(topicToPropertyTag);
         topicToPropertyTag.getPropertyTag().getTopicToPropertyTags().add(topicToPropertyTag);
@@ -728,6 +716,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         topicToBugzillaBugs.clear();
     }
 
+    @Override
     public void addPropertyTag(final PropertyTag propertyTag, final String value) {
         final TopicToPropertyTag mapping = new TopicToPropertyTag();
         mapping.setTopic(this);
@@ -738,6 +727,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         propertyTag.getTopicToPropertyTags().add(mapping);
     }
 
+    @Override
     public void removePropertyTag(final PropertyTag propertyTag, final String value) {
         final List<TopicToPropertyTag> removeList = new ArrayList<TopicToPropertyTag>();
 

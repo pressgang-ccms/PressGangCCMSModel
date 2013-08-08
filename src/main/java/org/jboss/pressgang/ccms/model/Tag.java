@@ -25,6 +25,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,14 +43,13 @@ import org.jboss.pressgang.ccms.model.contentspec.ContentSpecToTag;
 import org.jboss.pressgang.ccms.model.sort.CategoryIDComparator;
 import org.jboss.pressgang.ccms.model.sort.ProjectIDComparator;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
-import org.jboss.pressgang.ccms.utils.common.CollectionUtilities;
 
 @Entity
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "Tag", uniqueConstraints = @UniqueConstraint(columnNames = {"TagName"}))
-public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements java.io.Serializable {
+public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements Serializable {
     public static final String SELECT_ALL_QUERY = "select tag from Tag tag";
     private static final long serialVersionUID = 2841080567638275194L;
 
@@ -454,11 +454,13 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
         this.tagToPropertyTags = tagToPropertyTags;
     }
 
+    @Override
     public void removePropertyTag(final TagToPropertyTag tagToPropertyTag) {
         tagToPropertyTags.remove(tagToPropertyTag);
         tagToPropertyTag.getPropertyTag().getTagToPropertyTags().remove(tagToPropertyTag);
     }
 
+    @Override
     public void removePropertyTag(final PropertyTag propertyTag, final String value) {
         final List<TagToPropertyTag> removeList = new ArrayList<TagToPropertyTag>();
 
@@ -475,11 +477,13 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
         }
     }
 
+    @Override
     public void addPropertyTag(final TagToPropertyTag tagToPropertyTag) {
         tagToPropertyTags.add(tagToPropertyTag);
         tagToPropertyTag.getPropertyTag().getTagToPropertyTags().add(tagToPropertyTag);
     }
 
+    @Override
     public void addPropertyTag(final PropertyTag propertyTag, final String value) {
         final TagToPropertyTag mapping = new TagToPropertyTag();
         mapping.setTag(this);
@@ -492,40 +496,24 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements j
 
     @Override
     @Transient
-    protected Set<TagToPropertyTag> getPropertyTags() {
+    public Set<TagToPropertyTag> getPropertyTags() {
         return tagToPropertyTags;
     }
 
     @Transient
-    public List<PropertyTag> getPropertyTagsArray() {
-        final List<PropertyTag> retValue = new ArrayList<PropertyTag>();
-        for (final TagToPropertyTag mapping : tagToPropertyTags) {
-            final PropertyTag entity = mapping.getPropertyTag();
-            retValue.add(entity);
-        }
-
-        return retValue;
-    }
-
-    @Transient
-    public List<TagToPropertyTag> getTagToPropertyTagsArray() {
-        return CollectionUtilities.toArrayList(tagToPropertyTags);
-    }
-
-    @Transient
-    public void addCategoryRelationship(final TagToCategory tagToCategory) {
+    public void addCategory(final TagToCategory tagToCategory) {
         tagToCategory.getCategory().getTagToCategories().add(tagToCategory);
         tagToCategories.add(tagToCategory);
     }
 
     @Transient
-    public void removeCategoryRelationship(final TagToCategory tagToCategory) {
+    public void removeCategory(final TagToCategory tagToCategory) {
         tagToCategory.getCategory().getTagToCategories().remove(tagToCategory);
         tagToCategories.remove(tagToCategory);
     }
 
     @Transient
-    public List<TagToCategory> getTagToCategoriesArray() {
+    public List<TagToCategory> getTagToCategoriesList() {
         final List<TagToCategory> retValue = new ArrayList<TagToCategory>();
 
         for (final TagToCategory tagToCategory : tagToCategories) {

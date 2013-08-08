@@ -45,7 +45,11 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.interfaces.HasCSNodes;
+import org.jboss.pressgang.ccms.model.interfaces.HasProperties;
+import org.jboss.pressgang.ccms.model.interfaces.HasTwoWayRelationships;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
@@ -53,7 +57,8 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ContentSpecNode")
-public class CSNode extends AuditedEntity implements Serializable {
+public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> implements HasCSNodes, HasTwoWayRelationships<CSNodeToCSNode>,
+        Serializable {
 
     private static final long serialVersionUID = -5074781793940947664L;
     public static final String SELECT_ALL_QUERY = "select csNode FROM CSNode AS csNode";
@@ -259,6 +264,7 @@ public class CSNode extends AuditedEntity implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
+    @Override
     public Set<CSNode> getChildren() {
         return children;
     }
@@ -301,6 +307,7 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @Transient
+    @Override
     public List<CSNode> getChildrenList() {
         return new ArrayList<CSNode>(getChildren());
     }
@@ -316,29 +323,17 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @Transient
+    @Override
     public void removeChild(final CSNode child) {
-        removeChild(child, true);
-    }
-
-    @Transient
-    public void removeChild(final CSNode child, boolean removeChildren) {
-        for (final Iterator<CSNode> iter = children.iterator(); iter.hasNext();) {
-            final CSNode childNode = iter.next();
-            if (childNode.equals(child)) {
-                iter.remove();
-            }
-        }
+        children.remove(child);
         child.setParent(null);
         if (contentSpec != null) {
-            if (removeChildren) {
-                contentSpec.removeChildAndAllChildren(child);
-            } else {
-                contentSpec.removeChild(child);
-            }
+            contentSpec.removeChild(child);
         }
     }
 
     @Transient
+    @Override
     public void addChild(final CSNode child) {
         if (child.getParent() != null && !child.getParent().equals(this)) {
             child.getParent().removeChild(child);
@@ -354,7 +349,7 @@ public class CSNode extends AuditedEntity implements Serializable {
     }
 
     @Transient
-    public void removeRelatedTo(final CSNode node, Integer relationshipTypeId) {
+    public void removeRelationshipTo(final CSNode node, Integer relationshipTypeId) {
         final List<CSNodeToCSNode> removeNodes = new ArrayList<CSNodeToCSNode>();
 
         for (final CSNodeToCSNode nodeToNode : relatedToNodes) {
@@ -364,36 +359,36 @@ public class CSNode extends AuditedEntity implements Serializable {
         }
 
         for (final CSNodeToCSNode removeNode : removeNodes) {
-            relatedToNodes.remove(removeNode);
-            removeNode.getRelatedNode().getRelatedFromNodes().remove(removeNode);
+            removeRelationshipTo(removeNode);
         }
     }
 
     @Transient
-    public void addRelatedTo(final CSNode relatedNode, Integer relationshipTypeId) {
+    public void addRelationshipTo(final CSNode relatedNode, Integer relationshipTypeId) {
         final CSNodeToCSNode nodeToNode = new CSNodeToCSNode();
         nodeToNode.setMainNode(this);
         nodeToNode.setRelatedNode(relatedNode);
         nodeToNode.setRelationshipType(relationshipTypeId);
 
-        getRelatedToNodes().add(nodeToNode);
-        relatedNode.getRelatedFromNodes().add(nodeToNode);
+        addRelationshipTo(nodeToNode);
     }
 
     @Transient
-    public void addRelatedTo(final CSNodeToCSNode relatedNode) {
+    @Override
+    public void addRelationshipTo(final CSNodeToCSNode relatedNode) {
         getRelatedToNodes().add(relatedNode);
         relatedNode.getRelatedNode().getRelatedFromNodes().add(relatedNode);
     }
 
     @Transient
-    public void removeRelatedTo(final CSNodeToCSNode relatedNode) {
+    @Override
+    public void removeRelationshipTo(final CSNodeToCSNode relatedNode) {
         getRelatedToNodes().remove(relatedNode);
         relatedNode.getRelatedNode().getRelatedFromNodes().remove(relatedNode);
     }
 
     @Transient
-    public void removeRelatedFrom(final CSNode node, Integer relationshipTypeId) {
+    public void removeRelationshipFrom(final CSNode node, Integer relationshipTypeId) {
         final List<CSNodeToCSNode> removeNodes = new ArrayList<CSNodeToCSNode>();
 
         for (final CSNodeToCSNode nodeFromNode : relatedFromNodes) {
@@ -403,39 +398,41 @@ public class CSNode extends AuditedEntity implements Serializable {
         }
 
         for (final CSNodeToCSNode removeNode : removeNodes) {
-            relatedFromNodes.remove(removeNode);
-            removeNode.getRelatedNode().getRelatedToNodes().remove(removeNode);
+            removeRelationshipFrom(removeNode);
         }
     }
 
     @Transient
-    public void addRelatedFrom(final CSNode relatedNode, Integer relationshipTypeId) {
+    public void addRelationshipFrom(final CSNode relatedNode, Integer relationshipTypeId) {
         final CSNodeToCSNode nodeFromNode = new CSNodeToCSNode();
         nodeFromNode.setMainNode(this);
         nodeFromNode.setRelatedNode(relatedNode);
         nodeFromNode.setRelationshipType(relationshipTypeId);
 
-        getRelatedFromNodes().add(nodeFromNode);
-        relatedNode.getRelatedToNodes().add(nodeFromNode);
+        addRelationshipFrom(nodeFromNode);
     }
 
     @Transient
-    public void addRelatedFrom(final CSNodeToCSNode relatedNode) {
+    @Override
+    public void addRelationshipFrom(final CSNodeToCSNode relatedNode) {
         getRelatedFromNodes().add(relatedNode);
         relatedNode.getRelatedNode().getRelatedToNodes().add(relatedNode);
     }
 
     @Transient
-    public void removeRelatedFrom(final CSNodeToCSNode relatedNode) {
+    @Override
+    public void removeRelationshipFrom(final CSNodeToCSNode relatedNode) {
         getRelatedFromNodes().remove(relatedNode);
         relatedNode.getRelatedNode().getRelatedToNodes().remove(relatedNode);
     }
 
     @Transient
-    public List<CSNodeToPropertyTag> getCSNodeToPropertyTagsList() {
-        return new ArrayList<CSNodeToPropertyTag>(csNodeToPropertyTags);
+    @Override
+    public Set<CSNodeToPropertyTag> getPropertyTags() {
+        return csNodeToPropertyTags;
     }
 
+    @Override
     public void addPropertyTag(final PropertyTag propertyTag, final String value) {
         final CSNodeToPropertyTag mapping = new CSNodeToPropertyTag();
         mapping.setCSNode(this);
@@ -446,6 +443,13 @@ public class CSNode extends AuditedEntity implements Serializable {
         propertyTag.getCSNodeToPropertyTags().add(mapping);
     }
 
+    @Override
+    public void addPropertyTag(final CSNodeToPropertyTag mapping) {
+        csNodeToPropertyTags.add(mapping);
+        mapping.getPropertyTag().getCSNodeToPropertyTags().add(mapping);
+    }
+
+    @Override
     public void removePropertyTag(final PropertyTag propertyTag, final String value) {
         final List<CSNodeToPropertyTag> removeList = new ArrayList<CSNodeToPropertyTag>();
 
@@ -461,6 +465,7 @@ public class CSNode extends AuditedEntity implements Serializable {
         }
     }
 
+    @Override
     public void removePropertyTag(final CSNodeToPropertyTag mapping) {
         csNodeToPropertyTags.remove(mapping);
         mapping.getPropertyTag().getCSNodeToPropertyTags().remove(mapping);

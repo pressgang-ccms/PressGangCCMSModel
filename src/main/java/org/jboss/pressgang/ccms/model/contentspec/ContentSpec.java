@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -47,6 +46,8 @@ import org.jboss.pressgang.ccms.model.TagToCategory;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
+import org.jboss.pressgang.ccms.model.interfaces.HasCSNodes;
+import org.jboss.pressgang.ccms.model.interfaces.HasTags;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
@@ -55,7 +56,7 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "ContentSpec")
-public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToPropertyTag> implements Serializable {
+public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToPropertyTag> implements HasCSNodes, HasTags, Serializable {
     private static final long serialVersionUID = 5229054857631287690L;
     public static final String SELECT_ALL_QUERY = "select contentSpec from ContentSpec as contentSpec";
 
@@ -198,7 +199,8 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     }
 
     @Transient
-    public List<CSNode> getTopCSNodes() {
+    @Override
+    public List<CSNode> getChildrenList() {
         final List<CSNode> nodes = new ArrayList<CSNode>();
 
         for (final CSNode node : csNodes) {
@@ -211,9 +213,25 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     }
 
     @Transient
-    public void removeChild(final CSNode child) {
-        final List<CSNode> removeNodes = new ArrayList<CSNode>();
+    @Override
+    public Set<CSNode> getChildren() {
+        final Set<CSNode> nodes = new HashSet<CSNode>();
 
+        for (final CSNode node : csNodes) {
+            if (node.getParent() == null) {
+                nodes.add(node);
+            }
+        }
+
+        return nodes;
+    }
+
+    @Transient
+    @Override
+    public void removeChild(final CSNode child) {
+        final Set<CSNode> removeNodes = new HashSet<CSNode>();
+
+        // Find the node (or possibly nodes) to remove
         for (final CSNode childNode : csNodes) {
             if (childNode.getId() != null && childNode.getId().equals(child.getId())) {
                 removeNodes.add(childNode);
@@ -221,36 +239,28 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         }
 
         for (final CSNode removeNode : removeNodes) {
-            csNodes.remove(removeNode);
-            removeNode.setContentSpec(null);
-            if (removeNode.getParent() != null) {
-                removeNode.getParent().removeChild(child);
+            removeChildAndAllChildrenForChild(removeNode);
+
+            if (child.getParent() != null) {
+                child.getParent().removeChild(child);
             }
         }
     }
 
     @Transient
-    public void removeChildAndAllChildren(final CSNode child) {
-        // Find the node (or possibly nodes) to remove
-        for (final Iterator<CSNode> iter = csNodes.iterator(); iter.hasNext();) {
-            final CSNode childNode = iter.next();
-            if (childNode.getId() != null && childNode.getId().equals(child.getId())) {
-                iter.remove();
-                childNode.setContentSpec(null);
-                if (childNode.getParent() != null) {
-                    childNode.getParent().removeChild(child);
-                }
-
-                // Remove all the children for the node
-                final Set<CSNode> children = new HashSet<CSNode>(childNode.getChildren());
-                for (final CSNode childChildNode : children) {
-                    removeChildAndAllChildren(childChildNode);
-                }
-            }
+    protected void removeChildAndAllChildrenForChild(final CSNode child) {
+        // Add all the children of the node to be removed.
+        final Set<CSNode> children = new HashSet<CSNode>(child.getChildren());
+        for (final CSNode childChildNode : children) {
+            removeChildAndAllChildrenForChild(childChildNode);
         }
+
+        csNodes.remove(child);
+        child.setContentSpec(null);
     }
 
     @Transient
+    @Override
     public void addChild(final CSNode child) {
         if (child.getContentSpec() != null && !child.getContentSpec().equals(this)) {
             child.getContentSpec().removeChild(child);
@@ -269,17 +279,13 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         }
     }
 
-    @Transient
-    public List<ContentSpecToPropertyTag> getContentSpecToPropertyTagsList() {
-        return new ArrayList<ContentSpecToPropertyTag>(contentSpecToPropertyTags);
-    }
-
     @Override
     @Transient
-    protected Set<ContentSpecToPropertyTag> getPropertyTags() {
+    public Set<ContentSpecToPropertyTag> getPropertyTags() {
         return contentSpecToPropertyTags;
     }
 
+    @Override
     public void addPropertyTag(final PropertyTag propertyTag, final String value) {
         final ContentSpecToPropertyTag mapping = new ContentSpecToPropertyTag();
         mapping.setContentSpec(this);
@@ -290,6 +296,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         propertyTag.getContentSpecToPropertyTags().add(mapping);
     }
 
+    @Override
     public void removePropertyTag(final PropertyTag propertyTag, final String value) {
         final List<ContentSpecToPropertyTag> removeList = new ArrayList<ContentSpecToPropertyTag>();
 
@@ -306,7 +313,20 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         }
     }
 
+    @Override
+    public void addPropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
+        contentSpecToPropertyTags.add(contentSpecToPropertyTag);
+        contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().add(contentSpecToPropertyTag);
+    }
+
+    @Override
+    public void removePropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
+        contentSpecToPropertyTags.remove(contentSpecToPropertyTag);
+        contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().remove(contentSpecToPropertyTag);
+    }
+
     @Transient
+    @Override
     public List<Tag> getTags() {
         final List<Tag> retValue = new ArrayList<Tag>();
         for (final ContentSpecToTag contentSpecToTag : contentSpecToTags) {
@@ -377,6 +397,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         addTag(tag, true);
     }
 
+    @Override
     public void removeTag(final Tag tag) {
         removeTag(tag, false);
     }
@@ -402,29 +423,9 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         }
     }
 
-    public void addTag(final ContentSpecToTag contentSpecToTag) {
-        contentSpecToTags.add(contentSpecToTag);
-        contentSpecToTag.getTag().getContentSpecToTags().add(contentSpecToTag);
-    }
-
-    public void removeTag(final ContentSpecToTag contentSpecToTag) {
-        contentSpecToTags.remove(contentSpecToTag);
-        contentSpecToTag.getTag().getContentSpecToTags().remove(contentSpecToTag);
-    }
-
-    public void addPropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
-        contentSpecToPropertyTags.add(contentSpecToPropertyTag);
-        contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().add(contentSpecToPropertyTag);
-    }
-
-    public void removePropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
-        contentSpecToPropertyTags.remove(contentSpecToPropertyTag);
-        contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().remove(contentSpecToPropertyTag);
-    }
-
     @Transient
     public CSNode getContentSpecTitle() {
-        for (final CSNode node : getTopCSNodes()) {
+        for (final CSNode node : getChildrenList()) {
             if (node.getCSNodeTitle().equals("Title")) {
                 return node;
             }
@@ -435,7 +436,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Transient
     public void setContentSpecTitle(final CSNode contentSpecTitle) {
-        if (!getTopCSNodes().contains(contentSpecTitle)) {
+        if (!getChildrenList().contains(contentSpecTitle)) {
             contentSpecTitle.setParent(null);
             contentSpecTitle.setContentSpec(this);
             getCSNodes().add(contentSpecTitle);
@@ -444,7 +445,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Transient
     public CSNode getContentSpecProduct() {
-        for (final CSNode node : getTopCSNodes()) {
+        for (final CSNode node : getChildrenList()) {
             if (node.getCSNodeTitle().equals("Product")) {
                 return node;
             }
@@ -455,7 +456,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Transient
     public void setContentSpecProduct(final CSNode contentSpecProduct) {
-        if (!getTopCSNodes().contains(contentSpecProduct)) {
+        if (!getChildrenList().contains(contentSpecProduct)) {
             contentSpecProduct.setParent(null);
             contentSpecProduct.setContentSpec(this);
             getCSNodes().add(contentSpecProduct);
@@ -464,7 +465,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Transient
     public CSNode getContentSpecVersion() {
-        for (final CSNode node : getTopCSNodes()) {
+        for (final CSNode node : getChildrenList()) {
             if (node.getCSNodeTitle().equals("Version")) {
                 return node;
             }
@@ -475,7 +476,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Transient
     public void setContentSpecVersion(final CSNode contentSpecVersion) {
-        if (!getTopCSNodes().contains(contentSpecVersion)) {
+        if (!getChildrenList().contains(contentSpecVersion)) {
             contentSpecVersion.setParent(null);
             contentSpecVersion.setContentSpec(this);
             getCSNodes().add(contentSpecVersion);
@@ -484,8 +485,8 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Transient
     public CSNode getMetaData(final String metaDataTitle) {
-        if (getTopCSNodes() != null) {
-            for (final CSNode item : getTopCSNodes()) {
+        if (getChildrenList() != null) {
+            for (final CSNode item : getChildrenList()) {
                 if (item.getCSNodeTitle().equalsIgnoreCase(metaDataTitle)) {
                     return item;
                 }

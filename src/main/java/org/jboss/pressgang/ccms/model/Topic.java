@@ -358,6 +358,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Override
     public void addRelationshipFrom(final TopicToTopic relationship) {
+        relationship.setRelatedTopic(this);
         getChildTopicToTopics().add(relationship);
         relationship.getRelatedTopic().getParentTopicToTopics().add(relationship);
     }
@@ -385,6 +386,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Override
     public void addRelationshipTo(final TopicToTopic relationship) {
+        relationship.setMainTopic(this);
         getParentTopicToTopics().add(relationship);
         relationship.getRelatedTopic().getChildTopicToTopics().add(relationship);
     }

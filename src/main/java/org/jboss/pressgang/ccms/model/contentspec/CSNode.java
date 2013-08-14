@@ -16,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -29,7 +28,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -44,11 +42,9 @@ import org.hibernate.envers.query.AuditQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Topic;
-import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.interfaces.HasCSNodes;
-import org.jboss.pressgang.ccms.model.interfaces.HasProperties;
 import org.jboss.pressgang.ccms.model.interfaces.HasTwoWayRelationships;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
@@ -261,7 +257,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         this.condition = condition;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     @Override
@@ -376,6 +372,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     @Transient
     @Override
     public void addRelationshipTo(final CSNodeToCSNode relatedNode) {
+        relatedNode.setMainNode(this);
         getRelatedToNodes().add(relatedNode);
         relatedNode.getRelatedNode().getRelatedFromNodes().add(relatedNode);
     }
@@ -405,8 +402,8 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     @Transient
     public void addRelationshipFrom(final CSNode relatedNode, Integer relationshipTypeId) {
         final CSNodeToCSNode nodeFromNode = new CSNodeToCSNode();
-        nodeFromNode.setMainNode(this);
-        nodeFromNode.setRelatedNode(relatedNode);
+        nodeFromNode.setMainNode(relatedNode);
+        nodeFromNode.setRelatedNode(this);
         nodeFromNode.setRelationshipType(relationshipTypeId);
 
         addRelationshipFrom(nodeFromNode);
@@ -415,6 +412,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     @Transient
     @Override
     public void addRelationshipFrom(final CSNodeToCSNode relatedNode) {
+        relatedNode.setRelatedNode(this);
         getRelatedFromNodes().add(relatedNode);
         relatedNode.getRelatedNode().getRelatedToNodes().add(relatedNode);
     }

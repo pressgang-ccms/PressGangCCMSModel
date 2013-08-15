@@ -686,6 +686,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     @Override
     public void addPropertyTag(final TopicToPropertyTag topicToPropertyTag) {
+        topicToPropertyTag.setTopic(this);
         topicToPropertyTags.add(topicToPropertyTag);
         topicToPropertyTag.getPropertyTag().getTopicToPropertyTags().add(topicToPropertyTag);
     }

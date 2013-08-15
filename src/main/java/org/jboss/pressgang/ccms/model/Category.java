@@ -234,6 +234,7 @@ public class Category extends AuditedEntity implements java.io.Serializable, Com
 
     @Transient
     public void addTag(final TagToCategory tagToCategory) {
+        tagToCategory.setCategory(this);
         tagToCategory.getTag().getTagToCategories().add(tagToCategory);
         tagToCategories.add(tagToCategory);
     }

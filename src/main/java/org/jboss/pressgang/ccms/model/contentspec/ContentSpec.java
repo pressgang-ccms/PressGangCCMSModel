@@ -315,6 +315,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     @Override
     public void addPropertyTag(final ContentSpecToPropertyTag contentSpecToPropertyTag) {
+        contentSpecToPropertyTag.setContentSpec(this);
         contentSpecToPropertyTags.add(contentSpecToPropertyTag);
         contentSpecToPropertyTag.getPropertyTag().getContentSpecToPropertyTags().add(contentSpecToPropertyTag);
     }

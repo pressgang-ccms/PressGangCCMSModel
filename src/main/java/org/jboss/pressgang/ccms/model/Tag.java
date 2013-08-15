@@ -479,6 +479,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements S
 
     @Override
     public void addPropertyTag(final TagToPropertyTag tagToPropertyTag) {
+        tagToPropertyTag.setTag(this);
         tagToPropertyTags.add(tagToPropertyTag);
         tagToPropertyTag.getPropertyTag().getTagToPropertyTags().add(tagToPropertyTag);
     }
@@ -502,6 +503,7 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements S
 
     @Transient
     public void addCategory(final TagToCategory tagToCategory) {
+        tagToCategory.setTag(this);
         tagToCategory.getCategory().getTagToCategories().add(tagToCategory);
         tagToCategories.add(tagToCategory);
     }

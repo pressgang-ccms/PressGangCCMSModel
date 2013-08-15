@@ -444,6 +444,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
 
     @Override
     public void addPropertyTag(final CSNodeToPropertyTag mapping) {
+        mapping.setCSNode(this);
         csNodeToPropertyTags.add(mapping);
         mapping.getPropertyTag().getCSNodeToPropertyTags().add(mapping);
     }

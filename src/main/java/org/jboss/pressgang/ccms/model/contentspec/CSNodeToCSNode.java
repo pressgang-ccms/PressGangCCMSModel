@@ -23,6 +23,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
@@ -111,7 +112,7 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
         if (getMainNode().getCSNodeType() == CommonConstants.CS_NODE_META_DATA || getRelatedNode().getCSNodeType() == CommonConstants
                 .CS_NODE_META_DATA || getMainNode().getCSNodeType() == CommonConstants.CS_NODE_COMMENT || getRelatedNode().getCSNodeType
                 () == CommonConstants.CS_NODE_COMMENT) {
-            throw new PersistenceException("Node to Node relationships can't be performed on Comments or Meta Data.");
+            throw new CustomConstraintViolationException("Node to Node relationships can't be performed on Comments or Meta Data.");
         }
     }
 }

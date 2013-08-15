@@ -44,6 +44,7 @@ import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.interfaces.HasCSNodes;
 import org.jboss.pressgang.ccms.model.interfaces.HasTwoWayRelationships;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
@@ -164,7 +165,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     }
 
     @JoinColumn(name = "NextNodeID")
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     public CSNode getNext() {
         return next;
@@ -531,14 +532,14 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     @Transient
     protected void validateNode() {
         if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && getParent() != null) {
-            throw new PersistenceException("Meta Data nodes are only allowed at the root level.");
+            throw new CustomConstraintViolationException("Meta Data nodes are only allowed at the root level.");
         }
 
         if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && !getChildren().isEmpty()) {
             throw new PersistenceException("Meta Data nodes cannot have children nodes.");
         } else if ((getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_INNER_TOPIC))
                 && !getChildren().isEmpty()) {
-            throw new PersistenceException("Topic nodes cannot have children nodes.");
+            throw new CustomConstraintViolationException("Topic nodes cannot have children nodes.");
         }
     }
 }

@@ -258,7 +258,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         this.condition = condition;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
     @Override

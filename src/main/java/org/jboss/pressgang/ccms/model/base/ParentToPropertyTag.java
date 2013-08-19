@@ -63,6 +63,19 @@ public abstract class ParentToPropertyTag<T extends AuditedEntity, U extends ToP
         return null;
     }
 
+    @Transient
+    public List<U> getProperties(final Integer propertyTagId) {
+        final List<U> properties = new ArrayList<U>();
+        for (final U toPropertyTag : getPropertyTags()) {
+            final PropertyTag propertyTag = toPropertyTag.getPropertyTag();
+            if (propertyTag.getPropertyTagId().equals(propertyTagId)) {
+                properties.add(toPropertyTag);
+            }
+        }
+
+        return properties;
+    }
+
     @Override
     @Transient
     public List<U> getPropertyTagsList() {

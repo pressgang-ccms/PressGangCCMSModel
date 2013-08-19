@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -422,7 +423,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     @Override
     public void removeRelationshipFrom(final CSNodeToCSNode relatedNode) {
         getRelatedFromNodes().remove(relatedNode);
-        relatedNode.getRelatedNode().getRelatedToNodes().remove(relatedNode);
+        relatedNode.getMainNode().getRelatedToNodes().remove(relatedNode);
     }
 
     @Transient
@@ -541,6 +542,17 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         } else if ((getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_INNER_TOPIC))
                 && !getChildren().isEmpty()) {
             throw new CustomConstraintViolationException("Topic nodes cannot have children nodes.");
+        }
+    }
+
+    @PreRemove
+    protected void preRemove() {
+        for (final CSNodeToCSNode mapping : new HashSet<CSNodeToCSNode>(relatedFromNodes)) {
+            removeRelationshipFrom(mapping);
+        }
+
+        for (final CSNodeToCSNode mapping : new HashSet<CSNodeToCSNode>(relatedToNodes)) {
+            removeRelationshipTo(mapping);
         }
     }
 }

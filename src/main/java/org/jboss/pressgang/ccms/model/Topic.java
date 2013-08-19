@@ -56,7 +56,6 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.CSNode;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpec;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
-import org.jboss.pressgang.ccms.model.interfaces.HasProperties;
 import org.jboss.pressgang.ccms.model.interfaces.HasTags;
 import org.jboss.pressgang.ccms.model.interfaces.HasTwoWayRelationships;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
@@ -582,7 +581,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @Override
     public void removeRelationshipFrom(final TopicToTopic relationship) {
         getChildTopicToTopics().remove(relationship);
-        relationship.getRelatedTopic().getParentTopicToTopics().remove(relationship);
+        relationship.getMainTopic().getParentTopicToTopics().remove(relationship);
     }
 
     public void removeTag(final int tagID) {

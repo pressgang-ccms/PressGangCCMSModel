@@ -553,7 +553,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         }
 
         if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && !getChildren().isEmpty()) {
-            throw new PersistenceException("Meta Data nodes cannot have children nodes.");
+            throw new CustomConstraintViolationException("Meta Data nodes cannot have children nodes.");
         } else if ((getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_INNER_TOPIC))
                 && !getChildren().isEmpty()) {
             throw new CustomConstraintViolationException("Topic nodes cannot have children nodes.");

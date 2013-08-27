@@ -888,4 +888,10 @@
         <dropTable tableName="TopicSecondOrderData_AUD"/>
     </changeSet>
 
+    <changeSet id="29" author="lnewson@redhat.com">
+        <comment>Remove the ImageBase64 column to remove duplicate data</comment>
+        <dropColumn tableName="LanguageImage" columnName="ImageDataBase64"/>
+        <dropColumn tableName="LanguageImage_AUD" columnName="ImageDataBase64"/>
+    </changeSet>
+
 </databaseChangeLog>

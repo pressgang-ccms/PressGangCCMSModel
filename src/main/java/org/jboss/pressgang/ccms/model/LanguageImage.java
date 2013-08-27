@@ -57,7 +57,6 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     private ImageFile imageFile;
     private byte[] imageData;
     private byte[] thumbnail;
-    private byte[] imageDataBase64;
     private String locale;
     private String originalFileName;
 
@@ -102,20 +101,6 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
 
     public void setImageFile(ImageFile imageFile) {
         this.imageFile = imageFile;
-    }
-
-    @Column(name = "ImageDataBase64", columnDefinition = "mediumblob")
-    public byte[] getImageDataBase64() {
-        return imageDataBase64;
-    }
-
-    public void setImageDataBase64(final byte[] imageDataBase64) {
-        this.imageDataBase64 = imageDataBase64;
-    }
-
-    @Transient
-    public String getImageDataBase64String() {
-        return imageDataBase64 == null ? "" : new String(imageDataBase64);
     }
 
     @Column(name = "ImageData", columnDefinition = "mediumblob")
@@ -200,7 +185,6 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     @PreUpdate
     private void updateImageData() throws CustomConstraintViolationException {
         thumbnail = createImage(true);
-        imageDataBase64 = Base64.encodeBase64(imageData);
 
         imageFile.validate();
     }
@@ -285,5 +269,10 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     public void setUiOriginalFileName(final String uiOriginalFileName) {
         this.uiOriginalFileName = uiOriginalFileName;
         if (this.uiOriginalFileName != null && !this.uiOriginalFileName.isEmpty()) originalFileName = this.uiOriginalFileName;
+    }
+
+    @Transient
+    public byte[] getImageDataBase64() {
+        return imageData == null ? null : Base64.encodeBase64(imageData);
     }
 }

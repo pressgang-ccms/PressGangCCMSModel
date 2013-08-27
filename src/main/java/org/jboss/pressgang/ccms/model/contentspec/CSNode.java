@@ -520,6 +520,21 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         return entityManager.createQuery(query).getResultList();
     }
 
+    @Transient
+    public String getInheritedCondition() {
+        if (getCondition() == null || getCondition().trim().isEmpty()) {
+            if (getParent() != null) {
+                return getParent().getInheritedCondition();
+            } else if (getContentSpec() != null) {
+                return getContentSpec().getCondition();
+            } else {
+                return null;
+            }
+        } else {
+            return getCondition();
+        }
+    }
+
     @PrePersist
     @PreUpdate
     protected void preSave() {

@@ -537,7 +537,17 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     public boolean removeRelationshipTo(final Topic topic, final RelationshipTag relationshipTag) {
-        return removeRelationshipTo(topic.getTopicId(), relationshipTag.getRelationshipTagId());
+        for (final TopicToTopic topicToTopic : getParentTopicToTopics()) {
+            final Topic relatedTopic = topicToTopic.getRelatedTopic();
+            final RelationshipTag existingRelationshipTag = topicToTopic.getRelationshipTag();
+
+            if (relatedTopic.equals(topic) && existingRelationshipTag.getRelationshipTagId().equals(relationshipTag.getId())) {
+                removeRelationshipTo(topicToTopic);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean removeRelationshipTo(final Integer relatedTopicId, final Integer relationshipTagId) {
@@ -561,7 +571,17 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     }
 
     public boolean removeRelationshipFrom(final Topic topic, final RelationshipTag relationshipTag) {
-        return removeRelationshipFrom(topic.getTopicId(), relationshipTag.getRelationshipTagId());
+        for (final TopicToTopic topicToTopic : getChildTopicToTopics()) {
+            final Topic relatedTopic = topicToTopic.getRelatedTopic();
+            final RelationshipTag existingRelationshipTag = topicToTopic.getRelationshipTag();
+
+            if (relatedTopic.equals(topic) && existingRelationshipTag.getRelationshipTagId().equals(relationshipTag.getId())) {
+                removeRelationshipFrom(topicToTopic);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean removeRelationshipFrom(final Integer relatedTopicId, final Integer relationshipTagId) {

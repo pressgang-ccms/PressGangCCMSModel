@@ -427,7 +427,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     @Transient
     public CSNode getContentSpecTitle() {
         for (final CSNode node : getChildrenList()) {
-            if (node.getCSNodeTitle().equals("Title")) {
+            if (node.getCSNodeTitle().equals(CommonConstants.CS_TITLE_TITLE)) {
                 return node;
             }
         }
@@ -447,7 +447,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     @Transient
     public CSNode getContentSpecProduct() {
         for (final CSNode node : getChildrenList()) {
-            if (node.getCSNodeTitle().equals("Product")) {
+            if (node.getCSNodeTitle().equals(CommonConstants.CS_PRODUCT_TITLE)) {
                 return node;
             }
         }
@@ -467,7 +467,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     @Transient
     public CSNode getContentSpecVersion() {
         for (final CSNode node : getChildrenList()) {
-            if (node.getCSNodeTitle().equals("Version")) {
+            if (node.getCSNodeTitle().equals(CommonConstants.CS_VERSION_TITLE)) {
                 return node;
             }
         }

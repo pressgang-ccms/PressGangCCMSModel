@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,7 +28,7 @@ import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "LanguageFile")
+@Table(name = "LanguageFile", uniqueConstraints = @UniqueConstraint(columnNames = {"FileID", "Locale"}))
 public class LanguageFile extends AuditedEntity implements Serializable {
     private static final long serialVersionUID = 6439345505628825355L;
 

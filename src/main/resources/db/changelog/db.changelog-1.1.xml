@@ -807,6 +807,7 @@
                                  baseColumnNames="FileID"
                                  referencedTableName="File"
                                  referencedColumnNames="FileID"/>
+        <addUniqueConstraint tableName="LanguageFile" columnNames="FileID, Locale"/>
     </changeSet>
 
     <changeSet id="24" author="lnewson@redhat.com">

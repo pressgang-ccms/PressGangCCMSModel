@@ -59,8 +59,16 @@ public class EnversUtilities {
      * @return Returns the list of revision numbers for this entity, as maintained by Envers
      */
     public static <T extends AuditedEntity> List<Number> getRevisions(final EntityManager entityManager, final T entity) {
+        return getRevisions(entityManager, entity.getClass(), entity.getId());
+    }
+
+    /**
+     * @return Returns the list of revision numbers for this entity, as maintained by Envers
+     */
+    public static <T extends AuditedEntity> List<Number> getRevisions(final EntityManager entityManager, final Class<T> entityClass,
+            final Number id) {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
-        final List<Number> retValue = reader.getRevisions(entity.getClass(), entity.getId());
+        final List<Number> retValue = reader.getRevisions(entityClass, id);
         Collections.sort(retValue, Collections.reverseOrder());
         return retValue;
     }

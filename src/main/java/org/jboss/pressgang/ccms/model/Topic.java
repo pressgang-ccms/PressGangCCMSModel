@@ -793,6 +793,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         final CriteriaQuery<ContentSpec> query = criteriaBuilder.createQuery(ContentSpec.class);
         final Root<CSNode> root = query.from(CSNode.class);
         query.select(root.get("contentSpec").as(ContentSpec.class));
+        query.distinct(true);
 
         final Predicate topicIdMatches = criteriaBuilder.equal(root.get("entityId"), getTopicId());
         final Predicate normalTopicMatch = criteriaBuilder.equal(root.get("CSNodeType"), CommonConstants.CS_NODE_TOPIC);

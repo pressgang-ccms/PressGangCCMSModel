@@ -474,7 +474,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
 
     @Transient
     public Topic getTopic(final EntityManager entityManager) {
-        if (!(getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_INNER_TOPIC)))
+        if (!isTopicNode())
             return null;
         if (entityId == null)
             return null;
@@ -552,10 +552,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
             throw new CustomConstraintViolationException("Meta Data nodes are only allowed at the root level.");
         }
 
-        if (getCSNodeType() == CommonConstants.CS_NODE_META_DATA && !getChildren().isEmpty()) {
-            throw new CustomConstraintViolationException("Meta Data nodes cannot have children nodes.");
-        } else if ((getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_INNER_TOPIC))
-                && !getChildren().isEmpty()) {
+        if (isTopicNode() && !getChildren().isEmpty()) {
             throw new CustomConstraintViolationException("Topic nodes cannot have children nodes.");
         }
     }
@@ -569,5 +566,11 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         for (final CSNodeToCSNode mapping : new HashSet<CSNodeToCSNode>(relatedToNodes)) {
             removeRelationshipTo(mapping);
         }
+    }
+
+    @Transient
+    public boolean isTopicNode() {
+        return getCSNodeType() != null && (getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals
+                (CommonConstants.CS_NODE_INNER_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_META_DATA_TOPIC));
     }
 }

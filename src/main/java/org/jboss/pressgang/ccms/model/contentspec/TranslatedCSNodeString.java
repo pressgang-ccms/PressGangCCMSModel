@@ -3,8 +3,10 @@ package org.jboss.pressgang.ccms.model.contentspec;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -62,7 +64,7 @@ public class TranslatedCSNodeString extends AuditedEntity implements java.io.Ser
         this.locale = locale;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "TranslatedCSNodeID", nullable = false)
     @NotNull
     public TranslatedCSNode getTranslatedCSNode() {

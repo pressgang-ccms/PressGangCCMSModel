@@ -99,7 +99,7 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
         this.relationshipSort = relationshipSort;
     }
 
-    @Column(name = "Mode", nullable = false, columnDefinition = "TINYINT")
+    @Column(name = "RelationshipMode", nullable = false, columnDefinition = "TINYINT")
     @NotNull
     public Integer getRelationshipMode() {
         return relationshipMode;

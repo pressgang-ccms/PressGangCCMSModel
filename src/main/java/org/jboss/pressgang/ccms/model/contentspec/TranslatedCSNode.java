@@ -135,23 +135,6 @@ public class TranslatedCSNode extends AuditedEntity implements HasTranslatedStri
     }
 
     @Transient
-    public TranslatedTopicData getTranslatedTopicData() {
-        return getTranslatedTopicDatas().isEmpty() ? null : getTranslatedTopicDatas().iterator().next();
-    }
-
-    @Transient
-    public void setTranslatedTopicData(final TranslatedTopicData translatedTopicData) {
-        // Remove any TranslatedTopics that currently exist
-        for (final TranslatedTopicData translatedTopic : getTranslatedTopicDatas()) {
-            removeTranslatedTopicData(translatedTopic);
-        }
-        // Set the Translated Topic
-        if (translatedTopicData != null) {
-            addTranslatedTopicData(translatedTopicData);
-        }
-    }
-
-    @Transient
     public CSNode getEnversCSNode(final EntityManager entityManager) {
         if (enversCSNode == null) {
             /* Find the envers topic */

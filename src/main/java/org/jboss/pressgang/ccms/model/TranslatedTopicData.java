@@ -309,6 +309,22 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
         return false;
     }
 
+    /**
+     * @return The File ID used to identify this topic and revision in Zanata
+     */
+    @Transient
+    public String getZanataId() {
+        if (translatedTopic != null) {
+            if (translatedCSNode == null) {
+                return translatedTopic.getZanataId();
+            } else {
+                return translatedTopic.getZanataId() + "-" + translatedCSNode.getId();
+            }
+        } else {
+            return null;
+        }
+    }
+
     @Transient
     @Override
     public void addTranslatedString(final TranslatedTopicString translatedTopicString) {

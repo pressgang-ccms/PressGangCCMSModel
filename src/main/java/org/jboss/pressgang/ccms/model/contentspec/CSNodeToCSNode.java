@@ -39,6 +39,7 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
     private CSNode relatedNode = null;
     private Integer relationshipType = null;
     private Integer relationshipSort = null;
+    private Integer relationshipMode = null;
 
     @Override
     @Transient
@@ -80,6 +81,7 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
     }
 
     @Column(name = "RelationshipType", nullable = false, columnDefinition = "TINYINT")
+    @NotNull
     public Integer getRelationshipType() {
         return relationshipType;
     }
@@ -95,6 +97,16 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
 
     public void setRelationshipSort(Integer relationshipSort) {
         this.relationshipSort = relationshipSort;
+    }
+
+    @Column(name = "Mode", nullable = false, columnDefinition = "TINYINT")
+    @NotNull
+    public Integer getRelationshipMode() {
+        return relationshipMode;
+    }
+
+    public void setRelationshipMode(Integer relationshipMode) {
+        this.relationshipMode = relationshipMode;
     }
 
     @PrePersist

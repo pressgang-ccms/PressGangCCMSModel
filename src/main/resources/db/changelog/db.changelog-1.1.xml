@@ -361,6 +361,9 @@
             <column name="RelationshipType" type="tinyint">
                 <constraints nullable="false"/>
             </column>
+            <column name="RelationshipMode" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
             <column name="Sort" type="int(11)"/>
         </createTable>
         <addForeignKeyConstraint constraintName="FK_MainNodeID_CS_NODE_TO_NODE"
@@ -397,6 +400,9 @@
                 <constraints nullable="true"/>
             </column>
             <column name="RelationshipType" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="RelationshipMode" type="tinyint">
                 <constraints nullable="true"/>
             </column>
             <column name="Sort" type="int(11)">

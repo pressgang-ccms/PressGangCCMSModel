@@ -10,10 +10,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,6 +33,7 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.contentspec.TranslatedCSNode;
 
 /**
  * A TranslatedTopic represents a particular revision of a topic. This revision then holds the translated version of the
@@ -39,7 +43,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "TranslatedTopic", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicRevision", "TopicID"}))
+@Table(name = "TranslatedTopic", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicRevision", "TopicID", "TranslatedCSNodeID"}))
 public class TranslatedTopic extends AuditedEntity implements java.io.Serializable {
     private static final long serialVersionUID = 4190214754023153898L;
     public static final String SELECT_ALL_QUERY = "select translatedTopic from TranslatedTopic translatedTopic";
@@ -47,6 +51,8 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
     private Integer translatedTopicId;
     private Integer topicId;
     private Integer topicRevision;
+    private TranslatedCSNode translatedCSNode;
+    private String translatedXMLCondition;
     private Set<TranslatedTopicData> translatedTopicDatas = new HashSet<TranslatedTopicData>(0);
     private Topic enversTopic;
 
@@ -84,12 +90,36 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
         this.topicRevision = topicRevision;
     }
 
+    @OneToOne
+    @JoinColumn(name = "TranslatedCSNodeID")
+    public TranslatedCSNode getTranslatedCSNode() {
+        return translatedCSNode;
+    }
+
+    public void setTranslatedCSNode(final TranslatedCSNode translatedCSNode) {
+        this.translatedCSNode = translatedCSNode;
+    }
+
+    @Column(name = "TranslatedXMLCondition", nullable = false, length = 255)
+    @Size(max = 255)
+    public String getTranslatedXMLCondition() {
+        return translatedXMLCondition;
+    }
+
+    public void setTranslatedXMLCondition(final String translatedXMLCondition) {
+        this.translatedXMLCondition = translatedXMLCondition;
+    }
+
     /**
      * @return The File ID used to identify this topic and revision in Zanata
      */
     @Transient
     public String getZanataId() {
-        return topicId + "-" + topicRevision;
+        if (translatedCSNode == null) {
+            return topicId + "-" + topicRevision;
+        } else {
+            return topicId + "-" + topicRevision + "-" + translatedCSNode.getId();
+        }
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "translatedTopic", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -136,5 +166,19 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
     @Transient
     public void setEnversTopic(final Topic enversTopic) {
         this.enversTopic = enversTopic;
+    }
+
+    @Transient
+    public void addTranslatedTopicData(final TranslatedTopicData translatedTopicData) {
+        if (!translatedTopicDatas.contains(translatedTopicData)) {
+            translatedTopicData.setTranslatedTopic(this);
+            translatedTopicDatas.add(translatedTopicData);
+        }
+    }
+
+    @Transient
+    public void removeTranslatedTopicData(final TranslatedTopicData translatedTopicData) {
+        translatedTopicData.setTranslatedTopic(null);
+        translatedTopicDatas.remove(translatedTopicData);
     }
 }

@@ -42,18 +42,16 @@ import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TranslatedTopicData",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"TranslatedTopicID", "TranslationLocale", "TranslatedCSNodeID"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"TranslatedTopicID", "TranslationLocale"}))
 public class TranslatedTopicData extends AuditedEntity implements HasTranslatedStrings<TranslatedTopicString>, Serializable {
     private static final long serialVersionUID = 7470594104954257672L;
     public static final String SELECT_ALL_QUERY = "select translatedTopicData from TranslatedTopicData translatedTopicData";
 
     private Integer translatedTopicDataId;
     private TranslatedTopic translatedTopic;
-    private TranslatedCSNode translatedCSNode;
     private String translatedXml;
     private String translatedXmlErrors;
     private String translationLocale;
-    private String translatedXMLCondition;
     private Set<TranslatedTopicString> translatedTopicStrings = new HashSet<TranslatedTopicString>(0);
     private Integer translationPercentage = 0;
 
@@ -82,16 +80,6 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
 
     public void setTranslatedTopic(final TranslatedTopic translatedTopic) {
         this.translatedTopic = translatedTopic;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "TranslatedCSNodeID")
-    public TranslatedCSNode getTranslatedCSNode() {
-        return translatedCSNode;
-    }
-
-    public void setTranslatedCSNode(final TranslatedCSNode translatedCSNode) {
-        this.translatedCSNode = translatedCSNode;
     }
 
     @Column(name = "TranslatedXML", columnDefinition = "MEDIUMTEXT")
@@ -134,16 +122,6 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
 
     public void setTranslationPercentage(Integer translationPercentage) {
         this.translationPercentage = translationPercentage;
-    }
-
-    @Column(name = "TranslatedXMLCondition", nullable = false, length = 255)
-    @Size(max = 255)
-    public String getTranslatedXMLCondition() {
-        return translatedXMLCondition;
-    }
-
-    public void setTranslatedXMLCondition(final String translatedXMLCondition) {
-        this.translatedXMLCondition = translatedXMLCondition;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "translatedTopicData", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -307,22 +285,6 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
         }
 
         return false;
-    }
-
-    /**
-     * @return The File ID used to identify this topic and revision in Zanata
-     */
-    @Transient
-    public String getZanataId() {
-        if (translatedTopic != null) {
-            if (translatedCSNode == null) {
-                return translatedTopic.getZanataId();
-            } else {
-                return translatedTopic.getZanataId() + "-" + translatedCSNode.getId();
-            }
-        } else {
-            return null;
-        }
     }
 
     @Transient

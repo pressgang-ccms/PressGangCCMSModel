@@ -695,8 +695,8 @@
     </changeSet>
 
     <changeSet id="19" author="lnewson@redhat.com">
-        <comment>Add a column to Translated Topic Data to reference Translated Content Spec Node</comment>
-        <addColumn tableName="TranslatedTopicData">
+        <comment>Add a column to Translated Topic to reference Translated Content Spec Node</comment>
+        <addColumn tableName="TranslatedTopic">
             <column name="TranslatedCSNodeID" type="int(11)">
                 <constraints nullable="true"/>
             </column>
@@ -704,19 +704,19 @@
                 <constraints nullable="true"/>
             </column>
         </addColumn>
-        <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeID_TRANSLATED_TOPIC_DATA"
-                                 baseTableName="TranslatedTopicData"
+        <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeID_TRANSLATED_TOPIC"
+                                 baseTableName="TranslatedTopic"
                                  baseColumnNames="TranslatedCSNodeID"
                                  referencedTableName="TranslatedCSNode"
                                  referencedColumnNames="TranslatedCSNodeID"/>
-        <dropUniqueConstraint tableName="TranslatedTopicData" constraintName="TranslatedTopicID"/>
-        <addUniqueConstraint tableName="TranslatedTopicData" columnNames="TranslatedTopicID, TranslationLocale, TranslatedCSNodeID"
-                             constraintName="TranslatedTopicID"/>
+        <dropUniqueConstraint tableName="TranslatedTopic" constraintName="TopicRevision"/>
+        <addUniqueConstraint tableName="TranslatedTopic" columnNames="TopicID, TopicRevision, TranslatedCSNodeID"
+                             constraintName="TopicRevision"/>
     </changeSet>
 
     <changeSet id="20" author="lnewson@redhat.com">
-        <comment>Add a column to Translated Topic Data AUD to reference Translated Content Spec Node AUD</comment>
-        <addColumn tableName="TranslatedTopicData_AUD">
+        <comment>Add a column to Translated Topic AUD to reference Translated Content Spec Node AUD</comment>
+        <addColumn tableName="TranslatedTopic_AUD">
             <column name="TranslatedCSNodeID" type="int(11)">
                 <constraints nullable="true"/>
             </column>
@@ -724,7 +724,7 @@
                 <constraints nullable="true"/>
             </column>
         </addColumn>
-        <createIndex tableName="TranslatedTopicData_AUD" indexName="TranslatedCSNodeID">
+        <createIndex tableName="TranslatedTopic_AUD" indexName="TranslatedCSNodeID">
             <column name="TranslatedCSNodeID"/>
         </createIndex>
     </changeSet>

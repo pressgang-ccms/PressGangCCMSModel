@@ -11,8 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -90,7 +90,7 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
         this.topicRevision = topicRevision;
     }
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TranslatedCSNodeID")
     public TranslatedCSNode getTranslatedCSNode() {
         return translatedCSNode;

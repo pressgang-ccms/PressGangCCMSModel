@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -33,6 +32,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.jboss.pressgang.ccms.model.TranslatedTopic;
+import org.jboss.pressgang.ccms.model.TranslatedTopicData;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.interfaces.HasTranslatedStrings;
@@ -50,7 +50,7 @@ public class TranslatedCSNode extends AuditedEntity implements HasTranslatedStri
     private Integer contentSpecNodeId = null;
     private Integer contentSpecNodeRevision = null;
     private String originalString = null;
-    private TranslatedTopic translatedTopic = null;
+    private Set<TranslatedTopic> translatedTopics = new HashSet<TranslatedTopic>(0);
     private Set<TranslatedCSNodeString> translatedCSNodeStrings = new HashSet<TranslatedCSNodeString>(0);
 
     private CSNode enversCSNode;
@@ -123,13 +123,15 @@ public class TranslatedCSNode extends AuditedEntity implements HasTranslatedStri
         this.translatedCSNodeStrings = translatedCSNodeStrings;
     }
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "translatedCSNode", cascade = CascadeType.ALL)
-    public TranslatedTopic getTranslatedTopic() {
-        return translatedTopic;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "translatedCSNode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
+    public Set<TranslatedTopic> getTranslatedTopics() {
+        return translatedTopics;
     }
 
-    public void setTranslatedTopic(final TranslatedTopic translatedTopic) {
-        this.translatedTopic = translatedTopic;
+    public void setTranslatedTopics(final Set<TranslatedTopic> translatedTopics) {
+        this.translatedTopics = translatedTopics;
     }
 
     @Transient
@@ -162,5 +164,27 @@ public class TranslatedCSNode extends AuditedEntity implements HasTranslatedStri
     public void removeTranslatedString(final TranslatedCSNodeString translatedString) {
         translatedString.setTranslatedCSNode(null);
         getTranslatedCSNodeStrings().remove(translatedString);
+    }
+
+    public void addTranslatedTopic(final TranslatedTopic translatedTopic) {
+        if (!translatedTopics.contains(translatedTopic)) {
+            translatedTopics.add(translatedTopic);
+            translatedTopic.setTranslatedCSNode(this);
+        }
+    }
+
+    public void removeTranslatedTopicData(final TranslatedTopic translatedTopic) {
+        translatedTopics.remove(translatedTopic);
+        translatedTopic.setTranslatedCSNode(null);
+    }
+
+    @Transient
+    public List<TranslatedTopicData> getTranslatedTopicDatas() {
+        final List<TranslatedTopicData> translatedTopicDatas = new ArrayList<TranslatedTopicData>();
+        for (final TranslatedTopic translatedTopic : getTranslatedTopics()) {
+            translatedTopicDatas.addAll(translatedTopic.getTranslatedTopicDatas());
+        }
+
+        return translatedTopicDatas;
     }
 }

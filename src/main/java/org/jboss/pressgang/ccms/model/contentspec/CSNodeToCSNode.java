@@ -109,14 +109,21 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
         this.relationshipMode = relationshipMode;
     }
 
-    @PrePersist
-    protected void prePersist() {
-        validateNodeToNode();
-    }
-
     @PreUpdate
-    protected void preUpdate() {
+    @PrePersist
+    protected void preSave() {
         validateNodeToNode();
+
+        // Set the content specs last modified date if one of it's nodes change
+        if (mainNode != null) {
+            if (mainNode.getContentSpec() != null) {
+                mainNode.getContentSpec().setLastModified();
+            }
+        } else if (relatedNode != null) {
+            if (relatedNode.getContentSpec() != null) {
+                relatedNode.getContentSpec().setLastModified();
+            }
+        }
     }
 
     @Transient

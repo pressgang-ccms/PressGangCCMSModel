@@ -51,7 +51,7 @@ public class EnversUtilities {
         /* Use a LinkedHashMap to preserver the order */
         final Map<Number, T> retValue = new LinkedHashMap<Number, T>();
         for (final Number revision : revisions)
-            retValue.put(revision, getRevision(reader, entityClass, id, revision));
+            retValue.put(revision, getRevision(reader, entityClass, id, revision, false));
 
         return retValue;
     }
@@ -81,7 +81,7 @@ public class EnversUtilities {
      */
     public static <T extends AuditedEntity> T getRevision(final EntityManager entityManager, final T entity, final Number revision) {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
-        return getRevision(reader, (Class<T>) entity.getClass(), entity.getId(), revision);
+        return getRevision(reader, (Class<T>) entity.getClass(), entity.getId(), revision, true);
     }
 
     /**
@@ -92,19 +92,19 @@ public class EnversUtilities {
     public static <T extends AuditedEntity> T getRevision(final EntityManager entityManager, final Class<T> entityClass, final Integer id,
             final Number revision) {
         final AuditReader reader = AuditReaderFactory.get(entityManager);
-        return getRevision(reader, entityClass, id, revision);
+        return getRevision(reader, entityClass, id, revision, true);
     }
 
     @SuppressWarnings("unchecked")
     private static <T extends AuditedEntity> T getRevision(final AuditReader reader, final Class<T> entityClass, final Integer id,
-            final Number revision) {
+            final Number revision, boolean revisionCheck) {
         final T revEntity = (T) reader.find(entityClass, id, revision);
         if (revEntity == null) return null;
 
         final Date revisionLastModified = reader.getRevisionDate(revision);
         revEntity.setLastModifiedDate(revisionLastModified);
 
-        revEntity.setRevision(getClosestRevision(reader, entityClass, id, revision));
+        revEntity.setRevision(revisionCheck ? getClosestRevision(reader, entityClass, id, revision) : revision);
 
         return revEntity;
     }

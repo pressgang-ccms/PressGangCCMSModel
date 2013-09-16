@@ -645,7 +645,7 @@
         </createTable>
         <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeID_TRANSLATED_CS_NODE_STRING"
                                  baseTableName="TranslatedCSNodeString"
-                                 baseColumnNames="TranslatedCSNodeStringID"
+                                 baseColumnNames="TranslatedCSNodeID"
                                  referencedTableName="TranslatedCSNode"
                                  referencedColumnNames="TranslatedCSNodeID"/>
     </changeSet>
@@ -689,7 +689,7 @@
                                  baseColumnNames="REVEND"
                                  referencedTableName="REVINFO"
                                  referencedColumnNames="REV"/>
-        <createIndex tableName="TranslatedCSNode_AUD" indexName="TranslatedCSNodeID">
+        <createIndex tableName="TranslatedCSNodeString_AUD" indexName="TranslatedCSNodeID">
             <column name="TranslatedCSNodeID"/>
         </createIndex>
     </changeSet>

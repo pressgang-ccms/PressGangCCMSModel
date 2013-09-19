@@ -43,13 +43,16 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
+import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.interfaces.HasCSNodes;
 import org.jboss.pressgang.ccms.model.interfaces.HasTags;
 import org.jboss.pressgang.ccms.model.sort.TagIDComparator;
+import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
+import org.jboss.pressgang.ccms.utils.structures.Pair;
 
 @Entity
 @Audited
@@ -521,5 +524,28 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         }
 
         return entityManager.createQuery(query).getResultList();
+    }
+
+    @Transient
+    public List<Topic> getTopics(final EntityManager entityManager) {
+        // Find the references to topics in the content spec
+        final Set<Pair<Integer, Integer>> topicReferences = new HashSet<Pair<Integer, Integer>>();
+        for (final CSNode csNode : getCSNodes()) {
+            if (csNode.isTopicNode()) {
+                topicReferences.add(new Pair<Integer, Integer>(csNode.getEntityId(), csNode.getEntityRevision()));
+            }
+        }
+
+        // Loop over the references and get the topics
+        final List<Topic> topics = new ArrayList<Topic>();
+        for (final Pair<Integer, Integer> topicReference : topicReferences) {
+            if (topicReference.getSecond() == null) {
+                topics.add(entityManager.getReference(Topic.class, topicReference.getFirst()));
+            } else {
+                topics.add(EnversUtilities.getRevision(entityManager, Topic.class, topicReference.getFirst(), topicReference.getSecond()));
+            }
+        }
+
+        return topics;
     }
 }

@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -33,7 +34,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
-import org.jboss.pressgang.ccms.model.contentspec.TranslatedCSNode;
 import org.jboss.pressgang.ccms.model.interfaces.HasTranslatedStrings;
 import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
 
@@ -54,6 +54,7 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
     private String translationLocale;
     private Set<TranslatedTopicString> translatedTopicStrings = new HashSet<TranslatedTopicString>(0);
     private Integer translationPercentage = 0;
+    private TranslatedTopicSecondOrderData translatedTopicSecondOrderData;
 
     @Transient
     public Integer getId() {
@@ -133,6 +134,30 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
 
     public void setTranslatedTopicStrings(final Set<TranslatedTopicString> translatedTopicStrings) {
         this.translatedTopicStrings = translatedTopicStrings;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "translatedTopicData", cascade = CascadeType.ALL)
+    public TranslatedTopicSecondOrderData getTranslatedTopicSecondOrderData() {
+        return translatedTopicSecondOrderData;
+    }
+
+    public void setTranslatedTopicSecondOrderData(TranslatedTopicSecondOrderData translatedTopicSecondOrderData) {
+        this.translatedTopicSecondOrderData = translatedTopicSecondOrderData;
+    }
+
+    @Transient
+    public String getTranslatedAdditionalXml() {
+        if (translatedTopicSecondOrderData == null) return null;
+
+        return translatedTopicSecondOrderData.getTranslatedAdditionalXml();
+    }
+
+    public void setTranslatedAdditionalXml(final String value) {
+        if (translatedTopicSecondOrderData == null) {
+            translatedTopicSecondOrderData = new TranslatedTopicSecondOrderData();
+        }
+
+        translatedTopicSecondOrderData.setTranslatedAdditionalXml(value);
     }
 
     @Transient

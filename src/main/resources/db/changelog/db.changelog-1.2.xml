@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet id="1" author="lnewson@redhat.com">
+        <comment>Create the new TranslatedTopicSecondOrderData table</comment>
+        <createTable tableName="TranslatedTopicSecondOrderData">
+            <column name="TranslatedTopicSecondOrderDataID" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TranslatedTopicDataID" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AdditionalXML" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_TranslatedTopicID_TRANSLATED_SECOND_ORDER_DATA"
+                baseTableName="TranslatedTopicSecondOrderData"
+                baseColumnNames="TranslatedTopicDataID"
+                referencedTableName="TranslatedTopicData"
+                referencedColumnNames="TranslatedTopicDataID"/>
+    </changeSet>
+    <changeSet id="2" author="lnewson@redhat.com">
+        <comment>Create the new TranslatedTopicSecondOrderData revision table</comment>
+        <createTable tableName="TranslatedTopicSecondOrderData_AUD">
+            <column name="TranslatedTopicSecondOrderDataID" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TranslatedTopicDataID" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="AdditionalXML" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="TranslatedTopicSecondOrderData_AUD" columnNames="TranslatedTopicSecondOrderDataID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_TRANSLATED_SECOND_ORDER_DATA"
+                                 baseTableName="TranslatedTopicSecondOrderData_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_TRANSLATED_SECOND_ORDER_DATA"
+                                 baseTableName="TranslatedTopicSecondOrderData_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="TranslatedTopicSecondOrderData_AUD" indexName="TranslatedTopicDataID">
+            <column name="TranslatedTopicDataID"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

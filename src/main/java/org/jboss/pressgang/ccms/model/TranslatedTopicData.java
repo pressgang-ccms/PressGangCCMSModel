@@ -155,6 +155,7 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
     public void setTranslatedAdditionalXml(final String value) {
         if (translatedTopicSecondOrderData == null) {
             translatedTopicSecondOrderData = new TranslatedTopicSecondOrderData();
+            translatedTopicSecondOrderData.setTranslatedTopicData(this);
         }
 
         translatedTopicSecondOrderData.setTranslatedAdditionalXml(value);

@@ -6,7 +6,7 @@
     <changeSet id="1" author="lnewson@redhat.com">
         <comment>Create the new TranslatedTopicSecondOrderData table</comment>
         <createTable tableName="TranslatedTopicSecondOrderData">
-            <column name="TranslatedTopicSecondOrderDataID" type="int">
+            <column name="TranslatedTopicSecondOrderDataID" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="TranslatedTopicDataID" type="int">

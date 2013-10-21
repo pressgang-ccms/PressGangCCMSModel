@@ -75,6 +75,10 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implements HasTags, HasTwoWayRelationships<TopicToTopic>,
         Serializable {
     public static final String SELECT_ALL_QUERY = "SELECT topic FROM Topic as Topic";
+    /**
+     * The name of the Hibernate Search field
+     */
+    public static final String TOPIC_SEARCH_TEXT_FIELD_NAME = "TopicSearchText";
     private static final long serialVersionUID = 5580473587657911655L;
 
     private Integer topicId;
@@ -256,7 +260,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
      * Hibernate Search. The text extraction uses Jericho - http://jericho.htmlparser.net/
      */
     @Transient
-    @Field(name = "TopicSearchText", index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+    @Field(name = TOPIC_SEARCH_TEXT_FIELD_NAME, index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     public String getTopicSearchText() {
         if (topicXML == null) return "";
 

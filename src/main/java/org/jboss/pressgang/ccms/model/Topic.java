@@ -92,17 +92,20 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private Set<TopicToTopicSourceUrl> topicToTopicSourceUrls = new HashSet<TopicToTopicSourceUrl>(0);
     private Set<TopicToPropertyTag> topicToPropertyTags = new HashSet<TopicToPropertyTag>(0);
     private Set<TopicToBugzillaBug> topicToBugzillaBugs = new HashSet<TopicToBugzillaBug>(0);
+    private Set<MinHash> minHash = new HashSet<MinHash>(0);
     private String topicXML;
     private TopicSecondOrderData topicSecondOrderData;
     private String topicLocale = CommonConstants.DEFAULT_LOCALE;
-    private Integer minHash;
 
-    @Column(name = "TopicMinHash", unique = false, nullable = true)
-    public Integer getMinHash() {
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
+    public Set<MinHash> getMinHash() {
         return minHash;
     }
 
-    public void setMinHash(final Integer minHash) {
+    public void setMinHash(final Set<MinHash> minHash) {
         this.minHash = minHash;
     }
 

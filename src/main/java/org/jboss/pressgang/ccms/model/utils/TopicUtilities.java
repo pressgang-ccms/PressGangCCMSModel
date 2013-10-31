@@ -34,31 +34,45 @@ public class TopicUtilities {
             return null;
         }
 
+        final int SHINGLE_WORD_COUNT = 5;
+
         try {
             final Document doc = XMLUtilities.convertStringToDocument(xml);
             if (doc != null) {
                 final String text = doc.getTextContent();
                 final String[] words = text.split("\\s+");
                 final List<String> shingles = new ArrayList<String>();
-                for (int i = 0; i < words.length; i += 5) {
+
+                if (words.length < SHINGLE_WORD_COUNT) {
                     final StringBuilder shingle = new StringBuilder();
-                    for (int j = i; j < words.length && j < i + 5; ++j) {
+                    for (int i = 0; i < words.length; ++i) {
                         if (shingle.length() != 0) {
                             shingle.append(" ");
                         }
-                        shingle.append(words[j]);
+                        shingle.append(words[i]);
                     }
-                    shingles.add(shingle.toString());
-                }
+                    return shingle.toString().hashCode();
+                } else {
+                    for (int i = 0; i < words.length - SHINGLE_WORD_COUNT + 1; ++i) {
+                        final StringBuilder shingle = new StringBuilder();
+                        for (int j = i; j < words.length && j < i + SHINGLE_WORD_COUNT; ++j) {
+                            if (shingle.length() != 0) {
+                                shingle.append(" ");
+                            }
+                            shingle.append(words[j]);
+                        }
+                        shingles.add(shingle.toString());
+                    }
 
-                Integer minHash = null;
-                for (final String string : shingles) {
-                    final int hash = string.hashCode();
-                    if (minHash == null || hash < minHash) {
-                        minHash = hash;
+                    Integer minHash = null;
+                    for (final String string : shingles) {
+                        final int hash = string.hashCode();
+                        if (minHash == null || hash < minHash) {
+                            minHash = hash;
+                        }
                     }
+                    return minHash;
                 }
-                return minHash;
 
             }
         }

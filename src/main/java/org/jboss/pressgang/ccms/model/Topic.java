@@ -75,6 +75,7 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implements HasTags, HasTwoWayRelationships<TopicToTopic>,
         Serializable {
     public static final String SELECT_ALL_QUERY = "SELECT topic FROM Topic as Topic";
+
     /**
      * The name of the Hibernate Search field
      */
@@ -92,7 +93,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private Set<TopicToTopicSourceUrl> topicToTopicSourceUrls = new HashSet<TopicToTopicSourceUrl>(0);
     private Set<TopicToPropertyTag> topicToPropertyTags = new HashSet<TopicToPropertyTag>(0);
     private Set<TopicToBugzillaBug> topicToBugzillaBugs = new HashSet<TopicToBugzillaBug>(0);
-    private Set<MinHash> minHash = new HashSet<MinHash>(0);
+    private Set<MinHash> minHashes = new HashSet<MinHash>(0);
     private String topicXML;
     private TopicSecondOrderData topicSecondOrderData;
     private String topicLocale = CommonConstants.DEFAULT_LOCALE;
@@ -101,12 +102,22 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<MinHash> getMinHash() {
-        return minHash;
+    public Set<MinHash> getMinHashes() {
+        return minHashes;
     }
 
-    public void setMinHash(final Set<MinHash> minHash) {
-        this.minHash = minHash;
+    public void setMinHash(final Set<MinHash> minHashes) {
+        this.minHashes = minHashes;
+    }
+
+    @Transient
+    public List<MinHash> getMinHashList() {
+        final List<MinHash> retValue = new ArrayList<MinHash>();
+        for (final MinHash mapping : minHashes) {
+            retValue.add(mapping);
+        }
+
+        return retValue;
     }
 
     @Override

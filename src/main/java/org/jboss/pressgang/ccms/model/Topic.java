@@ -95,6 +95,12 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private String topicXML;
     private TopicSecondOrderData topicSecondOrderData;
     private String topicLocale = CommonConstants.DEFAULT_LOCALE;
+    private Integer minHash;
+
+    @Column(name = "TopicMinHash", unique = false, nullable = true)
+    public Integer getMinHash() {
+        return minHash;
+    }
 
     @Override
     @Transient
@@ -289,12 +295,14 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         topicTimeStamp = new Date();
         TopicUtilities.validateAndFixTags(this);
         TopicUtilities.validateAndFixRelationships(this);
+        this.minHash = TopicUtilities.getMinHash(this);
     }
 
     @PreUpdate
     private void onPreUpdate() {
         TopicUtilities.validateAndFixTags(this);
         TopicUtilities.validateAndFixRelationships(this);
+        this.minHash = TopicUtilities.getMinHash(this);
     }
 
     @Transient

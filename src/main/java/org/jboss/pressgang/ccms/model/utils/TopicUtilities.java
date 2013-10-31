@@ -8,7 +8,9 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.TreeMap;
+
 
 import org.jboss.pressgang.ccms.model.Category;
 import org.jboss.pressgang.ccms.model.Tag;
@@ -17,8 +19,53 @@ import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.TopicToTag;
 import org.jboss.pressgang.ccms.model.TopicToTopic;
 import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
+import org.jboss.pressgang.ccms.utils.common.XMLUtilities;
+import org.jboss.pressgang.ccms.utils.structures.StringToNodeCollection;
+import org.w3c.dom.Document;
 
 public class TopicUtilities {
+    /**
+     * Returns the minimum hash of the sentences in an XML file.
+     * @param topic The topics to analyse
+     * @return The minimum hash
+     */
+    public static Integer getMinHash(final Topic topic) {
+        if (topic == null || topic.getTopicXML() == null) {
+            return null;
+        }
+
+        try {
+            final Document doc = XMLUtilities.convertStringToDocument(topic.getTopicXML());
+            if (doc != null) {
+                final List<StringToNodeCollection> strings = XMLUtilities.getTranslatableStringsV2(doc, false);
+                if (strings != null) {
+                    Integer minHash = null;
+                    for (final StringToNodeCollection string : strings) {
+                        final int hash = string.getTranslationString().hashCode();
+                        if (minHash == null || hash < minHash) {
+                            minHash = hash;
+                        }
+                    }
+                    return minHash;
+                }
+            }
+        }
+        catch (final Exception ex) {
+
+        }
+
+        // if we get to here the topic does not have valid xml or has no translatable strings.
+        final String[] sentences = topic.getTopicXML().split("\\.");
+        Integer minHash = null;
+        for (final String string : sentences) {
+            final int hash = string.hashCode();
+            if (minHash == null || hash < minHash) {
+                minHash = hash;
+            }
+        }
+        return minHash;
+    }
+
     /**
      * Validate and Fix a topics relationships to ensure that the topics related topics are still matched by the Related Topics
      * themselves.

@@ -26,16 +26,16 @@ import org.w3c.dom.Document;
 public class TopicUtilities {
     /**
      * Returns the minimum hash of the sentences in an XML file.
-     * @param topic The topics to analyse
+     * @param xml The xml to analyse
      * @return The minimum hash
      */
-    public static Integer getMinHash(final Topic topic) {
-        if (topic == null || topic.getTopicXML() == null) {
+    public static Integer getMinHash(final String xml) {
+        if (xml == null) {
             return null;
         }
 
         try {
-            final Document doc = XMLUtilities.convertStringToDocument(topic.getTopicXML());
+            final Document doc = XMLUtilities.convertStringToDocument(xml);
             if (doc != null) {
                 final List<StringToNodeCollection> strings = XMLUtilities.getTranslatableStringsV2(doc, false);
                 if (strings != null) {
@@ -55,7 +55,7 @@ public class TopicUtilities {
         }
 
         // if we get to here the topic does not have valid xml or has no translatable strings.
-        final String[] sentences = topic.getTopicXML().split("\\.");
+        final String[] sentences = xml.split("\\.");
         Integer minHash = null;
         for (final String string : sentences) {
             final int hash = string.hashCode();

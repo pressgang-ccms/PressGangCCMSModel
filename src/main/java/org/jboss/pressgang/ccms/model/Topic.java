@@ -299,14 +299,14 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         topicTimeStamp = new Date();
         TopicUtilities.validateAndFixTags(this);
         TopicUtilities.validateAndFixRelationships(this);
-        this.minHash = TopicUtilities.getMinHash(this);
+        this.minHash = TopicUtilities.getMinHash(this.getTopicXML());
     }
 
     @PreUpdate
     private void onPreUpdate() {
         TopicUtilities.validateAndFixTags(this);
         TopicUtilities.validateAndFixRelationships(this);
-        this.minHash = TopicUtilities.getMinHash(this);
+        this.minHash = TopicUtilities.getMinHash(this.getTopicXML());
     }
 
     @Transient

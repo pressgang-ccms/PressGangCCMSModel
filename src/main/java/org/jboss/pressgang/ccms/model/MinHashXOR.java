@@ -16,6 +16,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "MinHashXOR")
 public class MinHashXOR extends AuditedEntity implements java.io.Serializable {
+    public static final String SELECT_ALL_QUERY = "SELECT xor FROM MinHashXOR as MinHashXOR";
+
     private Integer minHashXORId;
     private Integer minHashXOR;
 
@@ -31,7 +33,7 @@ public class MinHashXOR extends AuditedEntity implements java.io.Serializable {
     }
 
 
-    @Column(name = "minHashXOR", unique = false, nullable = false)
+    @Column(name = "minHashXOR", unique = true, nullable = false)
     public Integer getMinHashXOR() {
         return minHashXOR;
     }

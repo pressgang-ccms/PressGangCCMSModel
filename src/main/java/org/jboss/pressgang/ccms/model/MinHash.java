@@ -16,6 +16,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "MinHash", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicID", "MinHashFuncID"}))
 public class MinHash extends AuditedEntity implements java.io.Serializable {
+    public static final String SELECT_ALL_QUERY = "SELECT minhash FROM MinHash as MinHash";
+
     private Integer minHashId;
     private Integer minHashFuncID;
     private Topic topic;

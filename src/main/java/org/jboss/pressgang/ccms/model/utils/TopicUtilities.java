@@ -37,17 +37,29 @@ public class TopicUtilities {
         try {
             final Document doc = XMLUtilities.convertStringToDocument(xml);
             if (doc != null) {
-                final List<StringToNodeCollection> strings = XMLUtilities.getTranslatableStringsV2(doc, false);
-                if (strings != null) {
-                    Integer minHash = null;
-                    for (final StringToNodeCollection string : strings) {
-                        final int hash = string.getTranslationString().hashCode();
-                        if (minHash == null || hash < minHash) {
-                            minHash = hash;
+                final String text = doc.getTextContent();
+                final String[] words = text.split("\\s+");
+                final List<String> shingles = new ArrayList<String>();
+                for (int i = 0; i < words.length; i += 5) {
+                    final StringBuilder shingle = new StringBuilder();
+                    for (int j = i; j < words.length && j < i + 5; ++j) {
+                        if (shingle.length() != 0) {
+                            shingle.append(" ");
                         }
+                        shingle.append(words[j]);
                     }
-                    return minHash;
+                    shingles.add(shingle.toString());
                 }
+
+                Integer minHash = null;
+                for (final String string : shingles) {
+                    final int hash = string.hashCode();
+                    if (minHash == null || hash < minHash) {
+                        minHash = hash;
+                    }
+                }
+                return minHash;
+
             }
         }
         catch (final Exception ex) {

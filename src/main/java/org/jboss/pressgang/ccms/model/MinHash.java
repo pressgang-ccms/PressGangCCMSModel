@@ -3,6 +3,7 @@ package org.jboss.pressgang.ccms.model;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,8 +14,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "MinHash")
-public class MinHash {
+@Table(name = "MinHash", uniqueConstraints = @UniqueConstraint(columnNames = {"TopicID", "MinHashFuncID"}))
+public class MinHash extends AuditedEntity implements java.io.Serializable {
     private Integer minHashId;
     private Integer minHashFuncID;
     private Topic topic;
@@ -58,5 +59,11 @@ public class MinHash {
 
     public void setMinHash(final Integer minHash) {
         this.minHash = minHash;
+    }
+
+    @Override
+    @Transient
+    public Integer getId() {
+        return minHashId;
     }
 }

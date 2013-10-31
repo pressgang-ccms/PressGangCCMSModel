@@ -102,6 +102,10 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         return minHash;
     }
 
+    public void setMinHash(final Integer minHash) {
+        this.minHash = minHash;
+    }
+
     @Override
     @Transient
     public Integer getId() {

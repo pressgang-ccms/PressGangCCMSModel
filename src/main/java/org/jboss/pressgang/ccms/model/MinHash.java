@@ -66,6 +66,7 @@ public class MinHash extends AuditedEntity implements java.io.Serializable {
     }
 
     @Column(name = "MinHash", unique = false, nullable = false)
+    @NotNull
     public Integer getMinHash() {
         return minHash;
     }

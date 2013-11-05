@@ -2,6 +2,7 @@ package org.jboss.pressgang.ccms.model;
 
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
+import static ch.lambdaj.Lambda.min;
 import static ch.lambdaj.Lambda.on;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.hamcrest.Matchers.equalTo;
@@ -790,6 +791,20 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         for (final TopicToPropertyTag mapping : removeList) {
             topicToPropertyTags.remove(mapping);
             mapping.getPropertyTag().getTopicToPropertyTags().remove(mapping);
+        }
+    }
+
+    @Transient
+    public void addMinHash(final MinHash minHash) {
+        minHashes.add(minHash);
+        minHash.setTopic(this);
+    }
+
+    @Transient
+    public void removeMinHash(final MinHash minHash) {
+        if (minHashes.contains(minHash)) {
+            minHashes.remove(minHash);
+            minHash.setTopic(null);
         }
     }
 

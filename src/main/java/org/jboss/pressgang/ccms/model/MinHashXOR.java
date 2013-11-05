@@ -1,14 +1,20 @@
 package org.jboss.pressgang.ccms.model;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
-import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Audited
@@ -16,7 +22,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "MinHashXOR")
 public class MinHashXOR extends AuditedEntity implements java.io.Serializable {
-    public static final String SELECT_ALL_QUERY = "SELECT xor FROM MinHashXOR as MinHashXOR";
+    public static final String SELECT_ALL_QUERY = "SELECT xor FROM MinHashXOR as xor";
 
     private Integer minHashXORId;
     private Integer minHashXOR;
@@ -28,12 +34,13 @@ public class MinHashXOR extends AuditedEntity implements java.io.Serializable {
         return minHashXORId;
     }
 
-    public void setMinHashXORId(final Integer minHashId) {
-        this.minHashXORId = minHashId;
+    public void setMinHashXORId(final Integer minHashXORId) {
+        this.minHashXORId = minHashXORId;
     }
 
 
-    @Column(name = "minHashXOR", unique = true, nullable = false)
+    @Column(name = "MinHashXOR", unique = true, nullable = false)
+    @NotNull
     public Integer getMinHashXOR() {
         return minHashXOR;
     }

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet id="1" author="mcaspers@redhat.com">
+        <comment>Create the new MinHash table</comment>
+        <createTable tableName="MinHash">
+            <column name="MinHashID" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="MinHashFuncID" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="TopicID" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="MinHash" type="int">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="MinHash" columnNames="TopicID, MinHashFuncID"/>
+        <addForeignKeyConstraint constraintName="FK_TopicID_MIN_HASH"
+                                 baseTableName="MinHash"
+                                 baseColumnNames="TopicID"
+                                 referencedTableName="Topic"
+                                 referencedColumnNames="TopicID"/>
+    </changeSet>
+
+    <changeSet id="2" author="mcaspers@redhat.com">
+        <comment>Create the new MinHash revision table</comment>
+        <createTable tableName="MinHash_AUD">
+            <column name="MinHashID" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="REV" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="MinHashFuncID" type="int">
+                <constraints nullable="true" />
+            </column>
+            <column name="TopicID" type="int">
+                <constraints nullable="true" />
+            </column>
+            <column name="MinHash" type="int">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="MinHash_AUD" columnNames="MinHashID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_MIN_HASH"
+                                 baseTableName="MinHash_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_MIN_HASH"
+                                 baseTableName="MinHash_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="MinHash_AUD" indexName="TopicID">
+            <column name="TopicID"/>
+            <column name="MinHashFuncID"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet id="3" author="mcaspers@redhat.com">
+        <comment>Create the new MinHashXOR table</comment>
+        <createTable tableName="MinHashXOR">
+            <column name="MinHashXORID" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="MinHashXOR" type="int">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="mcaspers@redhat.com">
+        <comment>Create the new MinHashXOR revision table</comment>
+        <createTable tableName="MinHashXOR_AUD">
+            <column name="MinHashXORID" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="REV" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="MinHashXOR" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="MinHashXOR_AUD" columnNames="MinHashXORID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_MIN_HASH_XOR"
+                                 baseTableName="MinHashXOR_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_MIN_HASH_XOR"
+                                 baseTableName="MinHashXOR_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+    </changeSet>
+
+</databaseChangeLog>

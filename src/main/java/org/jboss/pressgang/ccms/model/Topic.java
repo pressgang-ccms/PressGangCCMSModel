@@ -98,28 +98,6 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private TopicSecondOrderData topicSecondOrderData;
     private String topicLocale = CommonConstants.DEFAULT_LOCALE;
 
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
-    public Set<MinHash> getMinHashes() {
-        return minHashes;
-    }
-
-    public void setMinHash(final Set<MinHash> minHashes) {
-        this.minHashes = minHashes;
-    }
-
-    @Transient
-    public List<MinHash> getMinHashList() {
-        final List<MinHash> retValue = new ArrayList<MinHash>();
-        for (final MinHash mapping : minHashes) {
-            retValue.add(mapping);
-        }
-
-        return retValue;
-    }
-
     @Override
     @Transient
     public Integer getId() {
@@ -157,6 +135,17 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     public void setXmlDoctype(Integer xmlDoctype) {
         this.xmlDoctype = xmlDoctype;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
+    public Set<MinHash> getMinHashes() {
+        return minHashes;
+    }
+
+    public void setMinHashes(final Set<MinHash> minHashes) {
+        this.minHashes = minHashes;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "relatedTopic")
@@ -277,6 +266,16 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
     public void setTopicToBugzillaBugs(final Set<TopicToBugzillaBug> topicToBugzillaBugs) {
         this.topicToBugzillaBugs = topicToBugzillaBugs;
+    }
+
+    @Transient
+    public List<MinHash> getMinHashesList() {
+        final List<MinHash> retValue = new ArrayList<MinHash>();
+        for (final MinHash mapping : minHashes) {
+            retValue.add(mapping);
+        }
+
+        return retValue;
     }
 
     /**

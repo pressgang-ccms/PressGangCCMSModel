@@ -43,7 +43,7 @@ public class TopicUtilities {
      *                  between 0.6 and 0.9.
      * @return
      */
-    public List<Integer> getMatchingMinHash(final EntityManager entityManager, final Integer topicId, final Float threshold) {
+    public static List<Integer> getMatchingMinHash(final EntityManager entityManager, final Integer topicId, final Float threshold) {
         try {
             // get the source topic
             final Topic sourceTopic = entityManager.find(Topic.class, topicId);

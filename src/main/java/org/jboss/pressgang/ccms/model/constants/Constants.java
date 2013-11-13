@@ -27,6 +27,14 @@ public class Constants {
      * for more details).
      */
     public static final int LSH_NINETY_PERCENT_ROWS = 22;
+    /**
+     * This is the minimum similarity that can be detected between two documents.
+     */
+    public static final float MIN_DOCUMENT_SIMILARITY = 0.6f;
+    /**
+     * This is the maximum similarity that can be detected between two documents.
+     */
+    public static final float MAX_DOCUMENT_SIMILARITY = 0.9f;
 
     private Constants() {
     }

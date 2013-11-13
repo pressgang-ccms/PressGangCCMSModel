@@ -78,6 +78,9 @@
             <column name="MinHashXOR" type="int">
                 <constraints unique="true" nullable="false"/>
             </column>
+            <column name="MinHashXORFuncID" type="int">
+                <constraints unique="true" nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -86,6 +89,9 @@
         <createTable tableName="MinHashXOR_AUD">
             <column name="MinHashXORID" type="int">
                 <constraints nullable="false" />
+            </column>
+            <column name="MinHashXORFuncID" type="int">
+                <constraints nullable="false"/>
             </column>
             <column name="REV" type="int">
                 <constraints nullable="false"/>

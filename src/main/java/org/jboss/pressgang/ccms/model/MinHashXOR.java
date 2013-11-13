@@ -45,11 +45,11 @@ public class MinHashXOR extends AuditedEntity implements java.io.Serializable {
 
     @Column(name = "MinHashXORFuncID", unique = true, nullable = false)
     @NotNull
-    public Integer MinHashXORFuncId() {
+    public Integer getMinHashXORFuncId() {
         return minHashXORFuncId;
     }
 
-    public void MinHashXORFuncId(final Integer minHashXORFuncId) {
+    public void setMinHashXORFuncId(final Integer minHashXORFuncId) {
         this.minHashXORFuncId = minHashXORFuncId;
     }
 

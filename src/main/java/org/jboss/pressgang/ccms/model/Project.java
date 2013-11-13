@@ -129,7 +129,7 @@ public class Project extends AuditedEntity implements java.io.Serializable {
             final Set<TagToCategory> tagToCategories = tag.getTagToCategories();
 
             if (tagToCategories.size() == 0) {
-                NameIDSortMap categoryDetails = new NameIDSortMap("Uncatagorised", -1, 0);
+                NameIDSortMap categoryDetails = new NameIDSortMap("Uncategorised", -1, 0);
 
                 if (!tags.containsKey(categoryDetails)) tags.put(categoryDetails, new ArrayList<String>());
 

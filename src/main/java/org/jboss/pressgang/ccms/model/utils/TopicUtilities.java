@@ -23,6 +23,169 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 public class TopicUtilities {
+
+    /**
+     * Recalculate the min hash signature for a topic.
+     * @param topic The topic to generate a signature for
+     * @param minHashXORs The list of XOR values to apply to the hash code
+     */
+    public static void recalculateMinHash(final Topic topic, final List<MinHashXOR> minHashXORs) {
+        final List<MinHash> existingMinHashes = new ArrayList<MinHash>(topic.getMinHashes());
+
+        final Map<Integer, Integer> minHashes = getMinHashes(topic.getTopicXML(), minHashXORs);
+
+        for (final Integer funcId : minHashes.keySet()) {
+
+            boolean found = false;
+            for (final MinHash minHash : existingMinHashes) {
+                if (minHash.getMinHashFuncID() == funcId) {
+                    minHash.setMinHash(minHashes.get(funcId));
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                final MinHash minHash = new MinHash();
+                minHash.setMinHashFuncID(funcId);
+                minHash.setMinHash(minHashes.get(funcId));
+                topic.addMinHash(minHash);
+            }
+        }
+    }
+
+    /**
+     * Generate the min hashes
+     * @param xml The content to apply the signature to
+     * @param minHashXORs The list of XOR values to apply to the hash code
+     * @return
+     */
+    public static Map<Integer, Integer> getMinHashes(final String xml, final List<MinHashXOR> minHashXORs) {
+        final Map<Integer, Integer> retValue = new HashMap<Integer, Integer>();
+
+        // If the xml is null then all min hashes are also going to be null, so just return an empty list.
+        if (xml == null) {
+            return retValue;
+        }
+
+        // the first minhash uses the builtin hashcode only
+        final Integer baseMinHash = getMinHash(xml, null);
+        if (baseMinHash != null) {
+            retValue.put(0, baseMinHash);
+        }
+
+
+        for (int funcId = 1; funcId < org.jboss.pressgang.ccms.model.constants.Constants.NUM_MIN_HASHES; ++funcId) {
+            boolean foundMinHash = false;
+            for (final MinHashXOR minHashXOR : minHashXORs) {
+                if (minHashXOR.getMinHashXORFuncId() == funcId) {
+                    final Integer minHash = getMinHash(xml, minHashXOR.getMinHashXOR());
+                    if (minHash != null) {
+                        retValue.put(funcId, minHash);
+                    }
+                    foundMinHash = true;
+                    break;
+                }
+            }
+            if (!foundMinHash) {
+                throw new IllegalStateException("Did not find a minhash xor int for function " + funcId);
+            }
+        }
+
+        return retValue;
+    }
+
+    /**
+     * Returns the minimum hash of the sentences in an XML file.
+     * @param xml The xml to analyse
+     * @param xor the number to xor the hash against. Null if the standard hashCode() method should be used alone.
+     * @return The minimum hash
+     */
+    public static Integer getMinHash(final String xml, final Integer xor) {
+        if (xml == null) {
+            return null;
+        }
+
+        final int SHINGLE_WORD_COUNT = 5;
+
+        String text = null;
+
+        try {
+            final Document doc = XMLUtilities.convertStringToDocument(xml);
+            if (doc != null) {
+                text = doc.getTextContent();
+            }
+        }
+        catch (final Exception ex) {
+
+        }
+
+        // the xml was invalid, so just strip out xml elements manually
+        if (text == null) {
+            text = xml.replaceAll("<//?.*?//?>", " ");
+        }
+
+        // now generate the minhashes
+        final String[] words = text.replaceAll("[^A-Za-z0-9]", " ").split("\\s+");
+        final List<String> shingles = new ArrayList<String>();
+
+        if (words.length < SHINGLE_WORD_COUNT) {
+            final StringBuilder shingle = new StringBuilder();
+            for (int i = 0; i < words.length; ++i) {
+                if (shingle.length() != 0) {
+                    shingle.append(" ");
+                }
+                shingle.append(words[i]);
+            }
+            final int hash =  shingle.toString().hashCode();
+            if (xor != null) {
+                return hash ^ xor;
+            } else {
+                return hash;
+            }
+        } else {
+            for (int i = 0; i < words.length - SHINGLE_WORD_COUNT + 1; ++i) {
+                final StringBuilder shingle = new StringBuilder();
+                for (int j = i; j < words.length && j < i + SHINGLE_WORD_COUNT; ++j) {
+                    if (shingle.length() != 0) {
+                        shingle.append(" ");
+                    }
+                    shingle.append(words[j]);
+                }
+                shingles.add(shingle.toString());
+            }
+
+            Integer minHash = null;
+            for (final String string : shingles) {
+                final int hash = string.hashCode();
+                final int finalHash = xor != null ? hash ^ xor : hash;
+                if (minHash == null || finalHash < minHash) {
+                    minHash = finalHash;
+                }
+            }
+            return minHash;
+        }
+    }
+
+    public static List<Integer> getMatchingMinHash(final EntityManager entityManager, final Integer topicId, final Float threshold) {
+        // get the source topic
+        final Topic sourceTopic = entityManager.find(Topic.class, topicId);
+        if (sourceTopic.getMinHashes().size() == 0) {
+                /*
+                    If the source topic does not have a minhash signature, force the search query to
+                    match a non existent topic id so no results are returned.
+                 */
+            return new ArrayList<Integer>(){{add(-1);}};
+        }
+
+        final Map<Integer, Integer> minhashes = new HashMap<Integer, Integer>();
+        for (final MinHash minHash : sourceTopic.getMinHashes()) {
+            minhashes.put(minHash.getMinHashFuncID(), minHash.getMinHash());
+        }
+
+        return getMatchingMinHash(entityManager, minhashes, threshold);
+    }
+
     /**
      * Matching the minhash signature of a document relies on a process known as locality sensitive hashing.
      * A good explaination of this process can be found at http://infolab.stanford.edu/~ullman/mmds/ch3.pdf.
@@ -38,18 +201,18 @@ public class TopicUtilities {
      * formula means that increasing the threshold results in an increased number of rows and a decreased number
      * of bands. We get a close approximation by running through a bunch of combinations and seeing what fits best.
      *
-     * @param topicId The topic whose minhash signature we will be matching to.
+     * @param entityManager The entity manager to use for queries
+     * @param minhashes The minhash signature to match topics to
      * @param threshold How similar we want two documents to be to be considered a match. This will be forced to a value
      *                  between 0.6 and 0.9.
      * @return
      */
-    public static List<Integer> getMatchingMinHash(final EntityManager entityManager, final Integer topicId, final Float threshold) {
+    public static List<Integer> getMatchingMinHash(final EntityManager entityManager, final Map<Integer, Integer> minhashes, final Float threshold) {
         try {
-            // get the source topic
-            final Topic sourceTopic = entityManager.find(Topic.class, topicId);
-            if (sourceTopic.getMinHashes().size() == 0) {
+
+            if (minhashes.size() == 0) {
                 /*
-                    If the source topic does not have a minhash signature, force the search query to
+                    If the source does not have a minhash signature, force the search query to
                     match a non existent topic id so no results are returned.
                  */
                 return new ArrayList<Integer>(){{add(-1);}};
@@ -80,28 +243,33 @@ public class TopicUtilities {
                 ++bands;
             }
 
-
-
             final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             final CriteriaQuery<Integer> criteriaQuery = criteriaBuilder.createQuery(Integer.class);
             final Root<MinHash> minHashRoot = criteriaQuery.from(MinHash.class);
 
             final Set<Integer> candidates = new HashSet<Integer>();
 
+            /*
+                Note to self - It may be possible to perform these band queries as one big query through something like
+                cb.having(cb.equal(cb.toInteger(cb.prod(minHashRoot.<Integer>get("minHashFuncID"), 1.0/lhsRows), band).
+                However, unless lhsRows * bands exactly equals Constants.NUM_MIN_HASHES there needs to be some additional
+                logic for the last band, which will have less than lhsRows rows in it.
+             */
+
             for (int band = 0; band < bands; ++band) {
                 final List<Predicate> rowMatches = new ArrayList<Predicate>();
                 for (int row = band * lhsRows; row < (band * lhsRows) + lhsRows && row < Constants.NUM_MIN_HASHES; ++row) {
-                    MinHash sourceMinHash = null;
-                    for (final MinHash minHash : sourceTopic.getMinHashes()) {
-                        if (row == minHash.getMinHashFuncID()) {
-                            sourceMinHash = minHash;
+                    Integer sourceMinHash = null;
+                    for (final Integer minHashFuncID : minhashes.keySet()) {
+                        if (row == minHashFuncID) {
+                            sourceMinHash = minhashes.get(minHashFuncID);
                             break;
                         }
                     }
 
                     rowMatches.add(criteriaBuilder.and(
-                            criteriaBuilder.equal(minHashRoot.<Integer>get("minHashFuncID"), sourceMinHash.getMinHashFuncID()),
-                            criteriaBuilder.equal(minHashRoot.<Integer>get("minHash"), sourceMinHash.getMinHash())
+                            criteriaBuilder.equal(minHashRoot.<Integer>get("minHashFuncID"), row),
+                            criteriaBuilder.equal(minHashRoot.<Integer>get("minHash"), sourceMinHash)
                     ));
                 }
 
@@ -132,10 +300,10 @@ public class TopicUtilities {
             final List<Integer> matchingTopics = new ArrayList<Integer>();
             for (final Topic topic : topics) {
                 int matches = 0;
-                for (final MinHash minHash : sourceTopic.getMinHashes()) {
+                for (final Integer minHashFuncID : minhashes.keySet()) {
                     for (final MinHash otherMinHash : topic.getMinHashes()) {
-                        if (minHash.getMinHashFuncID().equals(otherMinHash.getMinHashFuncID())) {
-                            if (minHash.getMinHash().equals(otherMinHash.getMinHash())) {
+                        if (minHashFuncID.equals(otherMinHash.getMinHashFuncID())) {
+                            if (minhashes.get(minHashFuncID).equals(otherMinHash.getMinHash())) {
                                 ++matches;
                             }
                             break;

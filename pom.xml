@@ -26,6 +26,7 @@
         <jericho.version>3.2</jericho.version>
         <imgscalr.version>4.2</imgscalr.version>
         <slf4j.version>1.6.4</slf4j.version>
+        <commons-configuration.version>1.9</commons-configuration.version>
     </properties>
 
     <build>
@@ -134,6 +135,11 @@
             <groupId>org.imgscalr</groupId>
             <artifactId>imgscalr-lib</artifactId>
             <version>${imgscalr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>${commons-configuration.version}</version>
         </dependency>
     </dependencies>
 </project>

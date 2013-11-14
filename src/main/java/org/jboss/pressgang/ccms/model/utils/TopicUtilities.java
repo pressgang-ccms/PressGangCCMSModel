@@ -30,7 +30,7 @@ public class TopicUtilities {
      * @param minHashXORs The list of XOR values to apply to the hash code
      */
     public static void recalculateMinHash(final Topic topic, final List<MinHashXOR> minHashXORs) {
-        final List<MinHash> existingMinHashes = new ArrayList<MinHash>(topic.getMinHashes());
+        final Set<MinHash> existingMinHashes = topic.getMinHashes();
 
         final Map<Integer, Integer> minHashes = getMinHashes(topic.getTopicXML(), minHashXORs);
 

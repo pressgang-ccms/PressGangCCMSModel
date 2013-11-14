@@ -38,7 +38,7 @@ public class TopicUtilities {
 
             boolean found = false;
             for (final MinHash minHash : existingMinHashes) {
-                if (minHash.getMinHashFuncID() == funcId) {
+                if (minHash.getMinHashFuncID().equals(funcId)) {
                     minHash.setMinHash(minHashes.get(funcId));
                     found = true;
                     break;

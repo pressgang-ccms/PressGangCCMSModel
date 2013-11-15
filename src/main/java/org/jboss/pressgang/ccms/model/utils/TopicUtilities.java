@@ -285,38 +285,40 @@ public class TopicUtilities {
                 candidates.addAll(entityManager.createQuery(query).getResultList());
             }
 
-            // at this point candidates should now list topic ids that are a potential match to the source topic.
-            final CriteriaQuery<Topic> topicCQ = criteriaBuilder.createQuery(Topic.class);
-            final Root<Topic> topicRoot = topicCQ.from(Topic.class);
-            final CriteriaBuilder.In<Integer> in = criteriaBuilder.in(topicRoot.<Integer>get("topicId"));
-            for (final Integer candidate : candidates) {
-                in.value(candidate);
-            }
-            final CriteriaQuery<Topic> topicQuery = topicCQ.select(topicRoot).where(in);
-            final List<Topic> topics = entityManager.createQuery(topicQuery).getResultList();
-
-            // we now have a list of topics that are possible candidates for a match. Now we compare the minhash values
-            // to see what the similarity actually is.
             final List<Integer> matchingTopics = new ArrayList<Integer>();
-            for (final Topic topic : topics) {
-                int matches = 0;
-                for (final Integer minHashFuncID : minhashes.keySet()) {
-                    for (final MinHash otherMinHash : topic.getMinHashes()) {
-                        if (minHashFuncID.equals(otherMinHash.getMinHashFuncID())) {
-                            if (minhashes.get(minHashFuncID).equals(otherMinHash.getMinHash())) {
-                                ++matches;
+
+            if (candidates.size() != 0) {
+                // at this point candidates should now list topic ids that are a potential match to the source topic.
+                final CriteriaQuery<Topic> topicCQ = criteriaBuilder.createQuery(Topic.class);
+                final Root<Topic> topicRoot = topicCQ.from(Topic.class);
+                final CriteriaBuilder.In<Integer> in = criteriaBuilder.in(topicRoot.<Integer>get("topicId"));
+                for (final Integer candidate : candidates) {
+                    in.value(candidate);
+                }
+                final CriteriaQuery<Topic> topicQuery = topicCQ.select(topicRoot).where(in);
+                final List<Topic> topics = entityManager.createQuery(topicQuery).getResultList();
+
+                // we now have a list of topics that are possible candidates for a match. Now we compare the minhash values
+                // to see what the similarity actually is.
+
+                for (final Topic topic : topics) {
+                    int matches = 0;
+                    for (final Integer minHashFuncID : minhashes.keySet()) {
+                        for (final MinHash otherMinHash : topic.getMinHashes()) {
+                            if (minHashFuncID.equals(otherMinHash.getMinHashFuncID())) {
+                                if (minhashes.get(minHashFuncID).equals(otherMinHash.getMinHash())) {
+                                    ++matches;
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
-                }
 
-                if ((float)matches / Constants.NUM_MIN_HASHES >= fixedThreshold) {
-                    matchingTopics.add(topic.getId());
+                    if ((float)matches / Constants.NUM_MIN_HASHES >= fixedThreshold) {
+                        matchingTopics.add(topic.getId());
+                    }
                 }
             }
-
-
 
             return matchingTopics;
 

@@ -317,11 +317,12 @@ public class TopicUtilities {
                     if ((float)matches / Constants.NUM_MIN_HASHES >= fixedThreshold) {
                         matchingTopics.add(topic.getId());
                     }
+
+                    return matchingTopics;
                 }
+            } else {
+                return new ArrayList<Integer>(){{add(-1);}};
             }
-
-            return matchingTopics;
-
         } catch (final Exception ex) {
             return null;
         }

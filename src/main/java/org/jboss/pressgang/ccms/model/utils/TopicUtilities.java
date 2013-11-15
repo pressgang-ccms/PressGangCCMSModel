@@ -260,11 +260,10 @@ public class TopicUtilities {
                 final List<Predicate> rowMatches = new ArrayList<Predicate>();
                 for (int row = band * lhsRows; row < (band * lhsRows) + lhsRows && row < Constants.NUM_MIN_HASHES; ++row) {
                     Integer sourceMinHash = null;
-                    for (final Integer minHashFuncID : minhashes.keySet()) {
-                        if (row == minHashFuncID) {
-                            sourceMinHash = minhashes.get(minHashFuncID);
-                            break;
-                        }
+                    if (minhashes.containsKey(row)) {
+                        sourceMinHash = minhashes.get(row);
+                    } else {
+                        throw new IllegalArgumentException("minhashes did not contain a minhash for function " + row);
                     }
 
                     rowMatches.add(criteriaBuilder.and(
@@ -303,26 +302,29 @@ public class TopicUtilities {
 
                 for (final Topic topic : topics) {
                     int matches = 0;
-                    for (final Integer minHashFuncID : minhashes.keySet()) {
-                        for (final MinHash otherMinHash : topic.getMinHashes()) {
-                            if (minHashFuncID.equals(otherMinHash.getMinHashFuncID())) {
-                                if (minhashes.get(minHashFuncID).equals(otherMinHash.getMinHash())) {
-                                    ++matches;
-                                }
-                                break;
+
+                    for (final MinHash otherMinHash : topic.getMinHashes()) {
+                        if (minhashes.containsKey(otherMinHash.getMinHashFuncID())) {
+                            if (minhashes.get(otherMinHash.getMinHashFuncID()).equals(otherMinHash.getMinHash())) {
+                                ++matches;
                             }
+                        } else {
+                            throw new IllegalArgumentException("minhashes did not contain a minhash for function " + otherMinHash.getMinHashFuncID());
                         }
                     }
+
 
                     if ((float)matches / Constants.NUM_MIN_HASHES >= fixedThreshold) {
                         matchingTopics.add(topic.getId());
                     }
                 }
 
-                return matchingTopics;
-            } else {
-                return new ArrayList<Integer>(){{add(-1);}};
+                if (matchingTopics.size() != 0) {
+                    return matchingTopics;
+                }
             }
+
+            return new ArrayList<Integer>(){{add(-1);}};
         } catch (final Exception ex) {
             return null;
         }

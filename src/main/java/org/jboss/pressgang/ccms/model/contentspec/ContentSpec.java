@@ -45,6 +45,7 @@ import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
+import org.jboss.pressgang.ccms.model.config.ApplicationConfig;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.interfaces.HasCSNodes;
@@ -65,7 +66,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     private Integer contentSpecId = null;
     private Integer contentSpecType = CommonConstants.CS_BOOK;
-    private String locale = CommonConstants.DEFAULT_LOCALE;
+    private String locale = ApplicationConfig.getInstance().getDefaultLocale();
     private String condition = null;
     private Date lastPublished = null;
     private Date lastModified = null;
@@ -96,7 +97,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     @NotNull(message = "{contentspec.locale.notBlank}")
     @NotBlank(message = "{contentspec.locale.notBlank}")
     public String getLocale() {
-        return locale == null ? CommonConstants.DEFAULT_LOCALE : locale;
+        return locale == null ? ApplicationConfig.getInstance().getDefaultLocale() : locale;
     }
 
     public void setLocale(String locale) {

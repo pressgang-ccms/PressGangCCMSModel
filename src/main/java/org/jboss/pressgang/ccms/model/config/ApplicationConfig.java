@@ -2,6 +2,7 @@ package org.jboss.pressgang.ccms.model.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -13,6 +14,7 @@ public class ApplicationConfig extends AbstractConfiguration {
     private static final String KEY_LOCALES = "locales";
     private static final String KEY_UI_URL = "ui.url";
     private static final String KEY_DOCBOOK_TEMPLATE_IDS = "docbook.template.ids";
+    private static final String KEY_SEO_CATEGORY_IDS = "seo.category.ids";
     private static final String KEY_DOCBUILDER_URL = "docbuilder.url";
     private static final String KEY_BUGZILLA_TEIID = "bugzilla.teiid";
     private static final String KEY_BUGZILLA_URL = "bugzilla.url";
@@ -24,6 +26,7 @@ public class ApplicationConfig extends AbstractConfiguration {
             KEY_DOCBOOK_TEMPLATE_IDS,
             KEY_DOCBUILDER_URL,
             KEY_LOCALES,
+            KEY_SEO_CATEGORY_IDS,
             KEY_UI_URL
     );
 
@@ -51,6 +54,8 @@ public class ApplicationConfig extends AbstractConfiguration {
         for (final Object o : list) {
             retValue.add(o.toString());
         }
+
+        Collections.sort(retValue);
 
         return retValue;
     }
@@ -82,6 +87,21 @@ public class ApplicationConfig extends AbstractConfiguration {
         getConfiguration().setProperty(KEY_DOCBOOK_TEMPLATE_IDS, docbookTemplateIds);
     }
 
+    public List<Integer> getSEOCategoryIds() {
+        final List<Object> list = getConfiguration().getList(KEY_SEO_CATEGORY_IDS);
+        final List<Integer> retValue = new ArrayList<Integer>();
+
+        for (final Object o : list) {
+            retValue.add(Integer.parseInt((String) o));
+        }
+
+        return retValue;
+    }
+
+    public void setSEOCategoryIds(final List<Integer> seoCategoryIds) {
+        getConfiguration().setProperty(KEY_SEO_CATEGORY_IDS, seoCategoryIds);
+    }
+
     public String getDocBuilderUrl() {
         return getConfiguration().getString(KEY_DOCBUILDER_URL);
     }
@@ -102,7 +122,7 @@ public class ApplicationConfig extends AbstractConfiguration {
         return getConfiguration().getString(KEY_BUGZILLA_URL);
     }
 
-    public void addUndefinedProperty(final String key, final String value) throws ConfigurationException {
+    public void addUndefinedSetting(final String key, final String value) throws ConfigurationException {
         if (RESERVED_KEYS.contains(key)) {
             throw new ConfigurationException("\"" + key + "\" is already defined.");
         } else {
@@ -110,7 +130,7 @@ public class ApplicationConfig extends AbstractConfiguration {
         }
     }
 
-    public List<UndefinedSetting> getUndefinedProperties() {
+    public List<UndefinedSetting> getUndefinedSettings() {
         final List<UndefinedSetting> undefinedProperties = new ArrayList<UndefinedSetting>();
         for (final String key : getKeys()) {
             if (!RESERVED_KEYS.contains(key)) {

@@ -2,7 +2,6 @@ package org.jboss.pressgang.ccms.model;
 
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.min;
 import static ch.lambdaj.Lambda.on;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.hamcrest.Matchers.equalTo;
@@ -53,6 +52,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
+import org.jboss.pressgang.ccms.model.config.ApplicationConfig;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.CSNode;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpec;
@@ -97,7 +97,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private Set<MinHash> minHashes = new HashSet<MinHash>(0);
     private String topicXML;
     private TopicSecondOrderData topicSecondOrderData;
-    private String topicLocale = CommonConstants.DEFAULT_LOCALE;
+    private String topicLocale = ApplicationConfig.getInstance().getDefaultLocale();
 
     @Override
     @Transient
@@ -121,7 +121,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @NotBlank(message = "{topic.locale.notBlank}")
     @Size(max = 45)
     public String getTopicLocale() {
-        return topicLocale == null ? CommonConstants.DEFAULT_LOCALE : topicLocale;
+        return topicLocale == null ? ApplicationConfig.getInstance().getDefaultLocale() : topicLocale;
     }
 
     public void setTopicLocale(final String topicLocale) {

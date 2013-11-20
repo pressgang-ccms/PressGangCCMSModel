@@ -100,7 +100,7 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
         this.translatedCSNode = translatedCSNode;
     }
 
-    @Column(name = "TranslatedXMLCondition", nullable = false, length = 255)
+    @Column(name = "TranslatedXMLCondition", nullable = true, length = 255)
     @Size(max = 255)
     public String getTranslatedXMLCondition() {
         return translatedXMLCondition;

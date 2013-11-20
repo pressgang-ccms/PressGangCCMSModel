@@ -53,6 +53,7 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
     private Integer topicRevision;
     private TranslatedCSNode translatedCSNode;
     private String translatedXMLCondition;
+    private String customEntities;
     private Set<TranslatedTopicData> translatedTopicDatas = new HashSet<TranslatedTopicData>(0);
     private Topic enversTopic;
 
@@ -108,6 +109,16 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
 
     public void setTranslatedXMLCondition(final String translatedXMLCondition) {
         this.translatedXMLCondition = translatedXMLCondition;
+    }
+
+    @Column(name = "CustomEntities", nullable = true, columnDefinition = "TEXT")
+    @Size(max = 65535)
+    public String getCustomEntities() {
+        return customEntities;
+    }
+
+    public void setCustomEntities(String customEntities) {
+        this.customEntities = customEntities;
     }
 
     /**

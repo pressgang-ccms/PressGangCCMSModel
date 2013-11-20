@@ -123,4 +123,22 @@
                                  referencedColumnNames="REV"/>
     </changeSet>
 
+    <changeSet id="5" author="lnewson@redhat.com">
+        <comment>Add the CustomEntities field for TranslatedTopics</comment>
+        <addColumn tableName="TranslatedTopic">
+            <column name="CustomEntities" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="6" author="lnewson@redhat.com">
+        <comment>Add the CustomEntities field for TranslatedTopic revisions</comment>
+        <addColumn tableName="TranslatedTopic_AUD">
+            <column name="CustomEntities" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

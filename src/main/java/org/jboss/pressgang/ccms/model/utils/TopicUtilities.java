@@ -171,10 +171,10 @@ public class TopicUtilities {
         // get the source topic
         final Topic sourceTopic = entityManager.find(Topic.class, topicId);
         if (sourceTopic.getMinHashes().size() == 0) {
-                /*
-                    If the source topic does not have a minhash signature, force the search query to
-                    match a non existent topic id so no results are returned.
-                 */
+            /*
+                If the source topic does not have a minhash signature, force the search query to
+                match a non existent topic id so no results are returned.
+             */
             return new ArrayList<Integer>(){{add(-1);}};
         }
 
@@ -183,7 +183,17 @@ public class TopicUtilities {
             minhashes.put(minHash.getMinHashFuncID(), minHash.getMinHash());
         }
 
-        return getMatchingMinHash(entityManager, minhashes, threshold);
+        final List<Integer> matchingTopics = getMatchingMinHash(entityManager, minhashes, threshold);
+        matchingTopics.remove(topicId);
+        if (matchingTopics.size() == 0) {
+            /*
+                If there are no matches, force the search query to
+                match a non existent topic id so no results are returned.
+             */
+            return new ArrayList<Integer>(){{add(-1);}};
+        }
+
+        return matchingTopics;
     }
 
     /**

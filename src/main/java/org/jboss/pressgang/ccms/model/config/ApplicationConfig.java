@@ -77,7 +77,11 @@ public class ApplicationConfig extends AbstractConfiguration {
         final List<Integer> retValue = new ArrayList<Integer>();
 
         for (final Object o : list) {
-            retValue.add(Integer.parseInt((String) o));
+            if (o instanceof Integer) {
+                retValue.add((Integer) o);
+            } else {
+                retValue.add(Integer.parseInt(o.toString()));
+            }
         }
 
         return retValue;
@@ -92,7 +96,11 @@ public class ApplicationConfig extends AbstractConfiguration {
         final List<Integer> retValue = new ArrayList<Integer>();
 
         for (final Object o : list) {
-            retValue.add(Integer.parseInt((String) o));
+            if (o instanceof Integer) {
+                retValue.add((Integer) o);
+            } else {
+                retValue.add(Integer.parseInt(o.toString()));
+            }
         }
 
         return retValue;

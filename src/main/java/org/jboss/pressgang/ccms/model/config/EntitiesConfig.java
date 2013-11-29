@@ -15,8 +15,10 @@ public class EntitiesConfig extends AbstractConfiguration {
     private static final String KEY_TAG_ABSTRACT = "tag.abstract";
     private static final String KEY_TAG_AUTHOR_GROUP = "tag.authorGroup";
     private static final String KEY_TAG_CONTENT_SPEC = "tag.contentspec";
+    private static final String KEY_TAG_FROZEN = "tag.frozen";
     private static final String KEY_TAG_INTERNAL = "tag.internalOnly";
     private static final String KEY_TAG_LEGAL_NOTICE = "tag.legalNotice";
+    private static final String KEY_TAG_OBSOLETE = "tag.obsolete";
     private static final String KEY_TAG_REVIEW = "tag.review";
     private static final String KEY_TAG_REVISION_HISTORY = "tag.revisionHistory";
     private static final String KEY_TAG_TASK = "tag.task";
@@ -97,8 +99,9 @@ public class EntitiesConfig extends AbstractConfiguration {
             KEY_TAG_ABSTRACT,
             KEY_TAG_AUTHOR_GROUP,
             KEY_TAG_CONTENT_SPEC,
+            KEY_TAG_FROZEN,
             KEY_TAG_INTERNAL,
-            KEY_TAG_LEGAL_NOTICE,
+            KEY_TAG_LEGAL_NOTICE, KEY_TAG_OBSOLETE,
             KEY_TAG_REVIEW,
             KEY_TAG_REVISION_HISTORY,
             KEY_TAG_TASK,
@@ -130,12 +133,20 @@ public class EntitiesConfig extends AbstractConfiguration {
         return getConfiguration().getInteger(KEY_TAG_CONTENT_SPEC, null);
     }
 
+    public Integer getFrozenTagId() {
+        return getConfiguration().getInteger(KEY_TAG_FROZEN, null);
+    }
+
     public Integer getLegalNoticeTagId() {
         return getConfiguration().getInteger(KEY_TAG_LEGAL_NOTICE, null);
     }
 
     public Integer getInternalOnlyTagId() {
         return getConfiguration().getInteger(KEY_TAG_INTERNAL, null);
+    }
+
+    public Integer getObsoleteTagId() {
+        return getConfiguration().getInteger(KEY_TAG_OBSOLETE, null);
     }
 
     public Integer getReviewTagId() {
@@ -379,8 +390,23 @@ public class EntitiesConfig extends AbstractConfiguration {
             valid = false;
         }
 
+        if (getFrozenTagId() == null) {
+            LOG.error("The Frozen Tag ID isn't configured (eg. {}=1)", KEY_TAG_FROZEN);
+            valid = false;
+        }
+
+        if (getInternalOnlyTagId() == null) {
+            LOG.error("The Internal Only Tag ID isn't configured (eg. {}=1)", KEY_TAG_INTERNAL);
+            valid = false;
+        }
+
         if (getLegalNoticeTagId() == null) {
             LOG.error("The Legal Notice Tag ID isn't configured (eg. {}=1)", KEY_TAG_LEGAL_NOTICE);
+            valid = false;
+        }
+
+        if (getObsoleteTagId() == null) {
+            LOG.error("The Obsolete Tag ID isn't configured (eg. {}=1)", KEY_TAG_OBSOLETE);
             valid = false;
         }
 

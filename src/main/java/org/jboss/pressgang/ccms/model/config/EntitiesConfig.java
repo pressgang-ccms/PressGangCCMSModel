@@ -1,5 +1,6 @@
 package org.jboss.pressgang.ccms.model.config;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,6 +118,12 @@ public class EntitiesConfig extends AbstractConfiguration {
     }
 
     private EntitiesConfig() {
+    }
+
+    @Override
+    public void load(final File file) throws ConfigurationException {
+        LOG.info("Loading the PressGang Entities Configuration");
+        super.load(file);
     }
 
     /*

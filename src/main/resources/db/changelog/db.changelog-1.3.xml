@@ -25,6 +25,10 @@
                                  baseColumnNames="TopicID"
                                  referencedTableName="Topic"
                                  referencedColumnNames="TopicID"/>
+        <createIndex tableName="MinHash" indexName="TopicIDAndMinHashFuncID">
+            <column name="TopicID"/>
+            <column name="MinHashFuncID"/>
+        </createIndex>
     </changeSet>
 
     <changeSet id="2" author="mcaspers@redhat.com">

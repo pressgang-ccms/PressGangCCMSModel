@@ -10,4 +10,17 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="2" author="lnewson@redhat.com">
+        <comment>Fix for BZ#1039309</comment>
+        <dropIndex tableName="MinHash" indexName="TopicIDAndMinHashFuncID" />
+        <createIndex tableName="MinHash" indexName="MinHashAndMinHashFuncID">
+            <column name="MinHash" />
+            <column name="MinHashFuncID" />
+        </createIndex>
+        <createIndex tableName="MinHash_AUD" indexName="MinHashAndMinHashFuncID">
+            <column name="MinHash" />
+            <column name="MinHashFuncID" />
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>

@@ -23,4 +23,17 @@
         </createIndex>
     </changeSet>
 
+    <changeSet author="mcaspers@redhat.com" id="3">
+        <addColumn tableName="Topic">
+            <column name="TopicContentHash" type="char(64)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="Topic_AUD">
+            <column name="TopicContentHash" type="char(64)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

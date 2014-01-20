@@ -6,6 +6,8 @@ import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.collection.LambdaCollections.with;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 
@@ -362,6 +364,41 @@ public class TopicUtilities {
 
         for (final TopicToTopic topicToTopic : removeChildList)
             topic.getChildTopicToTopics().remove(topicToTopic);
+    }
+
+    /**
+     * Set the content hash on the topic. Uses the SHA 256 algorithm (http://www.mkyong.com/java/java-sha-hashing-example/)
+     * @param topic The topic to update
+     */
+    public static void updateContentHash(final Topic topic) {
+        topic.setTopicContentHash(new char[Constants.SHA256_LENGTH]);
+
+        if (topic.getTopicXML() != null && topic.getTopicXML().trim().length() != 0) {
+            try
+            {
+                final MessageDigest md = MessageDigest.getInstance(Constants.SHA256_NAME);
+                md.update(topic.getTopicXML().getBytes());
+
+                final byte byteData[] = md.digest();
+
+                //convert the byte to hex format method 1 (http://www.mkyong.com/java/java-sha-hashing-example/)
+                final StringBuffer sb = new StringBuffer();
+                for (int i = 0; i < byteData.length; ++i) {
+                    String hex = Integer.toHexString(0xff & byteData[i]);
+                    if(hex.length()==1) {
+                        hex = "0" + hex;
+                    }
+                    topic.getTopicContentHash()[i*2] = hex.charAt(0);
+                    topic.getTopicContentHash()[i*2 + 1] = hex.charAt(1);
+                }
+            } catch (final NoSuchAlgorithmException ex) {
+                // SHA-256 should always be available
+            }
+        } else {
+            for (int i = 0; i < Constants.SHA256_LENGTH; i++) {
+                topic.getTopicContentHash()[i] = '0';
+            }
+        }
     }
 
     /**

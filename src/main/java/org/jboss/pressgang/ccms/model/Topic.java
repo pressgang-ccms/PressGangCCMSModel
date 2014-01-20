@@ -98,6 +98,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private String topicXML;
     private TopicSecondOrderData topicSecondOrderData;
     private String topicLocale = ApplicationConfig.getInstance().getDefaultLocale();
+    private char[] topicContentHash;
 
     @Override
     @Transient
@@ -247,6 +248,16 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         this.topicXML = topicXML;
     }
 
+    @Column(name = "TopicContentHash", columnDefinition = "CHAR(64)")
+    @Size(max = 64, min = 64)
+    public char[] getTopicContentHash() {
+        return topicContentHash;
+    }
+
+    public void setTopicContentHash(final char[] topicContentHash) {
+        this.topicContentHash = topicContentHash;
+    }
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
@@ -313,12 +324,14 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         topicTimeStamp = new Date();
         TopicUtilities.validateAndFixTags(this);
         TopicUtilities.validateAndFixRelationships(this);
+        TopicUtilities.updateContentHash(this);
     }
 
     @PreUpdate
     private void onPreUpdate() {
         TopicUtilities.validateAndFixTags(this);
         TopicUtilities.validateAndFixRelationships(this);
+        TopicUtilities.updateContentHash(this);
     }
 
     @Transient

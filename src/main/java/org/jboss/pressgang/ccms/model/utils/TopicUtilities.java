@@ -367,13 +367,18 @@ public class TopicUtilities {
     }
 
     /**
-     * Set the content hash on the topic. Uses the SHA 256 algorithm (http://www.mkyong.com/java/java-sha-hashing-example/)
+     * Set the content hash on the topic.
      * @param topic The topic to update
      */
     public static void updateContentHash(final Topic topic) {
         topic.setTopicContentHash(calculateContentHash(topic.getTopicXML()));
     }
 
+    /**
+     * Calculate the SHA 256 hash for a string (http://www.mkyong.com/java/java-sha-hashing-example/)
+     * @param content The string to get the hash for
+     * @return The SHA 256 hash
+     */
     public static char[] calculateContentHash(final String content) {
         final char[] retValue = new char[Constants.SHA256_LENGTH];
 

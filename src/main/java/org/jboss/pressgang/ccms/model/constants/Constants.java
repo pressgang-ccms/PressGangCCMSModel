@@ -36,15 +36,7 @@ public class Constants {
      */
     public static final float MAX_DOCUMENT_SIMILARITY = 0.9f;
 
-    /**
-     * The number of characters that make up a SHA 256 hash
-     */
-    public static final int SHA256_LENGTH = 64;
 
-    /**
-     * The name of the SHA 256 algorithm
-     */
-    public static final String SHA256_NAME = "SHA-256";
 
     private Constants() {
     }

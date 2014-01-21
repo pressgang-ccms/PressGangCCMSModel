@@ -14,6 +14,7 @@ import java.util.*;
 import org.jboss.pressgang.ccms.model.*;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
+import org.jboss.pressgang.ccms.utils.common.StringUtilities;
 import org.jboss.pressgang.ccms.utils.common.XMLUtilities;
 import org.jboss.pressgang.ccms.utils.structures.StringToNodeCollection;
 import org.w3c.dom.Document;
@@ -371,46 +372,10 @@ public class TopicUtilities {
      * @param topic The topic to update
      */
     public static void updateContentHash(final Topic topic) {
-        topic.setTopicContentHash(calculateContentHash(topic.getTopicXML()));
+        topic.setTopicContentHash(StringUtilities.calculateContentHash(topic.getTopicXML()));
     }
 
-    /**
-     * Calculate the SHA 256 hash for a string (http://www.mkyong.com/java/java-sha-hashing-example/)
-     * @param content The string to get the hash for
-     * @return The SHA 256 hash
-     */
-    public static char[] calculateContentHash(final String content) {
-        final char[] retValue = new char[Constants.SHA256_LENGTH];
 
-        if (content != null && content.trim().length() != 0) {
-            try
-            {
-                final MessageDigest md = MessageDigest.getInstance(Constants.SHA256_NAME);
-                md.update(content.getBytes());
-
-                final byte byteData[] = md.digest();
-
-                //convert the byte to hex format method 1 (http://www.mkyong.com/java/java-sha-hashing-example/)
-                final StringBuffer sb = new StringBuffer();
-                for (int i = 0; i < byteData.length; ++i) {
-                    String hex = Integer.toHexString(0xff & byteData[i]);
-                    if(hex.length()==1) {
-                        hex = "0" + hex;
-                    }
-                    retValue[i*2] = hex.charAt(0);
-                    retValue[i*2 + 1] = hex.charAt(1);
-                }
-            } catch (final NoSuchAlgorithmException ex) {
-                // SHA-256 should always be available
-            }
-        } else {
-            for (int i = 0; i < Constants.SHA256_LENGTH; i++) {
-                retValue[i] = '0';
-            }
-        }
-
-        return retValue;
-    }
 
     /**
      * Validate and Fix a topics tags so that mutually exclusive tags are enforced and also remove any tags that may have been

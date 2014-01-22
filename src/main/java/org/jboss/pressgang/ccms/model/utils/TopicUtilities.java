@@ -6,24 +6,33 @@ import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.collection.LambdaCollections.with;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-
-
-import org.jboss.pressgang.ccms.model.*;
-import org.jboss.pressgang.ccms.model.constants.Constants;
-import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
-import org.jboss.pressgang.ccms.utils.common.StringUtilities;
-import org.jboss.pressgang.ccms.utils.common.XMLUtilities;
-import org.jboss.pressgang.ccms.utils.structures.StringToNodeCollection;
-import org.w3c.dom.Document;
-
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import org.jboss.pressgang.ccms.model.Category;
+import org.jboss.pressgang.ccms.model.MinHash;
+import org.jboss.pressgang.ccms.model.MinHashXOR;
+import org.jboss.pressgang.ccms.model.Tag;
+import org.jboss.pressgang.ccms.model.TagToCategory;
+import org.jboss.pressgang.ccms.model.Topic;
+import org.jboss.pressgang.ccms.model.TopicToTag;
+import org.jboss.pressgang.ccms.model.TopicToTopic;
+import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.sort.TagToCategorySortingComparator;
+import org.jboss.pressgang.ccms.utils.common.HashUtilities;
+import org.jboss.pressgang.ccms.utils.common.XMLUtilities;
+import org.w3c.dom.Document;
 
 public class TopicUtilities {
 
@@ -372,10 +381,8 @@ public class TopicUtilities {
      * @param topic The topic to update
      */
     public static void updateContentHash(final Topic topic) {
-        topic.setTopicContentHash(StringUtilities.calculateContentHash(topic.getTopicXML()));
+        topic.setTopicContentHash(HashUtilities.generateSHA256(topic.getTopicXML()).toCharArray());
     }
-
-
 
     /**
      * Validate and Fix a topics tags so that mutually exclusive tags are enforced and also remove any tags that may have been

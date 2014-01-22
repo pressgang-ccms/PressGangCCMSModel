@@ -24,6 +24,7 @@
     </changeSet>
 
     <changeSet author="mcaspers@redhat.com" id="3">
+        <comment>Add TopicContentHash columns for Topics</comment>
         <addColumn tableName="Topic">
             <column name="TopicContentHash" type="char(64)">
                 <constraints nullable="true"/>

@@ -32,6 +32,7 @@ import org.imgscalr.Scalr;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.utils.SVGIcon;
+import org.jboss.pressgang.ccms.utils.common.HashUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,8 +187,8 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     @PreUpdate
     private void updateImageData() throws CustomConstraintViolationException {
         thumbnail = createImage(true);
-
         imageFile.validate();
+        this.imageContentHash = HashUtilities.generateSHA256(imageData).toCharArray();
     }
 
     @Column(name = "Locale", nullable = false)

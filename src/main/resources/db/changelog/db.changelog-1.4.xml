@@ -39,12 +39,12 @@
 
     <changeSet author="mcaspers@redhat.com" id="4">
         <comment>Add ImageContentHash columns for ImageFiles</comment>
-        <addColumn tableName="ImageFile">
+        <addColumn tableName="LanguageImage">
             <column name="ImageContentHash" type="char(64)">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
-        <addColumn tableName="ImageFile_AUD">
+        <addColumn tableName="LanguageImage_AUD">
             <column name="ImageContentHash" type="char(64)">
                 <constraints nullable="true"/>
             </column>

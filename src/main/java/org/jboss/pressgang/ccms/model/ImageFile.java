@@ -46,7 +46,7 @@ public class ImageFile extends AuditedEntity implements java.io.Serializable {
 
     private String description;
     private Set<LanguageImage> languageImages = new HashSet<LanguageImage>(0);
-    private char[] imageContentHash;
+
 
     public ImageFile() {
     }
@@ -185,13 +185,5 @@ public class ImageFile extends AuditedEntity implements java.io.Serializable {
         languageImage.setImageFile(null);
     }
 
-    @Column(name = "ImageContentHash", columnDefinition = "CHAR(64)")
-    @Size(max = 64, min = 64)
-    public char[] getImageContentHash() {
-        return imageContentHash;
-    }
 
-    public void setImageContentHash(final char[] imageContentHash) {
-        this.imageContentHash = imageContentHash;
-    }
 }

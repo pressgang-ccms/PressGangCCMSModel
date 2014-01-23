@@ -62,6 +62,7 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
 
     private byte[] uiImageData;
     private String uiOriginalFileName;
+    private char[] imageContentHash;
 
     public LanguageImage() {
     }
@@ -274,5 +275,15 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     @Transient
     public byte[] getImageDataBase64() {
         return imageData == null ? null : Base64.encodeBase64(imageData);
+    }
+
+    @Column(name = "ImageContentHash", columnDefinition = "CHAR(64)")
+    @Size(max = 64, min = 64)
+    public char[] getImageContentHash() {
+        return imageContentHash;
+    }
+
+    public void setImageContentHash(final char[] imageContentHash) {
+        this.imageContentHash = imageContentHash;
     }
 }

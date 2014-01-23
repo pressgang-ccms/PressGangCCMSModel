@@ -266,7 +266,7 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
      * ignore any empty values, while passing through any legitimate file uploads. This means that the absence of a file in the
      * upload box does not indicate that no file should be assigned to the entity.
      *
-     * @param uiImageData The image file name uploaded through the UI
+     * @param uiOriginalFileName The image file name uploaded through the UI
      */
     public void setUiOriginalFileName(final String uiOriginalFileName) {
         this.uiOriginalFileName = uiOriginalFileName;

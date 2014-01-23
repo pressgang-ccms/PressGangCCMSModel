@@ -38,7 +38,7 @@
     </changeSet>
 
     <changeSet author="mcaspers@redhat.com" id="4">
-        <comment>Add ImageContentHash columns for ImageFiles</comment>
+        <comment>Add ImageContentHash columns for LanguageImages</comment>
         <addColumn tableName="LanguageImage">
             <column name="ImageContentHash" type="char(64)">
                 <constraints nullable="true"/>

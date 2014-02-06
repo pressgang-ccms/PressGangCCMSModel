@@ -35,7 +35,12 @@ public class Constants {
      * This is the maximum similarity that can be detected between two documents.
      */
     public static final float MAX_DOCUMENT_SIMILARITY = 0.9f;
-
+    /**
+     * Math.pow(1/MIN_HASH_BANDS,1/MIN_HASH_ROWS) should approximate how similar two documents should
+     * be when searching the database for duplicates. Or, to minimize false negatives, it should be
+     * smaller than the threshold. Here we have fixed the bands and rows to find topics with roughly
+     * 50% similarity, which is smaller than the minimum similarity of 60% that can be requested.
+     */
     public static final int MIN_HASH_BANDS = 40;
     public static final int MIN_HASH_ROWS = 5;
 

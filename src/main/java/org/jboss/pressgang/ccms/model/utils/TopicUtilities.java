@@ -134,7 +134,7 @@ public class TopicUtilities {
 
         // the xml was invalid, so just strip out xml elements manually
         if (text == null) {
-            text = xml.replaceAll("<//?.*?//?>", " ");
+            text = xml.replaceAll("</?.*?/?>", " ");
         }
 
         // now generate the minhashes

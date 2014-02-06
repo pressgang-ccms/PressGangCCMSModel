@@ -134,7 +134,7 @@ public class TopicUtilities {
 
         // the xml was invalid, so just strip out xml elements manually
         if (text == null) {
-            text = xml.replaceAll("<//?.*?//?>", " ");
+            text = xml.replaceAll("</?.*?/?>", " ");
         }
 
         // now generate the minhashes
@@ -247,24 +247,6 @@ public class TopicUtilities {
                 fixedThreshold = threshold;
             }
 
-            int lhsRows = 0;
-            for (int rows = Constants.LSH_SIXTY_PERCENT_ROWS; rows < Constants.LSH_NINETY_PERCENT_ROWS; ++rows) {
-                final int bands = Constants.NUM_MIN_HASHES / rows;
-                final double thisThreshold = Math.pow(1.0/bands, 1.0/rows);
-
-                if (rows != Constants.LSH_SIXTY_PERCENT_ROWS && thisThreshold > fixedThreshold) {
-                    lhsRows = rows - 1;
-                    break;
-                }
-            }
-
-            // The number of full bands that we be used to generate the sql query
-            int bands = Constants.NUM_MIN_HASHES / lhsRows;
-            // Any remaining topics that don't fall into a complete band
-            if(Constants.NUM_MIN_HASHES % lhsRows != 0) {
-                ++bands;
-            }
-
             final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             final CriteriaQuery<Integer> criteriaQuery = criteriaBuilder.createQuery(Integer.class);
             final Root<MinHash> minHashRoot = criteriaQuery.from(MinHash.class);
@@ -278,9 +260,9 @@ public class TopicUtilities {
                 logic for the last band, which will have less than lhsRows rows in it.
              */
 
-            for (int band = 0; band < bands; ++band) {
+            for (int band = 0; band < Constants.MIN_HASH_BANDS; ++band) {
                 final List<Predicate> rowMatches = new ArrayList<Predicate>();
-                for (int row = band * lhsRows; row < (band * lhsRows) + lhsRows && row < Constants.NUM_MIN_HASHES; ++row) {
+                for (int row = band * Constants.MIN_HASH_ROWS; row < (band * Constants.MIN_HASH_ROWS) + Constants.MIN_HASH_ROWS; ++row) {
                     Integer sourceMinHash = null;
                     if (minhashes.containsKey(row)) {
                         sourceMinHash = minhashes.get(row);

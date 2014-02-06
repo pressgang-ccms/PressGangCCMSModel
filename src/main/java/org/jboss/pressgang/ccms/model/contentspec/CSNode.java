@@ -14,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceException;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
@@ -571,6 +570,6 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     @Transient
     public boolean isTopicNode() {
         return getCSNodeType() != null && (getCSNodeType().equals(CommonConstants.CS_NODE_TOPIC) || getCSNodeType().equals
-                (CommonConstants.CS_NODE_INNER_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_META_DATA_TOPIC));
+                (CommonConstants.CS_NODE_INITIAL_CONTENT_TOPIC) || getCSNodeType().equals(CommonConstants.CS_NODE_META_DATA_TOPIC));
     }
 }

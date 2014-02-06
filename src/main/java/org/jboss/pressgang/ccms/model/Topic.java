@@ -87,7 +87,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private String topicText;
     private Date topicTimeStamp;
     private String topicTitle;
-    private Integer xmlDoctype = CommonConstants.DOCBOOK_45;
+    private Integer xmlFormat = CommonConstants.DOCBOOK_45;
     private Set<TopicToTag> topicToTags = new HashSet<TopicToTag>(0);
     private Set<TopicToTopic> parentTopicToTopics = new HashSet<TopicToTopic>(0);
     private Set<TopicToTopic> childTopicToTopics = new HashSet<TopicToTopic>(0);
@@ -129,14 +129,14 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         this.topicLocale = topicLocale;
     }
 
-    @Column(name = "TopicXMLDoctype", nullable = false)
+    @Column(name = "TopicXMLFormat", nullable = false)
     @NotNull
-    public Integer getXmlDoctype() {
-        return xmlDoctype;
+    public Integer getXmlFormat() {
+        return xmlFormat;
     }
 
-    public void setXmlDoctype(Integer xmlDoctype) {
-        this.xmlDoctype = xmlDoctype;
+    public void setXmlFormat(Integer xmlDoctype) {
+        this.xmlFormat = xmlDoctype;
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -51,4 +51,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="5" author="lnewson@redhat.com">
+        <comment>Rename the "TopicXMLDoctype" property to "TopicXMLFormat"</comment>
+        <renameColumn tableName="Topic" oldColumnName="TopicXMLDoctype" newColumnName="TopicXMLFormat" />
+        <renameColumn tableName="Topic_AUD" oldColumnName="TopicXMLDoctype" newColumnName="TopicXMLFormat" />
+    </changeSet>
+
 </databaseChangeLog>

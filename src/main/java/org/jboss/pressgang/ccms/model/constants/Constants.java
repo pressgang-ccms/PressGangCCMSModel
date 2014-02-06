@@ -36,6 +36,9 @@ public class Constants {
      */
     public static final float MAX_DOCUMENT_SIMILARITY = 0.9f;
 
+    public static final int MIN_HASH_BANDS = 40;
+    public static final int MIN_HASH_ROWS = 5;
+
 
 
     private Constants() {

@@ -37,7 +37,8 @@ public class EntitiesConfig extends AbstractConfiguration {
     private static final String KEY_PROPERTY_TAG_SURNAME = "propertyTag.surname";
     private static final String KEY_PROPERTY_TAG_TAG_STYLE = "propertyTag.tagStyle";
 
-    private static final String KEY_BLOB_CONSTANT_ROCBOOK_DTD = "constant.blob.rocbookDTD";
+    private static final String KEY_BLOB_CONSTANT_ROCBOOK_45_DTD = "constant.blob.rocbookDTD";
+    private static final String KEY_BLOB_CONSTANT_DOCBOOK_50_RNG = "constant.blob.docbook50RNG";
     private static final String KEY_BLOB_CONSTANT_FAIL_PENGUIN = "constant.blob.failPenguin";
 
     private static final String KEY_STRING_CONSTANT_XML_FORMATTING_ELEMENTS = "constant.string.xml.formatting";
@@ -64,7 +65,8 @@ public class EntitiesConfig extends AbstractConfiguration {
 
     private static final List<String> RESERVED_KEYS = Arrays.asList(
             KEY_BLOB_CONSTANT_FAIL_PENGUIN,
-            KEY_BLOB_CONSTANT_ROCBOOK_DTD,
+            KEY_BLOB_CONSTANT_ROCBOOK_45_DTD,
+            KEY_BLOB_CONSTANT_DOCBOOK_50_RNG,
             KEY_CATEGORY_TYPE,
             KEY_CATEGORY_WRITER,
             KEY_PROPERTY_TAG_ADDED_BY,
@@ -225,8 +227,12 @@ public class EntitiesConfig extends AbstractConfiguration {
         return getConfiguration().getInteger(KEY_BLOB_CONSTANT_FAIL_PENGUIN, null);
     }
 
-    public Integer getRocBookDTDBlobConstantId() {
-        return getConfiguration().getInteger(KEY_BLOB_CONSTANT_ROCBOOK_DTD, null);
+    public Integer getRocBook45DTDBlobConstantId() {
+        return getConfiguration().getInteger(KEY_BLOB_CONSTANT_ROCBOOK_45_DTD, null);
+    }
+
+    public Integer getDocBook50RNGBlobConstantId() {
+        return getConfiguration().getInteger(KEY_BLOB_CONSTANT_DOCBOOK_50_RNG, null);
     }
 
     /*
@@ -507,8 +513,13 @@ public class EntitiesConfig extends AbstractConfiguration {
             valid = false;
         }
 
-        if (getRocBookDTDBlobConstantId() == null) {
-            LOG.error("The RocBook DTD Blob Constant ID isn't configured (eg. {}=1)", KEY_BLOB_CONSTANT_ROCBOOK_DTD);
+        if (getRocBook45DTDBlobConstantId() == null) {
+            LOG.error("The RocBook 4.5 DTD Blob Constant ID isn't configured (eg. {}=1)", KEY_BLOB_CONSTANT_ROCBOOK_45_DTD);
+            valid = false;
+        }
+
+        if (getDocBook50RNGBlobConstantId() == null) {
+            LOG.error("The DocBook 5.0 RNG Blob Constant ID isn't configured (eg. {}=1)", KEY_BLOB_CONSTANT_DOCBOOK_50_RNG);
             valid = false;
         }
 

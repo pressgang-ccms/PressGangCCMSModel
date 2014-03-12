@@ -15,6 +15,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -39,7 +40,9 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotBlank;
+import org.jboss.pressgang.ccms.model.Process;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
@@ -75,6 +78,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     private Set<ContentSpecToPropertyTag> contentSpecToPropertyTags = new HashSet<ContentSpecToPropertyTag>(0);
     private Set<CSNode> csNodes = new HashSet<CSNode>(0);
     private Set<ContentSpecToTag> contentSpecToTags = new HashSet<ContentSpecToTag>(0);
+    private Set<ContentSpecToProcess> contentSpecToProcesses = new HashSet<ContentSpecToProcess>(0);
 
     @Override
     @Transient
@@ -154,6 +158,19 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     public void setContentSpecToTags(Set<ContentSpecToTag> contentSpecToTags) {
         this.contentSpecToTags = contentSpecToTags;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentSpec", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    @BatchSize(size = Constants.DEFAULT_BATCH_SIZE)
+    @OrderBy("id DESC")
+    @NotAudited
+    public Set<ContentSpecToProcess> getContentSpecToProcesses() {
+        return contentSpecToProcesses;
+    }
+
+    public void setContentSpecToProcesses(Set<ContentSpecToProcess> contentSpecToProcesses) {
+        this.contentSpecToProcesses = contentSpecToProcesses;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -424,6 +441,42 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
                     contentSpecToTags.remove(mapping);
                     mapping.getTag().getContentSpecToTags().remove(mapping);
                 }
+            }
+        }
+    }
+
+    @Transient
+    public List<Process> getProcesses() {
+        final List<Process> retValue = new ArrayList<Process>();
+        for (final ContentSpecToProcess specToProcess : contentSpecToProcesses) {
+            retValue.add(specToProcess.getProcess());
+        }
+        return retValue;
+    }
+
+    public void addProcess(final ContentSpecToProcess contentSpecToProcess) {
+        contentSpecToProcess.setContentSpec(this);
+        contentSpecToProcesses.add(contentSpecToProcess);
+    }
+
+    public void addProcess(final Process process) {
+        final ContentSpecToProcess contentSpecToProcess = new ContentSpecToProcess();
+        contentSpecToProcess.setContentSpec(this);
+        contentSpecToProcess.setProcess(process);
+        contentSpecToProcesses.add(contentSpecToProcess);
+    }
+
+    public void removeProcess(final ContentSpecToProcess contentSpecToProcess) {
+        contentSpecToPropertyTags.remove(contentSpecToProcess);
+    }
+
+    public void removeProcess(final Process process) {
+        // Filter down to the matching tags
+        final List<ContentSpecToProcess> mappingEntities = filter(having(on(ContentSpecToProcess.class).getProcess(), equalTo(process)),
+                getContentSpecToProcesses());
+        if (mappingEntities.size() != 0) {
+            for (final ContentSpecToProcess mapping : mappingEntities) {
+                contentSpecToProcesses.remove(mapping);
             }
         }
     }

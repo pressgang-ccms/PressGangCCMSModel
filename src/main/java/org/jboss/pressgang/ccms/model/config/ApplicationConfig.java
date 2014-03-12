@@ -1,10 +1,17 @@
 package org.jboss.pressgang.ccms.model.config;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.jboss.pressgang.ccms.utils.common.CollectionUtilities;
@@ -22,9 +29,10 @@ public class ApplicationConfig extends AbstractConfiguration {
     private static final String KEY_DOCBUILDER_URL = "docbuilder.url";
     private static final String KEY_BUGZILLA_TEIID = "bugzilla.teiid";
     private static final String KEY_BUGZILLA_URL = "bugzilla.url";
-    private static final String KEY_ZANATA_URL = "zanata.url";
-    private static final String KEY_ZANATA_PROJECT = "zanata.project";
-    private static final String KEY_ZANATA_PROJECT_VERSION = "zanata.project.version";
+    private static final String KEY_PROCESS_DIR = "process.dir";
+
+    private static final String KEY_ZANATA_PREFIX = "zanata";
+    private static final String KEY_ZANATA_PREFIX_WITH_DOT = "zanata.";
 
     private static final List<String> RESERVED_KEYS = Arrays.asList(
             KEY_BUGZILLA_TEIID,
@@ -35,9 +43,7 @@ public class ApplicationConfig extends AbstractConfiguration {
             KEY_LOCALES,
             KEY_SEO_CATEGORY_IDS,
             KEY_UI_URL,
-            KEY_ZANATA_URL,
-            KEY_ZANATA_PROJECT,
-            KEY_ZANATA_PROJECT_VERSION
+            KEY_PROCESS_DIR
     );
 
     private static ApplicationConfig INSTANCE = new ApplicationConfig();
@@ -84,7 +90,7 @@ public class ApplicationConfig extends AbstractConfiguration {
         return getConfiguration().getString(KEY_UI_URL);
     }
 
-    public void setUIUrl(final String uiUrl){
+    public void setUIUrl(final String uiUrl) {
         getConfiguration().setProperty(KEY_UI_URL, uiUrl);
     }
 
@@ -146,42 +152,24 @@ public class ApplicationConfig extends AbstractConfiguration {
         return getConfiguration().getString(KEY_BUGZILLA_URL);
     }
 
+    public String getProcessDirectory() {
+        return getConfiguration().getString(KEY_PROCESS_DIR);
+    }
+
     public void addUndefinedSetting(final String key, final String value) throws ConfigurationException {
         if (RESERVED_KEYS.contains(key)) {
             throw new ConfigurationException("\"" + key + "\" is already defined.");
+        } else if (key.startsWith(KEY_ZANATA_PREFIX_WITH_DOT)) {
+            throw new ConfigurationException("\"" + key + "\" is in a predefined namespace.");
         } else {
             getConfiguration().setProperty(key, value);
         }
     }
 
-    public String getZanataUrl() {
-        return getConfiguration().getString(KEY_ZANATA_URL);
-    }
-
-    public void setZanataUrl(final String zanataUrl){
-        getConfiguration().setProperty(KEY_ZANATA_URL, zanataUrl);
-    }
-
-    public String getZanataProject() {
-        return getConfiguration().getString(KEY_ZANATA_PROJECT);
-    }
-
-    public void setZanataProject(final String zanataProject){
-        getConfiguration().setProperty(KEY_ZANATA_PROJECT, zanataProject);
-    }
-
-    public String getZanataProjectVersion() {
-        return getConfiguration().getString(KEY_ZANATA_PROJECT_VERSION);
-    }
-
-    public void setZanataProjectVersion(final String zanataProjectVersion){
-        getConfiguration().setProperty(KEY_ZANATA_PROJECT_VERSION, zanataProjectVersion);
-    }
-
     public List<UndefinedSetting> getUndefinedSettings() {
         final List<UndefinedSetting> undefinedProperties = new ArrayList<UndefinedSetting>();
         for (final String key : getKeys()) {
-            if (!RESERVED_KEYS.contains(key)) {
+            if (!RESERVED_KEYS.contains(key) && !key.startsWith(KEY_ZANATA_PREFIX_WITH_DOT)) {
                 final Object value = getConfiguration().getProperty(key);
                 if (value instanceof List) {
                     final String joinedValue = CollectionUtilities.toSeperatedString((List<Object>) value,
@@ -193,6 +181,89 @@ public class ApplicationConfig extends AbstractConfiguration {
             }
         }
         return undefinedProperties;
+    }
+
+    public Map<String, ZanataServerConfig> getZanataServers() {
+        final Map<String, ZanataServerConfig> configs = new HashMap<String, ZanataServerConfig>();
+        final Iterator<String> keyIter = getConfiguration().getKeys(KEY_ZANATA_PREFIX);
+
+        // Break up into id/keys first
+        final Map<String, Set<String>> idKeyMap = new HashMap<String, Set<String>>();
+        while (keyIter.hasNext()) {
+            final String key = keyIter.next();
+            String[] split = key.replace(KEY_ZANATA_PREFIX_WITH_DOT, "").split("\\.", 2);
+            final String id = split[0];
+
+            if (!idKeyMap.containsKey(id)) {
+                idKeyMap.put(id, new HashSet<String>());
+            }
+
+            // Add the key
+            final String serverKey = split[1];
+            idKeyMap.get(id).add(serverKey);
+        }
+
+        // Populate the config map now that we know all the values
+        for (final Map.Entry<String, Set<String>> entry : idKeyMap.entrySet()) {
+            final String id = entry.getKey();
+            final ZanataServerConfig zanataServerConfig = new ZanataServerConfig(id);
+
+            final Set<String> keys = entry.getValue();
+            for (final String key : keys) {
+                final String fullKeyName = KEY_ZANATA_PREFIX_WITH_DOT + id + "." + key;
+
+                if (key.equals("name")) {
+                    zanataServerConfig.setName(getConfiguration().getString(fullKeyName));
+                } else if (key.equals("url")) {
+                    zanataServerConfig.setUrl(getConfiguration().getString(fullKeyName));
+                }
+                else if (key.equals("project")) {
+                    zanataServerConfig.setProject(getConfiguration().getString(fullKeyName));
+                }
+                else if (key.equals("project.version")) {
+                    zanataServerConfig.setProjectVersion(getConfiguration().getString(fullKeyName));
+                }
+            }
+
+            if (isNullOrEmpty(zanataServerConfig.getName())) {
+                zanataServerConfig.setName(id);
+            }
+
+            configs.put(id, zanataServerConfig);
+        }
+
+        return configs;
+    }
+
+    public void addZanataServerSetting(final String id, final String key, final String value) {
+        getConfiguration().setProperty(KEY_ZANATA_PREFIX_WITH_DOT + id + "." + key, value);
+    }
+
+    public void removeZanataServerSetting(final String id, final String key) {
+        getConfiguration().clearProperty(KEY_ZANATA_PREFIX_WITH_DOT + id + "." + key);
+    }
+
+    public void removeZanataServer(final String id) {
+        final Iterator<String> keyIter = getConfiguration().getKeys(KEY_ZANATA_PREFIX_WITH_DOT + id);
+        while (keyIter.hasNext()) {
+            removeProperty(keyIter.next());
+        }
+    }
+
+    public void addZanataServer(final ZanataServerConfig zanataServerConfig) {
+        final String baseKeyName = KEY_ZANATA_PREFIX_WITH_DOT + zanataServerConfig + ".";
+        if (zanataServerConfig.getName() != null) {
+            getConfiguration().setProperty(baseKeyName + "name", zanataServerConfig.getName());
+        }
+        if (zanataServerConfig.getUrl() != null) {
+            getConfiguration().setProperty(baseKeyName + "url", zanataServerConfig.getUrl());
+        }
+        if (zanataServerConfig.getProject() != null) {
+            getConfiguration().setProperty(baseKeyName + "project", zanataServerConfig.getProject());
+        }
+        if (zanataServerConfig.getProjectVersion() != null) {
+            getConfiguration().setProperty(baseKeyName + "project.version", zanataServerConfig.getProjectVersion());
+        }
     }
 
     public boolean validate() {
@@ -208,18 +279,34 @@ public class ApplicationConfig extends AbstractConfiguration {
     protected boolean validateZanataSettings() {
         boolean valid = true;
 
-        if (getZanataUrl() == null) {
-            LOG.error("The Zanata Server URL isn't configured (eg. {}=http://localhost/)", KEY_ZANATA_URL);
-            valid = false;
+        boolean foundOneServer = false;
+        final Iterator<String> keyIter = getConfiguration().getKeys(KEY_ZANATA_PREFIX);
+        while (keyIter.hasNext()) {
+            final String key = keyIter.next();
+            final String[] split = key.replace(KEY_ZANATA_PREFIX_WITH_DOT, "").split("\\.", 2);
+
+            // Make sure we have the minimum amount
+            if (split.length < 2) {
+                LOG.error("Invalid zanata server key (" + key + "). A zanata server key should be in the format \"" +
+                        KEY_ZANATA_PREFIX_WITH_DOT + "<ID>.<KEY>=<VALUE>\". eg: \"" + KEY_ZANATA_PREFIX_WITH_DOT + "local.name=Local\"");
+                valid = false;
+                continue;
+            } else {
+                // Make sure we have a value
+                final String value = getConfiguration().getString(key);
+                if (isNullOrEmpty(value)) {
+                    LOG.error("\"" + key + "\" has no value.");
+                    valid = false;
+                    continue;
+                }
+
+                foundOneServer = true;
+            }
         }
 
-        if (getZanataProject() == null) {
-            LOG.error("The Zanata Project isn't configured (eg. {}=My Project)", KEY_ZANATA_PROJECT);
-            valid = false;
-        }
-
-        if (getZanataUrl() == null) {
-            LOG.error("The Zanata Project Version isn't configured (eg. {}=1)", KEY_ZANATA_PROJECT_VERSION);
+        if (!foundOneServer) {
+            LOG.error("No Zanata servers configured. At least one server must be configured. eg: " + KEY_ZANATA_PREFIX_WITH_DOT + "local" +
+                    ".url=http://localhost/zanata/");
             valid = false;
         }
 

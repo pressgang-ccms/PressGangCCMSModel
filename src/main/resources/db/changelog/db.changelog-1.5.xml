@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="lnewson@redhat.com">
+        <comment>Create the Process table</comment>
+        <createTable tableName="Process">
+            <column name="ProcessUUID" type="char(36)">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="ProcessName" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="StartedBy" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="StartTime" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+            <column name="EndTime" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+            <column name="ProcessStatus" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="ProcessType" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="Logs" type="MEDIUMTEXT">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="lnewson@redhat.com">
+        <comment>Create the Content Spec to Process table</comment>
+        <createTable tableName="ContentSpecToProcess">
+            <column name="ContentSpecToProcessID" autoIncrement="true" type="int">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="ProcessUUID" type="char(36)">
+                <constraints nullable="false" />
+            </column>
+            <column name="ContentSpecID" type="int">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_ProcessUUID_CS_TO_PROCESS"
+                                 baseTableName="ContentSpecToProcess"
+                                 baseColumnNames="ProcessUUID"
+                                 referencedTableName="Process"
+                                 referencedColumnNames="ProcessUUID"/>
+        <addForeignKeyConstraint constraintName="FK_ContentSpecID_CS_TO_PROCESS"
+                                 baseTableName="ContentSpecToProcess"
+                                 baseColumnNames="ContentSpecID"
+                                 referencedTableName="ContentSpec"
+                                 referencedColumnNames="ContentSpecID"/>
+    </changeSet>
+</databaseChangeLog>

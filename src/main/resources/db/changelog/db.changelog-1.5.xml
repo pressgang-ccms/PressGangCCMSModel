@@ -3,7 +3,21 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-    <changeSet id="1" author="lnewson@redhat.com">
+    <changeSet author="mcaspers@redhat.com" id="1">
+        <comment>Add LanguageFileHash columns for LanguageFile</comment>
+        <addColumn tableName="LanguageFile">
+            <column name="FileContentHash" type="char(64)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="LanguageFile_AUD">
+            <column name="FileContentHash" type="char(64)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2" author="lnewson@redhat.com">
         <comment>Create the Process table</comment>
         <createTable tableName="Process">
             <column name="ProcessUUID" type="char(36)">
@@ -33,7 +47,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2" author="lnewson@redhat.com">
+    <changeSet id="3" author="lnewson@redhat.com">
         <comment>Create the Content Spec to Process table</comment>
         <createTable tableName="ContentSpecToProcess">
             <column name="ContentSpecToProcessID" autoIncrement="true" type="int">

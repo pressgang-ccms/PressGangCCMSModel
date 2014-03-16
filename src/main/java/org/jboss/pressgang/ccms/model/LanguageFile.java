@@ -2,17 +2,7 @@ package org.jboss.pressgang.ccms.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -23,6 +13,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
+import org.jboss.pressgang.ccms.utils.common.HashUtilities;
 
 @Entity
 @Audited
@@ -37,7 +29,23 @@ public class LanguageFile extends AuditedEntity implements Serializable {
     private String originalFileName = null;
     private byte[] fileData;
     private File file = null;
+    private char[] fileContentHash;
 
+    @PrePersist
+    @PreUpdate
+    private void updateImageData() throws CustomConstraintViolationException {
+        this.fileContentHash = HashUtilities.generateSHA256(fileData).toCharArray();
+    }
+
+    @Column(name = "FileContentHash", columnDefinition = "CHAR(64)")
+    @Size(max = 64, min = 64)
+    public char[] getFileContentHash() {
+        return fileContentHash;
+    }
+
+    public void setFileContentHash(final char[] fileContentHash) {
+        this.fileContentHash = fileContentHash;
+    }
 
     @Transient
     @Override

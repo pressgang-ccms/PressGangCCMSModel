@@ -265,11 +265,16 @@ public class Filter extends AuditedEntity implements java.io.Serializable {
 
             if (filterTagState == CommonFilterConstants.MATCH_TAG_STATE || filterTagState == CommonFilterConstants.NOT_MATCH_TAG_STATE) {
                 final Tag tag = filterTag.getTag();
+                final Set<TagToCategory> tagToCategories = tag.getTagToCategories();
 
-                for (final TagToCategory category : tag.getTagToCategories()) {
-                    if (!categories.contains(category.getCategory())) {
-                        categories.add(category.getCategory());
+                if (tagToCategories.size() != 0) {
+                    for (final TagToCategory category : tagToCategories) {
+                        if (!categories.contains(category.getCategory())) {
+                            categories.add(category.getCategory());
+                        }
                     }
+                } else {
+                    if (!categories.contains(null)) categories.add(null);
                 }
             }
         }

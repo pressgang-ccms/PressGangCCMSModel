@@ -287,6 +287,8 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements S
 
     @Transient
     public boolean isInCategory(final Integer categoryId) {
+        if (getTagToCategories().size() == 0 && categoryId == null) return true;
+
         for (final TagToCategory category : getTagToCategories())
             if (categoryId.equals(category.getCategory().getCategoryId())) return true;
 
@@ -295,6 +297,8 @@ public class Tag extends ParentToPropertyTag<Tag, TagToPropertyTag> implements S
 
     @Transient
     public boolean isInCategory(final Category category) {
+        if (getTagToCategories().size() == 0 && category == null) return true;
+
         for (final TagToCategory myCategory : getTagToCategories())
             if (myCategory.getCategory().equals(category)) return true;
 

@@ -45,6 +45,10 @@ public class EntitiesConfig extends AbstractConfiguration {
     private static final String KEY_STRING_CONSTANT_XML_FORMATTING_ELEMENTS = "constant.string.xml.formatting";
     private static final String KEY_STRING_CONSTANT_DOCBOOK_ELEMENTS = "constant.string.docbook.elements";
     private static final String KEY_STRING_CONSTANT_TOPIC_TEMPLATE = "constant.string.template.topic";
+    private static final String KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE = "constant.string.template.topic.authorGroup";
+    private static final String KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE = "constant.string.template.topic.abstract";
+    private static final String KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE = "constant.string.template.topic.legalNotice";
+    private static final String KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE = "constant.string.template.topic.revHistory";
     private static final String KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE = "constant.string.template.contentspec";
     private static final String KEY_STRING_CONSTANT_ARTICLE_BUILD_TEMPLATE = "constant.string.template.build.article";
     private static final String KEY_STRING_CONSTANT_ARTICLE_INFO_BUILD_TEMPLATE = "constant.string.template.build.articleInfo";
@@ -86,6 +90,10 @@ public class EntitiesConfig extends AbstractConfiguration {
             KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE,
             KEY_STRING_CONSTANT_DOCBOOK_ELEMENTS,
             KEY_STRING_CONSTANT_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE,
             KEY_STRING_CONSTANT_XML_FORMATTING_ELEMENTS,
             KEY_STRING_CONSTANT_ARTICLE_BUILD_TEMPLATE,
             KEY_STRING_CONSTANT_ARTICLE_INFO_BUILD_TEMPLATE,
@@ -104,7 +112,8 @@ public class EntitiesConfig extends AbstractConfiguration {
             KEY_TAG_CONTENT_SPEC,
             KEY_TAG_FROZEN,
             KEY_TAG_INTERNAL,
-            KEY_TAG_LEGAL_NOTICE, KEY_TAG_OBSOLETE,
+            KEY_TAG_LEGAL_NOTICE,
+            KEY_TAG_OBSOLETE,
             KEY_TAG_REVIEW,
             KEY_TAG_REVISION_HISTORY,
             KEY_TAG_TASK,
@@ -258,6 +267,18 @@ public class EntitiesConfig extends AbstractConfiguration {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_TOPIC_TEMPLATE, null);
     }
 
+    public Integer getAbstractTemplateStringConstantId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getLegalNoticeTemplateStringConstantId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getRevisionHistoryTemplateStringConstantId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE, null);
+    }
+
     public Integer getContentSpecTemplateStringConstantId() {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE, null);
     }
@@ -272,6 +293,10 @@ public class EntitiesConfig extends AbstractConfiguration {
 
     public Integer getAuthorGroupStringConstantId() {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_AUTHOR_GROUP_BUILD_TEMPLATE, null);
+    }
+
+    public Integer getAuthorGroupTemplateStringConstantId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE, null);
     }
 
     public Integer getBookStringConstantId() {
@@ -450,7 +475,8 @@ public class EntitiesConfig extends AbstractConfiguration {
         }
 
         if (getBugLinksLastValidatedPropertyTagId() == null) {
-            LOG.error("The Bug Links Last Validated Property Tag ID isn't configured (eg. {}=1)", KEY_PROPERTY_TAG_BUG_LINKS_LAST_VALIDATED);
+            LOG.error("The Bug Links Last Validated Property Tag ID isn't configured (eg. {}=1)",
+                    KEY_PROPERTY_TAG_BUG_LINKS_LAST_VALIDATED);
             valid = false;
         }
 
@@ -552,8 +578,33 @@ public class EntitiesConfig extends AbstractConfiguration {
             valid = false;
         }
 
+        if (getAbstractTemplateStringConstantId() == null) {
+            LOG.error("The Abstract Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
+        if (getAuthorGroupTemplateStringConstantId() == null) {
+            LOG.error("The Author Group Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
+        if (getLegalNoticeTemplateStringConstantId() == null) {
+            LOG.error("The Legal Notice Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
+        if (getRevisionHistoryTemplateStringConstantId() == null) {
+            LOG.error("The Revision History Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
         if (getContentSpecTemplateStringConstantId() == null) {
-            LOG.error("The Content Spec Template String Constant ID isn't configured (eg. {}=1)", KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE);
+            LOG.error("The Content Spec Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE);
             valid = false;
         }
 
@@ -588,8 +639,7 @@ public class EntitiesConfig extends AbstractConfiguration {
         }
 
         if (getPOMStringConstantId() == null) {
-            LOG.error("The pom.xml Build Template String Constant ID isn't configured (eg. {}=1)",
-                    KEY_STRING_CONSTANT_POM_BUILD_TEMPLATE);
+            LOG.error("The pom.xml Build Template String Constant ID isn't configured (eg. {}=1)", KEY_STRING_CONSTANT_POM_BUILD_TEMPLATE);
             valid = false;
         }
 

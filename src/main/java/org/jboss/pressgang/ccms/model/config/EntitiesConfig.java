@@ -378,26 +378,31 @@ public class EntitiesConfig extends AbstractConfiguration {
 
         // Tags
         if (!validateTags()) {
+            LOG.error("The tags are not valid in the entities config file");
             valid = false;
         }
 
         // Property Tags
         if (!validatePropertyTags()) {
+            LOG.error("The property tags are not valid in the entities config file");
             valid = false;
         }
 
         // Blob Constants
         if (!validateBlobConstants()) {
+            LOG.error("The blob constants are not valid in the entities config file");
             valid = false;
         }
 
         // String Constants
         if (!validateStringConstants()) {
+            LOG.error("The string constants are not valid in the entities config file");
             valid = false;
         }
 
         // Categories
         if (!validateCategories()) {
+            LOG.error("The categories are not valid in the entities config file");
             valid = false;
         }
 

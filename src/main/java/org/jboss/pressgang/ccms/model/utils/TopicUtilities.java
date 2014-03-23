@@ -40,8 +40,11 @@ public class TopicUtilities {
      * Recalculate the min hash signature for a topic.
      * @param topic The topic to generate a signature for
      * @param minHashXORs The list of XOR values to apply to the hash code
+     * @return true if the minhashes were updated, false otherwise
      */
-    public static void recalculateMinHash(final Topic topic, final List<MinHashXOR> minHashXORs) {
+    public static boolean recalculateMinHash(final Topic topic, final List<MinHashXOR> minHashXORs) {
+        boolean retValue = false;
+
         final Set<MinHash> existingMinHashes = topic.getMinHashes();
 
         final Map<Integer, Integer> minHashes = getMinHashes(topic.getTopicXML(), minHashXORs);
@@ -51,19 +54,25 @@ public class TopicUtilities {
             boolean found = false;
             for (final MinHash minHash : existingMinHashes) {
                 if (minHash.getMinHashFuncID().equals(funcId)) {
-                    minHash.setMinHash(minHashes.get(funcId));
+                    if (!minHash.getMinHash().equals(minHashes.get(funcId))) {
+                        minHash.setMinHash(minHashes.get(funcId));
+                        retValue = true;
+                    }
                     found = true;
                     break;
                 }
             }
 
             if (!found) {
+                retValue = true;
                 final MinHash minHash = new MinHash();
                 minHash.setMinHashFuncID(funcId);
                 minHash.setMinHash(minHashes.get(funcId));
                 topic.addMinHash(minHash);
             }
         }
+
+        return retValue;
     }
 
     /**

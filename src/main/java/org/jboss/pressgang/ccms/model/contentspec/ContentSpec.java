@@ -587,6 +587,9 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         for (final CSNode csNode : getCSNodes()) {
             if (csNode.isTopicNode()) {
                 topicReferences.add(new Pair<Integer, Integer>(csNode.getEntityId(), csNode.getEntityRevision()));
+            } else if (csNode.getCSInfoNode() != null) {
+                topicReferences.add(new Pair<Integer, Integer>(csNode.getCSInfoNode().getTopicId(),
+                        csNode.getCSInfoNode().getTopicRevision()));
             }
         }
 

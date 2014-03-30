@@ -21,28 +21,28 @@
         <comment>Create the Process table</comment>
         <createTable tableName="Process">
             <column name="ProcessUUID" type="char(36)">
-                <constraints primaryKey="true" nullable="false" />
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ProcessName" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="StartedBy" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="StartTime" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="EndTime" type="TIMESTAMP">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
             <column name="ProcessStatus" type="varchar(20)">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="ProcessType" type="int">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="Logs" type="MEDIUMTEXT">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
         </createTable>
     </changeSet>
@@ -51,13 +51,13 @@
         <comment>Create the Content Spec to Process table</comment>
         <createTable tableName="ContentSpecToProcess">
             <column name="ContentSpecToProcessID" autoIncrement="true" type="int">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="ProcessUUID" type="char(36)">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="ContentSpecID" type="int">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
         </createTable>
         <addForeignKeyConstraint constraintName="FK_ProcessUUID_CS_TO_PROCESS"
@@ -70,5 +70,75 @@
                                  baseColumnNames="ContentSpecID"
                                  referencedTableName="ContentSpec"
                                  referencedColumnNames="ContentSpecID"/>
+    </changeSet>
+
+    <changeSet id="4" author="lnewson@redhat.com">
+        <comment>Add the ContentSpecNodeInfo table</comment>
+        <createTable tableName="ContentSpecInfoNode">
+            <column name="ContentSpecInfoNodeID" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="TopicID" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TopicRevision" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="InfoCondition" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecNodeID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_CSNodeID_CS_INFO_NODE"
+                                 baseTableName="ContentSpecInfoNode"
+                                 baseColumnNames="ContentSpecNodeID"
+                                 referencedTableName="ContentSpecNode"
+                                 referencedColumnNames="ContentSpecNodeID"/>
+    </changeSet>
+
+    <changeSet id="5" author="lnewson@redhat.com">
+        <comment>Add the ContentSpecNodeInfo revision table</comment>
+        <createTable tableName="ContentSpecInfoNode_AUD">
+            <column name="ContentSpecInfoNodeID" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TopicID" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TopicRevision" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="InfoCondition" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ContentSpecNodeID" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="ContentSpecInfoNode_AUD" columnNames="ContentSpecInfoNodeID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CS_INFO_NODE"
+                                 baseTableName="ContentSpecInfoNode_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CS_INFO_NODE"
+                                 baseTableName="ContentSpecInfoNode_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="ContentSpecInfoNode_AUD" indexName="ContentSpecNodeID">
+            <column name="ContentSpecNodeID"/>
+        </createIndex>
     </changeSet>
 </databaseChangeLog>

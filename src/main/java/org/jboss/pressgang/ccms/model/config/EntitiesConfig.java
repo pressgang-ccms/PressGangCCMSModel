@@ -17,6 +17,7 @@ public class EntitiesConfig extends AbstractConfiguration {
     private static final String KEY_TAG_AUTHOR_GROUP = "tag.authorGroup";
     private static final String KEY_TAG_CONTENT_SPEC = "tag.contentspec";
     private static final String KEY_TAG_FROZEN = "tag.frozen";
+    private static final String KEY_TAG_INFO = "tag.info";
     private static final String KEY_TAG_INTERNAL = "tag.internalOnly";
     private static final String KEY_TAG_LEGAL_NOTICE = "tag.legalNotice";
     private static final String KEY_TAG_OBSOLETE = "tag.obsolete";
@@ -47,8 +48,10 @@ public class EntitiesConfig extends AbstractConfiguration {
     private static final String KEY_STRING_CONSTANT_TOPIC_TEMPLATE = "constant.string.template.topic";
     private static final String KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE = "constant.string.template.topic.authorGroup";
     private static final String KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE = "constant.string.template.topic.abstract";
+    private static final String KEY_STRING_CONSTANT_INFO_TOPIC_TEMPLATE = "constant.string.template.topic.info";
     private static final String KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE = "constant.string.template.topic.legalNotice";
     private static final String KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE = "constant.string.template.topic.revHistory";
+    private static final String KEY_STRING_CONSTANT_SECTIONINFO_TOPIC_TEMPLATE = "constant.string.template.topic.sectioninfo";
     private static final String KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE = "constant.string.template.contentspec";
     private static final String KEY_STRING_CONSTANT_ARTICLE_BUILD_TEMPLATE = "constant.string.template.build.article";
     private static final String KEY_STRING_CONSTANT_ARTICLE_INFO_BUILD_TEMPLATE = "constant.string.template.build.articleInfo";
@@ -92,8 +95,10 @@ public class EntitiesConfig extends AbstractConfiguration {
             KEY_STRING_CONSTANT_TOPIC_TEMPLATE,
             KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE,
             KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_INFO_TOPIC_TEMPLATE,
             KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE,
             KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_SECTIONINFO_TOPIC_TEMPLATE,
             KEY_STRING_CONSTANT_XML_FORMATTING_ELEMENTS,
             KEY_STRING_CONSTANT_ARTICLE_BUILD_TEMPLATE,
             KEY_STRING_CONSTANT_ARTICLE_INFO_BUILD_TEMPLATE,
@@ -111,6 +116,7 @@ public class EntitiesConfig extends AbstractConfiguration {
             KEY_TAG_AUTHOR_GROUP,
             KEY_TAG_CONTENT_SPEC,
             KEY_TAG_FROZEN,
+            KEY_TAG_INFO,
             KEY_TAG_INTERNAL,
             KEY_TAG_LEGAL_NOTICE,
             KEY_TAG_OBSOLETE,
@@ -157,6 +163,10 @@ public class EntitiesConfig extends AbstractConfiguration {
 
     public Integer getLegalNoticeTagId() {
         return getConfiguration().getInteger(KEY_TAG_LEGAL_NOTICE, null);
+    }
+
+    public Integer getInfoTagId() {
+        return getConfiguration().getInteger(KEY_TAG_INFO, null);
     }
 
     public Integer getInternalOnlyTagId() {
@@ -271,12 +281,20 @@ public class EntitiesConfig extends AbstractConfiguration {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE, null);
     }
 
+    public Integer getInfoTemplateStringConstantId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_INFO_TOPIC_TEMPLATE, null);
+    }
+
     public Integer getLegalNoticeTemplateStringConstantId() {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE, null);
     }
 
     public Integer getRevisionHistoryTemplateStringConstantId() {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getSectionInfoTemplateStringConstantId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_SECTIONINFO_TOPIC_TEMPLATE, null);
     }
 
     public Integer getContentSpecTemplateStringConstantId() {
@@ -438,6 +456,11 @@ public class EntitiesConfig extends AbstractConfiguration {
             valid = false;
         }
 
+        if (getInfoTagId() == null) {
+            LOG.error("The Info Tag ID isn't configured (eg. {}=1)", KEY_TAG_INFO);
+            valid = false;
+        }
+
         if (getInternalOnlyTagId() == null) {
             LOG.error("The Internal Only Tag ID isn't configured (eg. {}=1)", KEY_TAG_INTERNAL);
             valid = false;
@@ -595,6 +618,12 @@ public class EntitiesConfig extends AbstractConfiguration {
             valid = false;
         }
 
+        if (getInfoTemplateStringConstantId() == null) {
+            LOG.error("The DB5 Info Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_INFO_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
         if (getLegalNoticeTemplateStringConstantId() == null) {
             LOG.error("The Legal Notice Topic Template String Constant ID isn't configured (eg. {}=1)",
                     KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE);
@@ -604,6 +633,12 @@ public class EntitiesConfig extends AbstractConfiguration {
         if (getRevisionHistoryTemplateStringConstantId() == null) {
             LOG.error("The Revision History Topic Template String Constant ID isn't configured (eg. {}=1)",
                     KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
+        if (getSectionInfoTemplateStringConstantId() == null) {
+            LOG.error("The DB4.5 Info Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_SECTIONINFO_TOPIC_TEMPLATE);
             valid = false;
         }
 

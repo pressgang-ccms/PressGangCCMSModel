@@ -850,12 +850,18 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         query.select(root.get("contentSpec").as(ContentSpec.class));
         query.distinct(true);
 
+        // Regular topics
         final Predicate topicIdMatches = criteriaBuilder.equal(root.get("entityId"), getTopicId());
         final Predicate normalTopicMatch = criteriaBuilder.equal(root.get("CSNodeType"), CommonConstants.CS_NODE_TOPIC);
         final Predicate levelTopicMatch = criteriaBuilder.equal(root.get("CSNodeType"), CommonConstants.CS_NODE_INITIAL_CONTENT_TOPIC);
         final Predicate metaDataTopicMatch = criteriaBuilder.equal(root.get("CSNodeType"), CommonConstants.CS_NODE_META_DATA_TOPIC);
         final Predicate topicTypeMatches = criteriaBuilder.or(normalTopicMatch, levelTopicMatch, metaDataTopicMatch);
-        query.where(criteriaBuilder.and(topicIdMatches, topicTypeMatches));
+
+        // Info topics
+        final Predicate infoTopicIdMatches = criteriaBuilder.equal(root.get("CSInfoNode").get("topicId"), getTopicId());
+
+        final Predicate normalTopicMatches = criteriaBuilder.and(topicIdMatches, topicTypeMatches);
+        query.where(criteriaBuilder.or(normalTopicMatches, infoTopicIdMatches));
 
         final List<ContentSpec> results = entityManager.createQuery(query).getResultList();
         return results;

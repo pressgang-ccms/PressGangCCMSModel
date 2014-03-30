@@ -76,6 +76,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     private Set<CSNodeToCSNode> relatedFromNodes = new HashSet<CSNodeToCSNode>(0);
     private Set<CSNodeToCSNode> relatedToNodes = new HashSet<CSNodeToCSNode>(0);
     private Set<CSNodeToPropertyTag> csNodeToPropertyTags = new HashSet<CSNodeToPropertyTag>(0);
+    private CSInfoNode csInfoNode;
 
     private Topic topic;
 
@@ -208,6 +209,16 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         this.previous = previous;
     }
 
+    @OneToOne(mappedBy = "CSNode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    public CSInfoNode getCSInfoNode() {
+        return csInfoNode;
+    }
+
+    public void setCSInfoNode(CSInfoNode csInfoNode) {
+        this.csInfoNode = csInfoNode;
+    }
+
     /**
      * Sets the Previous Node and cleans up any old references.
      *
@@ -231,7 +242,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         }
     }
 
-    @Column(name = "EntityID")
+    @Column(name = "EntityID", nullable = true)
     public Integer getEntityId() {
         return entityId;
     }
@@ -240,7 +251,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         this.entityId = entityId;
     }
 
-    @Column(name = "EntityRevision")
+    @Column(name = "EntityRevision", nullable = true)
     public Integer getEntityRevision() {
         return entityRevision;
     }
@@ -249,7 +260,8 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         this.entityRevision = entityRevision;
     }
 
-    @Column(name = "NodeCondition")
+    @Column(name = "NodeCondition", nullable = true)
+    @Size(max = 255)
     public String getCondition() {
         return condition;
     }

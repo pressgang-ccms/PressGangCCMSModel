@@ -45,14 +45,20 @@ public class EntitiesConfig extends AbstractConfiguration {
 
     private static final String KEY_STRING_CONSTANT_XML_FORMATTING_ELEMENTS = "constant.string.xml.formatting";
     private static final String KEY_STRING_CONSTANT_DOCBOOK_ELEMENTS = "constant.string.docbook.elements";
+
+    private static final String KEY_STRING_CONSTANT_DB45_AUTHOR_GROUP_TOPIC_TEMPLATE = "constant.string.template.topic.db45.authorGroup";
+    private static final String KEY_STRING_CONSTANT_DB50_AUTHOR_GROUP_TOPIC_TEMPLATE = "constant.string.template.topic.db50.authorGroup";
+    private static final String KEY_STRING_CONSTANT_DB45_ABSTRACT_TOPIC_TEMPLATE = "constant.string.template.topic.db45.abstract";
+    private static final String KEY_STRING_CONSTANT_DB50_ABSTRACT_TOPIC_TEMPLATE = "constant.string.template.topic.db50.abstract";
+    private static final String KEY_STRING_CONSTANT_DB45_LEGAL_NOTICE_TOPIC_TEMPLATE = "constant.string.template.topic.db45.legalNotice";
+    private static final String KEY_STRING_CONSTANT_DB50_LEGAL_NOTICE_TOPIC_TEMPLATE = "constant.string.template.topic.db50.legalNotice";
+    private static final String KEY_STRING_CONSTANT_DB45_REV_HISTORY_TOPIC_TEMPLATE = "constant.string.template.topic.db45.revHistory";
+    private static final String KEY_STRING_CONSTANT_DB50_REV_HISTORY_TOPIC_TEMPLATE = "constant.string.template.topic.db50.revHistory";
+    private static final String KEY_STRING_CONSTANT_DB45_INFO_TOPIC_TEMPLATE = "constant.string.template.topic.db45.info";
+    private static final String KEY_STRING_CONSTANT_DB50_INFO_TOPIC_TEMPLATE = "constant.string.template.topic.db50.info";
     private static final String KEY_STRING_CONSTANT_TOPIC_TEMPLATE = "constant.string.template.topic";
-    private static final String KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE = "constant.string.template.topic.authorGroup";
-    private static final String KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE = "constant.string.template.topic.abstract";
-    private static final String KEY_STRING_CONSTANT_INFO_TOPIC_TEMPLATE = "constant.string.template.topic.info";
-    private static final String KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE = "constant.string.template.topic.legalNotice";
-    private static final String KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE = "constant.string.template.topic.revHistory";
-    private static final String KEY_STRING_CONSTANT_SECTIONINFO_TOPIC_TEMPLATE = "constant.string.template.topic.sectioninfo";
     private static final String KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE = "constant.string.template.contentspec";
+
     private static final String KEY_STRING_CONSTANT_ARTICLE_BUILD_TEMPLATE = "constant.string.template.build.article";
     private static final String KEY_STRING_CONSTANT_ARTICLE_INFO_BUILD_TEMPLATE = "constant.string.template.build.articleInfo";
     private static final String KEY_STRING_CONSTANT_AUTHOR_GROUP_BUILD_TEMPLATE = "constant.string.template.build.authorGroup";
@@ -93,12 +99,16 @@ public class EntitiesConfig extends AbstractConfiguration {
             KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE,
             KEY_STRING_CONSTANT_DOCBOOK_ELEMENTS,
             KEY_STRING_CONSTANT_TOPIC_TEMPLATE,
-            KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE,
-            KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE,
-            KEY_STRING_CONSTANT_INFO_TOPIC_TEMPLATE,
-            KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE,
-            KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE,
-            KEY_STRING_CONSTANT_SECTIONINFO_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB45_ABSTRACT_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB45_AUTHOR_GROUP_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB45_INFO_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB45_LEGAL_NOTICE_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB45_REV_HISTORY_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB50_ABSTRACT_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB50_AUTHOR_GROUP_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB50_INFO_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB50_LEGAL_NOTICE_TOPIC_TEMPLATE,
+            KEY_STRING_CONSTANT_DB50_REV_HISTORY_TOPIC_TEMPLATE,
             KEY_STRING_CONSTANT_XML_FORMATTING_ELEMENTS,
             KEY_STRING_CONSTANT_ARTICLE_BUILD_TEMPLATE,
             KEY_STRING_CONSTANT_ARTICLE_INFO_BUILD_TEMPLATE,
@@ -264,7 +274,6 @@ public class EntitiesConfig extends AbstractConfiguration {
     /*
      * STRING CONSTANTS
      */
-
     public Integer getXMLFormattingElementsStringConstantId() {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_XML_FORMATTING_ELEMENTS, null);
     }
@@ -273,32 +282,52 @@ public class EntitiesConfig extends AbstractConfiguration {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_DOCBOOK_ELEMENTS, null);
     }
 
-    public Integer getTopicTemplateStringConstantId() {
+    public Integer getTopicTemplateId() {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_TOPIC_TEMPLATE, null);
     }
 
-    public Integer getAbstractTemplateStringConstantId() {
-        return getConfiguration().getInteger(KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE, null);
-    }
-
-    public Integer getInfoTemplateStringConstantId() {
-        return getConfiguration().getInteger(KEY_STRING_CONSTANT_INFO_TOPIC_TEMPLATE, null);
-    }
-
-    public Integer getLegalNoticeTemplateStringConstantId() {
-        return getConfiguration().getInteger(KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE, null);
-    }
-
-    public Integer getRevisionHistoryTemplateStringConstantId() {
-        return getConfiguration().getInteger(KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE, null);
-    }
-
-    public Integer getSectionInfoTemplateStringConstantId() {
-        return getConfiguration().getInteger(KEY_STRING_CONSTANT_SECTIONINFO_TOPIC_TEMPLATE, null);
-    }
-
-    public Integer getContentSpecTemplateStringConstantId() {
+    public Integer getContentSpecTemplateId() {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE, null);
+    }
+
+    public Integer getDB45AbstractTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB45_ABSTRACT_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB45InfoTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB45_INFO_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB45LegalNoticeTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB45_LEGAL_NOTICE_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB45RevisionHistoryTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB45_REV_HISTORY_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB45AuthorGroupTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB45_AUTHOR_GROUP_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB50AbstractTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB50_ABSTRACT_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB50InfoTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB50_INFO_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB50LegalNoticeTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB50_LEGAL_NOTICE_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB50RevisionHistoryTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB50_REV_HISTORY_TOPIC_TEMPLATE, null);
+    }
+
+    public Integer getDB50AuthorGroupTopicTemplateId() {
+        return getConfiguration().getInteger(KEY_STRING_CONSTANT_DB50_AUTHOR_GROUP_TOPIC_TEMPLATE, null);
     }
 
     public Integer getArticleStringConstantId() {
@@ -311,10 +340,6 @@ public class EntitiesConfig extends AbstractConfiguration {
 
     public Integer getAuthorGroupStringConstantId() {
         return getConfiguration().getInteger(KEY_STRING_CONSTANT_AUTHOR_GROUP_BUILD_TEMPLATE, null);
-    }
-
-    public Integer getAuthorGroupTemplateStringConstantId() {
-        return getConfiguration().getInteger(KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE, null);
     }
 
     public Integer getBookStringConstantId() {
@@ -601,48 +626,72 @@ public class EntitiesConfig extends AbstractConfiguration {
             valid = false;
         }
 
-        if (getTopicTemplateStringConstantId() == null) {
+        if (getTopicTemplateId() == null) {
             LOG.error("The Topic Template String Constant ID isn't configured (eg. {}=1)", KEY_STRING_CONSTANT_TOPIC_TEMPLATE);
             valid = false;
         }
 
-        if (getAbstractTemplateStringConstantId() == null) {
-            LOG.error("The Abstract Topic Template String Constant ID isn't configured (eg. {}=1)",
-                    KEY_STRING_CONSTANT_ABSTRACT_TOPIC_TEMPLATE);
+        if (getDB45AbstractTopicTemplateId() == null) {
+            LOG.error("The DocBook 4.5 Abstract Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB45_ABSTRACT_TOPIC_TEMPLATE);
             valid = false;
         }
 
-        if (getAuthorGroupTemplateStringConstantId() == null) {
-            LOG.error("The Author Group Topic Template String Constant ID isn't configured (eg. {}=1)",
-                    KEY_STRING_CONSTANT_AUTHOR_GROUP_TOPIC_TEMPLATE);
+        if (getDB45AuthorGroupTopicTemplateId() == null) {
+            LOG.error("The DocBook 4.5 Author Group Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB45_AUTHOR_GROUP_TOPIC_TEMPLATE);
             valid = false;
         }
 
-        if (getInfoTemplateStringConstantId() == null) {
-            LOG.error("The DB5 Info Topic Template String Constant ID isn't configured (eg. {}=1)",
-                    KEY_STRING_CONSTANT_INFO_TOPIC_TEMPLATE);
+        if (getDB45InfoTopicTemplateId() == null) {
+            LOG.error("The DocBook 4.5 Info Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB45_INFO_TOPIC_TEMPLATE);
             valid = false;
         }
 
-        if (getLegalNoticeTemplateStringConstantId() == null) {
-            LOG.error("The Legal Notice Topic Template String Constant ID isn't configured (eg. {}=1)",
-                    KEY_STRING_CONSTANT_LEGAL_NOTICE_TOPIC_TEMPLATE);
+        if (getDB45LegalNoticeTopicTemplateId() == null) {
+            LOG.error("The DocBook 4.5 Legal Notice Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB45_LEGAL_NOTICE_TOPIC_TEMPLATE);
             valid = false;
         }
 
-        if (getRevisionHistoryTemplateStringConstantId() == null) {
-            LOG.error("The Revision History Topic Template String Constant ID isn't configured (eg. {}=1)",
-                    KEY_STRING_CONSTANT_REV_HISTORY_TOPIC_TEMPLATE);
+        if (getDB45RevisionHistoryTopicTemplateId() == null) {
+            LOG.error("The DocBook 4.5 Revision History Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB45_REV_HISTORY_TOPIC_TEMPLATE);
             valid = false;
         }
 
-        if (getSectionInfoTemplateStringConstantId() == null) {
-            LOG.error("The DB4.5 Info Topic Template String Constant ID isn't configured (eg. {}=1)",
-                    KEY_STRING_CONSTANT_SECTIONINFO_TOPIC_TEMPLATE);
+        if (getDB50AbstractTopicTemplateId() == null) {
+            LOG.error("The DocBook 5.0 Abstract Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB50_ABSTRACT_TOPIC_TEMPLATE);
             valid = false;
         }
 
-        if (getContentSpecTemplateStringConstantId() == null) {
+        if (getDB50AuthorGroupTopicTemplateId() == null) {
+            LOG.error("The DocBook 5.0 Author Group Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB50_AUTHOR_GROUP_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
+        if (getDB50InfoTopicTemplateId() == null) {
+            LOG.error("The DocBook 5.0 Info Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB50_INFO_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
+        if (getDB50LegalNoticeTopicTemplateId() == null) {
+            LOG.error("The DocBook 5.0 Legal Notice Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB50_LEGAL_NOTICE_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
+        if (getDB50RevisionHistoryTopicTemplateId() == null) {
+            LOG.error("The DocBook 5.0 Revision History Topic Template String Constant ID isn't configured (eg. {}=1)",
+                    KEY_STRING_CONSTANT_DB50_REV_HISTORY_TOPIC_TEMPLATE);
+            valid = false;
+        }
+
+        if (getContentSpecTemplateId() == null) {
             LOG.error("The Content Spec Template String Constant ID isn't configured (eg. {}=1)",
                     KEY_STRING_CONSTANT_CONTENT_SPEC_TEMPLATE);
             valid = false;

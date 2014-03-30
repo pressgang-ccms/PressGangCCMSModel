@@ -47,6 +47,7 @@ import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.interfaces.HasCSNodes;
 import org.jboss.pressgang.ccms.model.interfaces.HasTwoWayRelationships;
+import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
 import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
@@ -493,13 +494,10 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         if (topic == null) {
             if (entityRevision == null) {
                 // Find the latest topic
-                topic = entityManager.find(Topic.class, entityId);
+                topic = entityManager.find(Topic.class, getEntityId());
             } else {
                 // Find the envers topic
-                final AuditReader reader = AuditReaderFactory.get(entityManager);
-                final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, entityRevision).add(
-                        AuditEntity.id().eq(entityId));
-                topic = (Topic) query.getSingleResult();
+                topic = EnversUtilities.getRevision(entityManager, Topic.class, getEntityId(), getEntityRevision());
             }
         }
         return topic;

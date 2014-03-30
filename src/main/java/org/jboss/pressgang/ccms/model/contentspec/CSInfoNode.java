@@ -27,6 +27,7 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.jboss.pressgang.ccms.model.Topic;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
 
 @Entity
 @Audited
@@ -120,13 +121,10 @@ public class CSInfoNode extends AuditedEntity implements Serializable {
         if (topic == null) {
             if (topicRevision == null) {
                 // Find the latest topic
-                topic = entityManager.find(Topic.class, topicId);
+                topic = entityManager.find(Topic.class, getTopicId());
             } else {
                 // Find the envers topic
-                final AuditReader reader = AuditReaderFactory.get(entityManager);
-                final AuditQuery query = reader.createQuery().forEntitiesAtRevision(Topic.class, topicRevision).add(
-                        AuditEntity.id().eq(topicId));
-                topic = (Topic) query.getSingleResult();
+                topic = EnversUtilities.getRevision(entityManager, Topic.class, getTopicId(), getTopicRevision());
             }
         }
         return topic;

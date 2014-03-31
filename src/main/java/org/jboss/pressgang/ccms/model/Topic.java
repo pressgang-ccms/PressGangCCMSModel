@@ -27,6 +27,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
@@ -54,6 +56,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.config.ApplicationConfig;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.contentspec.CSInfoNode;
 import org.jboss.pressgang.ccms.model.contentspec.CSNode;
 import org.jboss.pressgang.ccms.model.contentspec.ContentSpec;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
@@ -858,7 +861,8 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         final Predicate topicTypeMatches = criteriaBuilder.or(normalTopicMatch, levelTopicMatch, metaDataTopicMatch);
 
         // Info topics
-        final Predicate infoTopicIdMatches = criteriaBuilder.equal(root.get("CSInfoNode").get("topicId"), getTopicId());
+        final Join<CSInfoNode, CSNode> csInfoNode = root.join("CSInfoNode", JoinType.LEFT);
+        final Predicate infoTopicIdMatches = criteriaBuilder.equal(csInfoNode.get("topicId"), getTopicId());
 
         final Predicate normalTopicMatches = criteriaBuilder.and(topicIdMatches, topicTypeMatches);
         query.where(criteriaBuilder.or(normalTopicMatches, infoTopicIdMatches));

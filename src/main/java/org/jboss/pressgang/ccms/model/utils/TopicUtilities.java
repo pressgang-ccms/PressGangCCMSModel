@@ -84,13 +84,13 @@ public class TopicUtilities {
     public static Map<Integer, Integer> getMinHashes(final String xml, final List<MinHashXOR> minHashXORs) {
         final Map<Integer, Integer> retValue = new HashMap<Integer, Integer>();
 
-        // If the xml is null then all min hashes are also going to be null, so just return an empty list.
-        if (xml == null) {
-            return retValue;
-        }
+        /*
+            Treat null and empty strings the same
+         */
+        final String fixedXML = xml == null ? "" : xml;
 
         // the first minhash uses the builtin hashcode only
-        final Integer baseMinHash = getMinHash(xml, null);
+        final Integer baseMinHash = getMinHash(fixedXML, null);
         if (baseMinHash != null) {
             retValue.put(0, baseMinHash);
         }
@@ -100,7 +100,7 @@ public class TopicUtilities {
             boolean foundMinHash = false;
             for (final MinHashXOR minHashXOR : minHashXORs) {
                 if (minHashXOR.getMinHashXORFuncId() == funcId) {
-                    final Integer minHash = getMinHash(xml, minHashXOR.getMinHashXOR());
+                    final Integer minHash = getMinHash(fixedXML, minHashXOR.getMinHashXOR());
                     if (minHash != null) {
                         retValue.put(funcId, minHash);
                     }
@@ -123,16 +123,17 @@ public class TopicUtilities {
      * @return The minimum hash
      */
     public static Integer getMinHash(final String xml, final Integer xor) {
-        if (xml == null) {
-            return null;
-        }
+        /*
+            Treat null and empty strings the same
+         */
+        final String fixedXML = xml == null ? "" : xml;
 
         final int SHINGLE_WORD_COUNT = 5;
 
         String text = null;
 
         try {
-            final Document doc = XMLUtilities.convertStringToDocument(xml);
+            final Document doc = XMLUtilities.convertStringToDocument(fixedXML);
             if (doc != null) {
                 text = doc.getTextContent();
             }
@@ -143,7 +144,7 @@ public class TopicUtilities {
 
         // the xml was invalid, so just strip out xml elements manually
         if (text == null) {
-            text = xml.replaceAll("</?.*?/?>", " ");
+            text = fixedXML.replaceAll("</?.*?/?>", " ");
         }
 
         // now generate the minhashes

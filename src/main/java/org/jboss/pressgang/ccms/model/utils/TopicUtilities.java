@@ -135,7 +135,7 @@ public class TopicUtilities {
         try {
             final Document doc = XMLUtilities.convertStringToDocument(fixedXML);
             if (doc != null) {
-                text = doc.getTextContent();
+                text = doc.getDocumentElement().getTextContent();
             }
         }
         catch (final Exception ex) {
@@ -148,7 +148,7 @@ public class TopicUtilities {
         }
 
         // now generate the minhashes
-        final String[] words = text.replaceAll("[\\p{Punct}]", " ").split("\\s+");
+        final String[] words = text.replaceAll("\\p{Punct}", " ").split("\\s+");
         final List<String> shingles = new ArrayList<String>();
 
         if (words.length < SHINGLE_WORD_COUNT) {

@@ -148,7 +148,7 @@ public class TopicUtilities {
         }
 
         // now generate the minhashes
-        final String[] words = text.replaceAll("[^A-Za-z0-9]", " ").split("\\s+");
+        final String[] words = text.replaceAll("[\\p{Punct}]", " ").split("\\s+");
         final List<String> shingles = new ArrayList<String>();
 
         if (words.length < SHINGLE_WORD_COUNT) {

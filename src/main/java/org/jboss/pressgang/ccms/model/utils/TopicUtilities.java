@@ -86,16 +86,11 @@ public class TopicUtilities {
     public static Map<Integer, Integer> getMinHashes(final String xml, final List<MinHashXOR> minHashXORs) {
         final Map<Integer, Integer> retValue = new HashMap<Integer, Integer>();
 
-        // If the xml is null then all min hashes are also going to be null, so just return an empty list.
-        if (xml == null) {
-            return retValue;
-        }
-
         // Clean the XML to remove element names and other useless data
         final String cleanedXML = cleanXMLForMinHash(xml);
 
         // the first minhash uses the builtin hashcode only
-        final Integer baseMinHash = getMinHashInternal(xml, null);
+        final Integer baseMinHash = getMinHashInternal(cleanedXML, null);
         if (baseMinHash != null) {
             retValue.put(0, baseMinHash);
         }
@@ -137,15 +132,14 @@ public class TopicUtilities {
      * @return The cleaned xml.
      */
     protected static String cleanXMLForMinHash(final String xml) {
-        if (xml == null) {
-            return null;
-        }
+        // Treat null and empty strings the same
+        final String fixedXML = xml == null ? "" : xml;
 
         String text = null;
         try {
-            final Document doc = XMLUtilities.convertStringToDocument(xml);
+            final Document doc = XMLUtilities.convertStringToDocument(fixedXML);
             if (doc != null) {
-                text = doc.getTextContent();
+                text = doc.getDocumentElement().getTextContent();
             }
         } catch (final Exception ex) {
             // Do nothing
@@ -153,7 +147,7 @@ public class TopicUtilities {
 
         // the xml was invalid, so just strip out xml elements manually
         if (text == null) {
-            text = xml.replaceAll("</?.*?/?>", " ");
+            text = fixedXML.replaceAll("</?.*?/?>", " ");
         }
 
         return text;
@@ -167,7 +161,12 @@ public class TopicUtilities {
      */
     protected static Integer getMinHashInternal(final String cleanedXML, final Integer xor) {
         // now generate the minhashes
-        final String[] words = cleanedXML.replaceAll("[^A-Za-z0-9]", " ").split("\\s+");
+        String[] words = cleanedXML.replaceAll("\\p{Punct}", " ").split("\\s+");
+
+        if (words.length == 0) {
+            words = new String[] {""};
+        }
+
         final List<String> shingles = new ArrayList<String>();
 
         if (words.length < SHINGLE_WORD_COUNT) {

@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import org.jboss.pressgang.ccms.utils.common.XMLUtilities;
 import org.w3c.dom.Document;
 
 public class TopicUtilities {
+    private static final int SHINGLE_WORD_COUNT = 5;
 
     /**
      * Recalculate the min hash signature for a topic.
@@ -89,18 +91,20 @@ public class TopicUtilities {
             return retValue;
         }
 
+        // Clean the XML to remove element names and other useless data
+        final String cleanedXML = cleanXMLForMinHash(xml);
+
         // the first minhash uses the builtin hashcode only
-        final Integer baseMinHash = getMinHash(xml, null);
+        final Integer baseMinHash = getMinHashInternal(xml, null);
         if (baseMinHash != null) {
             retValue.put(0, baseMinHash);
         }
-
 
         for (int funcId = 1; funcId < org.jboss.pressgang.ccms.model.constants.Constants.NUM_MIN_HASHES; ++funcId) {
             boolean foundMinHash = false;
             for (final MinHashXOR minHashXOR : minHashXORs) {
                 if (minHashXOR.getMinHashXORFuncId() == funcId) {
-                    final Integer minHash = getMinHash(xml, minHashXOR.getMinHashXOR());
+                    final Integer minHash = getMinHashInternal(cleanedXML, minHashXOR.getMinHashXOR());
                     if (minHash != null) {
                         retValue.put(funcId, minHash);
                     }
@@ -123,22 +127,28 @@ public class TopicUtilities {
      * @return The minimum hash
      */
     public static Integer getMinHash(final String xml, final Integer xor) {
+        return getMinHashInternal(cleanXMLForMinHash(xml), xor);
+    }
+
+    /**
+     * Cleans the provided XML by removing element names and other useless data.
+     *
+     * @param xml The xml to be cleaned.
+     * @return The cleaned xml.
+     */
+    protected static String cleanXMLForMinHash(final String xml) {
         if (xml == null) {
             return null;
         }
 
-        final int SHINGLE_WORD_COUNT = 5;
-
         String text = null;
-
         try {
             final Document doc = XMLUtilities.convertStringToDocument(xml);
             if (doc != null) {
                 text = doc.getTextContent();
             }
-        }
-        catch (final Exception ex) {
-
+        } catch (final Exception ex) {
+            // Do nothing
         }
 
         // the xml was invalid, so just strip out xml elements manually
@@ -146,8 +156,18 @@ public class TopicUtilities {
             text = xml.replaceAll("</?.*?/?>", " ");
         }
 
+        return text;
+    }
+
+    /**
+     * Returns the minimum hash of the sentences in an XML file.
+     * @param cleanedXML The cleaned xml to analyse
+     * @param xor the number to xor the hash against. Null if the standard hashCode() method should be used alone.
+     * @return The minimum hash
+     */
+    protected static Integer getMinHashInternal(final String cleanedXML, final Integer xor) {
         // now generate the minhashes
-        final String[] words = text.replaceAll("[^A-Za-z0-9]", " ").split("\\s+");
+        final String[] words = cleanedXML.replaceAll("[^A-Za-z0-9]", " ").split("\\s+");
         final List<String> shingles = new ArrayList<String>();
 
         if (words.length < SHINGLE_WORD_COUNT) {
@@ -196,7 +216,7 @@ public class TopicUtilities {
                 If the source topic does not have a minhash signature, force the search query to
                 match a non existent topic id so no results are returned.
              */
-            return new ArrayList<Integer>(){{add(-1);}};
+            return Arrays.asList(-1);
         }
 
         final Map<Integer, Integer> minhashes = new HashMap<Integer, Integer>();
@@ -211,7 +231,7 @@ public class TopicUtilities {
                 If there are no matches, force the search query to
                 match a non existent topic id so no results are returned.
              */
-            return new ArrayList<Integer>(){{add(-1);}};
+            return Arrays.asList(-1);
         }
 
         return matchingTopics;
@@ -337,7 +357,7 @@ public class TopicUtilities {
                 }
             }
 
-            return new ArrayList<Integer>(){{add(-1);}};
+            return Arrays.asList(-1);
         } catch (final Exception ex) {
             return null;
         }

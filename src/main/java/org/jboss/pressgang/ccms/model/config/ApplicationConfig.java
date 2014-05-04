@@ -30,6 +30,7 @@ public class ApplicationConfig extends AbstractConfiguration {
     private static final String KEY_BUGZILLA_TEIID = "bugzilla.teiid";
     private static final String KEY_BUGZILLA_URL = "bugzilla.url";
     private static final String KEY_PROCESS_DIR = "process.dir";
+    private static final String KEY_READONLY = "process.dir";
 
     private static final String KEY_ZANATA_PREFIX = "zanata";
     private static final String KEY_ZANATA_PREFIX_WITH_DOT = "zanata.";
@@ -43,7 +44,8 @@ public class ApplicationConfig extends AbstractConfiguration {
             KEY_LOCALES,
             KEY_SEO_CATEGORY_IDS,
             KEY_UI_URL,
-            KEY_PROCESS_DIR
+            KEY_PROCESS_DIR,
+            KEY_READONLY
     );
 
     private static ApplicationConfig INSTANCE = new ApplicationConfig();
@@ -59,6 +61,14 @@ public class ApplicationConfig extends AbstractConfiguration {
     public void load(final File file) throws ConfigurationException {
         LOG.info("Loading the PressGang Application Configuration");
         super.load(file);
+    }
+
+    public boolean getReadOnly() {
+        return getConfiguration().getBoolean(KEY_READONLY, false);
+    }
+
+    public void setReadOnly(final boolean readOnly) {
+        getConfiguration().getBoolean(KEY_READONLY, readOnly);
     }
 
     public String getDefaultLocale() {

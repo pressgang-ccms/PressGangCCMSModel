@@ -81,7 +81,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         Serializable {
     public static final String SELECT_ALL_QUERY = "SELECT topic FROM Topic as Topic";
 
-    /**
+    /*
      * The name of the Hibernate Search field
      */
     public static final String TOPIC_SEARCH_TEXT_FIELD_NAME = "TopicSearchText";
@@ -294,14 +294,14 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         return retValue;
     }
 
-    // Removing hibernate search for easier deployment in a cluster (https://bugzilla.redhat.com/show_bug.cgi?id=1090748)
-    /*
+
+    /**
      * This function will take the XML in the topicXML String and use it to generate a text only view that will be used by
      * Hibernate Search. The text extraction uses Jericho - http://jericho.htmlparser.net/
      */
-    /*
     @Transient
-    @Field(name = TOPIC_SEARCH_TEXT_FIELD_NAME, index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+    // Removing hibernate search for easier deployment in a cluster (https://bugzilla.redhat.com/show_bug.cgi?id=1090748)
+    //@Field(name = TOPIC_SEARCH_TEXT_FIELD_NAME, index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     public String getTopicSearchText() {
         if (topicXML == null) return "";
 

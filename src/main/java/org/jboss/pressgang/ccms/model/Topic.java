@@ -308,7 +308,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         final Source source = new Source(topicXML);
         source.fullSequentialParse();
         return source.getTextExtractor().toString();
-    }*/
+    }
 
     @Transient
     public String getTopicXMLErrors() {

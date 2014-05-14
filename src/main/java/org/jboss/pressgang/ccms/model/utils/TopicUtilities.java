@@ -391,7 +391,9 @@ public class TopicUtilities {
      * @param topic The topic to update
      */
     public static void updateContentHash(final Topic topic) {
-        topic.setTopicContentHash(HashUtilities.generateSHA256(topic.getTopicXML()).toCharArray());
+        if (topic.getTopicXML() != null) {
+            topic.setTopicContentHash(HashUtilities.generateSHA256(topic.getTopicXML()).toCharArray());
+        }
     }
 
     /**

@@ -188,7 +188,9 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     private void updateImageData() throws CustomConstraintViolationException {
         thumbnail = createImage(true);
         imageFile.validate();
-        this.imageContentHash = HashUtilities.generateSHA256(imageData).toCharArray();
+        if (imageData != null) {
+            imageContentHash = HashUtilities.generateSHA256(imageData).toCharArray();
+        }
     }
 
     @Column(name = "Locale", nullable = false)

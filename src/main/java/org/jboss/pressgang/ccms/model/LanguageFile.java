@@ -34,7 +34,9 @@ public class LanguageFile extends AuditedEntity implements Serializable {
     @PrePersist
     @PreUpdate
     private void updateImageData() throws CustomConstraintViolationException {
-        this.fileContentHash = HashUtilities.generateSHA256(fileData).toCharArray();
+        if (fileData != null) {
+            fileContentHash = HashUtilities.generateSHA256(fileData).toCharArray();
+        }
     }
 
     @Column(name = "FileContentHash", columnDefinition = "CHAR(64)")

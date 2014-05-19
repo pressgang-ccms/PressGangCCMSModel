@@ -72,8 +72,6 @@ import org.jboss.pressgang.ccms.utils.constants.CommonConstants;
 
 @Entity
 @Audited
-// Removing hibernate search for easier deployment in a cluster (https://bugzilla.redhat.com/show_bug.cgi?id=1090748)
-//@Indexed
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "Topic")
@@ -296,12 +294,10 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
 
 
     /**
-     * This function will take the XML in the topicXML String and use it to generate a text only view that will be used by
-     * Hibernate Search. The text extraction uses Jericho - http://jericho.htmlparser.net/
+     * This function will take the XML in the topicXML String and use it to generate a text only view.
+     * The text extraction uses Jericho - http://jericho.htmlparser.net/
      */
     @Transient
-    // Removing hibernate search for easier deployment in a cluster (https://bugzilla.redhat.com/show_bug.cgi?id=1090748)
-    //@Field(name = TOPIC_SEARCH_TEXT_FIELD_NAME, index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     public String getTopicSearchText() {
         if (topicXML == null) return "";
 

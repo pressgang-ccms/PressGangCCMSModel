@@ -30,7 +30,12 @@ public class ApplicationConfig extends AbstractConfiguration {
     private static final String KEY_BUGZILLA_TEIID = "bugzilla.teiid";
     private static final String KEY_BUGZILLA_URL = "bugzilla.url";
     private static final String KEY_PROCESS_DIR = "process.dir";
-    private static final String KEY_READONLY = "process.dir";
+    private static final String KEY_READONLY = "readonly";
+    /**
+     * We will add new items to the JMS notification topics every 10 seconds by default.
+     */
+    private static final int KEY_JMS_UPDATE_FREQUENCY_DEFAULT = 10;
+    private static final String KEY_JMS_UPDATE_FREQUENCY = "jms.UpdateFrequency";
 
     private static final String KEY_ZANATA_PREFIX = "zanata";
     private static final String KEY_ZANATA_PREFIX_WITH_DOT = "zanata.";
@@ -45,7 +50,8 @@ public class ApplicationConfig extends AbstractConfiguration {
             KEY_SEO_CATEGORY_IDS,
             KEY_UI_URL,
             KEY_PROCESS_DIR,
-            KEY_READONLY
+            KEY_READONLY,
+            KEY_JMS_UPDATE_FREQUENCY
     );
 
     private static ApplicationConfig INSTANCE = new ApplicationConfig();
@@ -63,12 +69,20 @@ public class ApplicationConfig extends AbstractConfiguration {
         super.load(file);
     }
 
+    public int getJmsUpdateFrequency() {
+        return getConfiguration().getInt(KEY_JMS_UPDATE_FREQUENCY, KEY_JMS_UPDATE_FREQUENCY_DEFAULT);
+    }
+
+    public void setJmsUpdateFrequency(final int jmsUpdateFrequency) {
+        getConfiguration().setProperty(KEY_JMS_UPDATE_FREQUENCY, jmsUpdateFrequency);
+    }
+
     public boolean getReadOnly() {
         return getConfiguration().getBoolean(KEY_READONLY, false);
     }
 
     public void setReadOnly(final boolean readOnly) {
-        getConfiguration().getBoolean(KEY_READONLY, readOnly);
+        getConfiguration().setProperty(KEY_READONLY, readOnly);
     }
 
     public String getDefaultLocale() {

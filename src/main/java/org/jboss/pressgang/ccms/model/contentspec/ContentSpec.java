@@ -47,6 +47,7 @@ import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
 import org.jboss.pressgang.ccms.model.Topic;
+import org.jboss.pressgang.ccms.model.TopicToTag;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.config.ApplicationConfig;
 import org.jboss.pressgang.ccms.model.constants.Constants;
@@ -552,6 +553,22 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         }
 
         return null;
+    }
+
+    @Transient
+    public boolean isTaggedWith(final Integer tagId) {
+        for (final Tag tag : getTags())
+            if (tag.getTagId().equals(tagId)) return true;
+
+        return false;
+    }
+
+    @Transient
+    public boolean isTaggedWith(final Tag tag) {
+        for (final Tag tag1 : getTags())
+            if (tag1.equals(tag)) return true;
+
+        return false;
     }
 
     @SuppressWarnings("unchecked")

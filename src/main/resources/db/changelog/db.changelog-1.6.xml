@@ -14,5 +14,14 @@
         <createIndex tableName="Topic" indexName="ContentHash">
             <column name="TopicContentHash"/>
         </createIndex>
+        <createIndex tableName="LanguageFile_AUD" indexName="ContentHash">
+            <column name="FileContentHash"/>
+        </createIndex>
+        <createIndex tableName="LanguageImage_AUD" indexName="ContentHash">
+            <column name="ImageContentHash"/>
+        </createIndex>
+        <createIndex tableName="Topic_AUD" indexName="ContentHash">
+            <column name="TopicContentHash"/>
+        </createIndex>
     </changeSet>
 </databaseChangeLog>

@@ -275,18 +275,20 @@ public class ApplicationConfig extends AbstractConfiguration {
     }
 
     public void addZanataServer(final ZanataServerConfig zanataServerConfig) {
-        final String baseKeyName = KEY_ZANATA_PREFIX_WITH_DOT + zanataServerConfig + ".";
-        if (zanataServerConfig.getName() != null) {
-            getConfiguration().setProperty(baseKeyName + "name", zanataServerConfig.getName());
-        }
-        if (zanataServerConfig.getUrl() != null) {
-            getConfiguration().setProperty(baseKeyName + "url", zanataServerConfig.getUrl());
-        }
-        if (zanataServerConfig.getProject() != null) {
-            getConfiguration().setProperty(baseKeyName + "project", zanataServerConfig.getProject());
-        }
-        if (zanataServerConfig.getProjectVersion() != null) {
-            getConfiguration().setProperty(baseKeyName + "project.version", zanataServerConfig.getProjectVersion());
+        if (zanataServerConfig.getId() != null) {
+            final String baseKeyName = KEY_ZANATA_PREFIX_WITH_DOT + zanataServerConfig.getId() + ".";
+            if (zanataServerConfig.getName() != null) {
+                getConfiguration().setProperty(baseKeyName + "name", zanataServerConfig.getName());
+            }
+            if (zanataServerConfig.getUrl() != null) {
+                getConfiguration().setProperty(baseKeyName + "url", zanataServerConfig.getUrl());
+            }
+            if (zanataServerConfig.getProject() != null) {
+                getConfiguration().setProperty(baseKeyName + "project", zanataServerConfig.getProject());
+            }
+            if (zanataServerConfig.getProjectVersion() != null) {
+                getConfiguration().setProperty(baseKeyName + "project.version", zanataServerConfig.getProjectVersion());
+            }
         }
     }
 

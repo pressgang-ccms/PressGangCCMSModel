@@ -128,10 +128,14 @@ public class CSNodeToCSNode extends AuditedEntity implements Serializable {
 
     @Transient
     protected void validateNodeToNode() {
-        if (getMainNode().getCSNodeType() == CommonConstants.CS_NODE_META_DATA || getRelatedNode().getCSNodeType() == CommonConstants
-                .CS_NODE_META_DATA || getMainNode().getCSNodeType() == CommonConstants.CS_NODE_COMMENT || getRelatedNode().getCSNodeType
-                () == CommonConstants.CS_NODE_COMMENT) {
-            throw new CustomConstraintViolationException("Node to Node relationships can't be performed on Comments or Meta Data.");
+        if (getMainNode().getCSNodeType() == CommonConstants.CS_NODE_META_DATA
+                || getRelatedNode().getCSNodeType() == CommonConstants.CS_NODE_META_DATA
+                || getMainNode().getCSNodeType() == CommonConstants.CS_NODE_COMMENT
+                || getRelatedNode().getCSNodeType() == CommonConstants.CS_NODE_COMMENT
+                || getMainNode().getCSNodeType() == CommonConstants.CS_NODE_COMMON_CONTENT
+                || getRelatedNode().getCSNodeType() == CommonConstants.CS_NODE_COMMON_CONTENT) {
+            throw new CustomConstraintViolationException("Node to Node relationships can't be performed on Common Content, " +
+                    "Comments or Meta Data.");
         }
     }
 }

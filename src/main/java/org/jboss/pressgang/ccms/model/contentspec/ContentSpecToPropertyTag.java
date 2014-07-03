@@ -116,7 +116,7 @@ public class ContentSpecToPropertyTag extends ToPropertyTag<ContentSpecToPropert
             } else {
                 final AuditReader reader = AuditReaderFactory.get(entityManager);
                 final AuditQueryCreator queryCreator = reader.createQuery();
-                final AuditQuery query = queryCreator.forEntitiesAtRevision(TopicToPropertyTag.class, revision).addProjection(
+                final AuditQuery query = queryCreator.forEntitiesAtRevision(ContentSpecToPropertyTag.class, revision).addProjection(
                         AuditEntity.id().count("contentSpecToPropertyTagId")).add(
                         AuditEntity.relatedId("propertyTag").eq(getPropertyTag().getId())).add(
                         AuditEntity.property("value").eq(getValue()));

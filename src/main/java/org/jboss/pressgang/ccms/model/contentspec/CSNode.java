@@ -172,7 +172,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     }
 
     @JoinColumn(name = "NextNodeID")
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     public CSNode getNext() {
         return next;
@@ -205,7 +205,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         }
     }
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "next")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "next", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     public CSNode getPrevious() {
         return previous;

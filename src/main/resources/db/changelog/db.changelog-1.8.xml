@@ -31,26 +31,6 @@
                                  referencedColumnNames="ContentSpecNodeID"/>
     </changeSet>
 
-    <changeSet id="1-mysql" author="lnewson@redhat.com" dbms="mysql">
-        <!-- MySQL has a max length for indexes and we can't set that yet.So we need to manually use SQL for MySQL
-        (see https://liquibase.jira.com/browse/CORE-1180 -->
-        <comment>Add the CSNodeURL unique index</comment>
-        <sql>CREATE UNIQUE INDEX ContentSpecURL ON ContentSpecNodeURL(ContentSpecID, URL(255))</sql>
-    </changeSet>
-
-    <changeSet id="1-other" author="lnewson@redhat.com">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <dbms type="mysql"></dbms>
-            </not>
-        </preConditions>
-        <comment>Add the CSNodeURL unique index</comment>
-        <createIndex tableName="ContentSpecNodeURL" indexName="ContentSpecURL" unique="true">
-            <column name="ContentSpecID" />
-            <column name="URL"/>
-        </createIndex>
-    </changeSet>
-
     <changeSet author="lnewson@redhat.com" id="2">
         <comment>Add the new CSNodeURL revision table</comment>
         <createTable tableName="ContentSpecNodeURL_AUD">

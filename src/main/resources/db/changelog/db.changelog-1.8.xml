@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="lnewson@redhat.com" id="1" dbms="">
+        <comment>Add the new CSNodeURL table</comment>
+        <createTable tableName="ContentSpecNodeURL">
+            <column name="CSNodeURLID" autoIncrement="true" type="int">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="URL" type="varchar(1024)">
+                <constraints nullable="false" />
+            </column>
+            <column name="ContentSpecNodeID" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="ContentSpecID" type="int">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_CSNodeURL_TO_ContentSpec"
+                                 baseTableName="ContentSpecNodeURL"
+                                 baseColumnNames="ContentSpecID"
+                                 referencedTableName="ContentSpec"
+                                 referencedColumnNames="ContentSpecID"/>
+        <addForeignKeyConstraint constraintName="FK_CSNodeURL_TO_ContentSpecNode"
+                                 baseTableName="ContentSpecNodeURL"
+                                 baseColumnNames="ContentSpecNodeID"
+                                 referencedTableName="ContentSpecNode"
+                                 referencedColumnNames="ContentSpecNodeID"/>
+    </changeSet>
+
+    <changeSet author="lnewson@redhat.com" id="2">
+        <comment>Add the new CSNodeURL revision table</comment>
+        <createTable tableName="ContentSpecNodeURL_AUD">
+            <column name="CSNodeURLID" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="REV" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="URL" type="varchar(1024)">
+                <constraints nullable="true" />
+            </column>
+            <column name="ContentSpecNodeID" type="int">
+                <constraints nullable="true" />
+            </column>
+            <column name="ContentSpecID" type="int">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="ContentSpecNodeURL_AUD" columnNames="CSNodeURLID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_CSNodeURL"
+                                 baseTableName="ContentSpecNodeURL_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_CSNodeURL"
+                                 baseTableName="ContentSpecNodeURL_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <createIndex tableName="ContentSpecNodeURL_AUD" indexName="ContentSpecNodeID">
+            <column name="ContentSpecNodeID"/>
+        </createIndex>
+        <createIndex tableName="ContentSpecNodeURL_AUD" indexName="ContentSpecID">
+            <column name="ContentSpecID"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

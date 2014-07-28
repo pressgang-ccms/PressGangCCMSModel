@@ -97,6 +97,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     private Set<CSNodeToCSNode> relatedToNodes = new HashSet<CSNodeToCSNode>(0);
     private Set<CSNodeToPropertyTag> csNodeToPropertyTags = new HashSet<CSNodeToPropertyTag>(0);
     private CSInfoNode csInfoNode;
+    private CSNodeURL csNodeURL;
 
     private Topic topic;
 
@@ -172,6 +173,10 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         for (final CSNode child : children) {
             child.setContentSpec(contentSpec);
         }
+
+        if (csNodeURL != null) {
+            csNodeURL.setContentSpec(contentSpec);
+        }
     }
 
     @JoinColumn(name = "ParentID")
@@ -186,7 +191,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
     }
 
     @JoinColumn(name = "NextNodeID")
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     public CSNode getNext() {
         return next;
@@ -219,7 +224,7 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         }
     }
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "next")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "next", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     public CSNode getPrevious() {
         return previous;
@@ -237,6 +242,16 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
 
     public void setCSInfoNode(CSInfoNode csInfoNode) {
         this.csInfoNode = csInfoNode;
+    }
+
+    @OneToOne(mappedBy = "CSNode", cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    public CSNodeURL getCSNodeURL() {
+        return csNodeURL;
+    }
+
+    public void setCSNodeURL(CSNodeURL csNodeURL) {
+        this.csNodeURL = csNodeURL;
     }
 
     /**
@@ -561,6 +576,17 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
         } else {
             return getCondition();
         }
+    }
+
+    @Transient
+    public void setFixedUrl(final String url) {
+        if (csNodeURL == null) {
+            csNodeURL = new CSNodeURL();
+            csNodeURL.setCSNode(this);
+            csNodeURL.setContentSpec(contentSpec);
+        }
+
+        csNodeURL.setUrl(url);
     }
 
     @PrePersist

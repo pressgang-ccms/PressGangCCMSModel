@@ -9,7 +9,7 @@
 
     <groupId>org.jboss.pressgang.ccms</groupId>
     <artifactId>pressgang-ccms-model</artifactId>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.9-SNAPSHOT</version>
     <name>PressGang CCMS Model</name>
 
     <scm>
@@ -19,7 +19,7 @@
     </scm>
 
     <properties>
-        <pressgang.ccms.version>1.7-SNAPSHOT</pressgang.ccms.version>
+        <pressgang.ccms.version>1.9-SNAPSHOT</pressgang.ccms.version>
         <jboss.bom.version>1.0.2.Final</jboss.bom.version>
         <batik.version>1.7</batik.version>
         <lambdaj.version>2.3.3</lambdaj.version>

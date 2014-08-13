@@ -82,6 +82,10 @@ public class ApplicationConfig extends AbstractConfiguration {
     private ApplicationConfig() {
     }
 
+    public void loadDefault() throws ConfigurationException {
+        load(new File(getPressGangConfigurationDirectory() + ApplicationConfig.FILENAME));
+    }
+
     @Override
     public void load(final File file) throws ConfigurationException {
         LOG.info("Loading the PressGang Application Configuration");
@@ -112,6 +116,7 @@ public class ApplicationConfig extends AbstractConfiguration {
         getConfiguration().setProperty(KEY_DEFAULT_LOCALE, defaultLocale);
     }
 
+    @Deprecated
     public List<String> getLocales() {
         final List<Object> list = getConfiguration().getList(KEY_LOCALES);
         final List<String> retValue = new ArrayList<String>();
@@ -125,6 +130,7 @@ public class ApplicationConfig extends AbstractConfiguration {
         return retValue;
     }
 
+    @Deprecated
     public void setLocales(final List<String> locales) {
         getConfiguration().setProperty(KEY_LOCALES, locales);
     }

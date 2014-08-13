@@ -50,7 +50,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.interfaces.HasTranslatedStrings;
@@ -61,7 +60,7 @@ import org.jboss.pressgang.ccms.model.utils.EnversUtilities;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "TranslatedTopicData",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"TranslatedTopicID", "TranslationLocale"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"TranslatedTopicID", "LocaleID"}))
 public class TranslatedTopicData extends AuditedEntity implements HasTranslatedStrings<TranslatedTopicString>, Serializable {
     private static final long serialVersionUID = 7470594104954257672L;
     public static final String SELECT_ALL_QUERY = "select translatedTopicData from TranslatedTopicData translatedTopicData";
@@ -70,7 +69,7 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
     private TranslatedTopic translatedTopic;
     private String translatedXml;
     private String translatedXmlErrors;
-    private String translationLocale;
+    private Locale locale;
     private Set<TranslatedTopicString> translatedTopicStrings = new HashSet<TranslatedTopicString>(0);
     private Integer translationPercentage = 0;
     private TranslatedTopicSecondOrderData translatedTopicSecondOrderData;
@@ -122,16 +121,15 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
         this.translatedXmlErrors = translatedXmlErrors;
     }
 
-    @Column(name = "TranslationLocale", nullable = false, length = 45)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "LocaleID")
     @NotNull(message = "{translatedtopic.locale.notBlank}")
-    @NotBlank(message = "{translatedtopic.locale.notBlank}")
-    @Size(max = 45)
-    public String getTranslationLocale() {
-        return translationLocale;
+    public Locale getLocale() {
+        return locale;
     }
 
-    public void setTranslationLocale(final String translationLocale) {
-        this.translationLocale = translationLocale;
+    public void setLocale(final Locale translationLocale) {
+        this.locale = translationLocale;
     }
 
     @Column(name = "TranslationPercentage", nullable = false)
@@ -209,7 +207,7 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
             final List<TranslatedTopicData> translatedTopics = relatedTopic.getTranslatedTopics(entityManager, null);
 
             for (final TranslatedTopicData relatedTranslation : translatedTopics) {
-                if (relatedTranslation.getTranslationLocale().equals(translationLocale)) {
+                if (relatedTranslation.getLocale().equals(locale)) {
                     relatedTranslatedTopicDatas.add(relatedTranslation);
                 }
             }
@@ -316,7 +314,7 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
         translatedTopicData.setTranslatedTopicDataId(topic.getId() * -1);
         translatedTopicData.setTranslatedXml(topic.getTopicXML());
         translatedTopicData.setTranslationPercentage(100);
-        translatedTopicData.setTranslationLocale(topic.getTopicLocale());
+        translatedTopicData.setLocale(topic.getLocale());
 
         return translatedTopicData;
     }

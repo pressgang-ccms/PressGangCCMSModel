@@ -23,6 +23,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.imageio.ImageIO;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,6 +47,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.imgscalr.Scalr;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
@@ -59,7 +61,7 @@ import org.slf4j.LoggerFactory;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "LanguageImage", uniqueConstraints = @UniqueConstraint(columnNames = {"ImageFileID", "Locale"}))
+@Table(name = "LanguageImage", uniqueConstraints = @UniqueConstraint(columnNames = {"ImageFileID", "LocaleID"}))
 public class LanguageImage extends AuditedEntity implements java.io.Serializable {
     private static final Logger log = LoggerFactory.getLogger(LanguageImage.class);
     private static final long serialVersionUID = 1585978752264763594L;
@@ -77,7 +79,7 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
     private ImageFile imageFile;
     private byte[] imageData;
     private byte[] thumbnail;
-    private String locale;
+    private Locale locale;
     private String originalFileName;
 
     private byte[] uiImageData;
@@ -212,14 +214,14 @@ public class LanguageImage extends AuditedEntity implements java.io.Serializable
         }
     }
 
-    @Column(name = "Locale", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "LocaleID")
     @NotNull(message = "{languageimage.locale.notBlank}")
-    @NotBlank(message = "{languageimage.locale.notBlank}")
-    public String getLocale() {
+    public Locale getLocale() {
         return locale;
     }
 
-    public void setLocale(String locale) {
+    public void setLocale(Locale locale) {
         this.locale = locale;
     }
 

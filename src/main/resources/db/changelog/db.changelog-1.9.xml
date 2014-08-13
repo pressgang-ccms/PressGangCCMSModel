@@ -92,4 +92,300 @@ along with PressGang CCMS.  If not, see <http://www.gnu.org/licenses/>.
             <column name="ContentSpecID"/>
         </createIndex>
     </changeSet>
+
+    <changeSet author="lnewson@redhat.com" id="3">
+        <comment>Create the locale table</comment>
+        <createTable tableName="Locale">
+            <column name="LocaleID" autoIncrement="true" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="Value" type="varchar(40)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="TranslationValue" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BuildValue" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="Locale" columnNames="Value"/>
+    </changeSet>
+
+    <changeSet id="4" author="lnewson@redhat.com">
+        <comment>Create the locale revision table</comment>
+        <createTable tableName="Locale_AUD">
+            <column name="LocaleID" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REV" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="tinyint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REVEND" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Value" type="varchar(40)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TranslationValue" type="varchar(40)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="BuildValue" type="varchar(40)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="Locale_AUD" columnNames="LocaleID, REV"/>
+        <addForeignKeyConstraint constraintName="FK_REV_Locale"
+                                 baseTableName="Locale_AUD"
+                                 baseColumnNames="REV"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+        <addForeignKeyConstraint constraintName="FK_REVEND_Locale"
+                                 baseTableName="Locale_AUD"
+                                 baseColumnNames="REVEND"
+                                 referencedTableName="REVINFO"
+                                 referencedColumnNames="REV"/>
+    </changeSet>
+
+    <changeSet id="5" author="lnewson@redhat.com">
+        <preConditions>
+            <changeSetExecuted id="3" author="lnewson@redhat.com" changeLogFile="db/changelog/db.changelog-1.9.xml"/>
+        </preConditions>
+        <comment>Move the locales from the properties to the database</comment>
+        <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateLocales"/>
+    </changeSet>
+
+    <changeSet id="6" author="lnewson@redhat.com">
+        <preConditions>
+            <changeSetExecuted id="5" author="lnewson@redhat.com" changeLogFile="db/changelog/db.changelog-1.9.xml"/>
+        </preConditions>
+        <comment>Change the ContentSpec table to use the new locale table</comment>
+        <!-- Create the new columns -->
+        <addColumn tableName="ContentSpec">
+            <column name="LocaleID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="ContentSpec_AUD">
+            <column name="LocaleID" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="ContentSpec_AUD" indexName="LocaleID">
+            <column name="LocaleID"/>
+        </createIndex>
+
+        <!-- Migrate the data to the new column -->
+        <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateContentSpecLocales"/>
+
+        <!-- Drop the old columns -->
+        <dropColumn tableName="ContentSpec" columnName="Locale"/>
+        <dropColumn tableName="ContentSpec_AUD" columnName="Locale"/>
+
+        <!-- Add the foreign key constraint -->
+        <addForeignKeyConstraint constraintName="FK_CS_TO_Locale"
+                                 baseTableName="ContentSpec"
+                                 baseColumnNames="LocaleID"
+                                 referencedTableName="Locale"
+                                 referencedColumnNames="LocaleID"/>
+    </changeSet>
+
+    <changeSet id="7" author="lnewson@redhat.com">
+        <preConditions>
+            <changeSetExecuted id="5" author="lnewson@redhat.com" changeLogFile="db/changelog/db.changelog-1.9.xml"/>
+        </preConditions>
+        <comment>Change the Topic table to use the new locale table</comment>
+        <!-- Create the new columns -->
+        <addColumn tableName="Topic">
+            <column name="LocaleID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="Topic_AUD">
+            <column name="LocaleID" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="Topic_AUD" indexName="LocaleID">
+            <column name="LocaleID"/>
+        </createIndex>
+
+        <!-- Migrate the data to the new column -->
+        <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateTopicLocales"/>
+
+        <!-- Drop the old columns -->
+        <dropColumn tableName="Topic" columnName="TopicLocale"/>
+        <dropColumn tableName="Topic_AUD" columnName="TopicLocale"/>
+
+        <!-- Add the foreign key constraint -->
+        <addForeignKeyConstraint constraintName="FK_Topic_TO_Locale"
+                                 baseTableName="Topic"
+                                 baseColumnNames="LocaleID"
+                                 referencedTableName="Locale"
+                                 referencedColumnNames="LocaleID"/>
+    </changeSet>
+
+    <changeSet id="8" author="lnewson@redhat.com">
+        <preConditions>
+            <changeSetExecuted id="5" author="lnewson@redhat.com" changeLogFile="db/changelog/db.changelog-1.9.xml"/>
+        </preConditions>
+        <comment>Change the TranslatedTopicData table to use the new locale table</comment>
+        <!-- Create the new columns -->
+        <addColumn tableName="TranslatedTopicData">
+            <column name="LocaleID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="TranslatedTopicData_AUD">
+            <column name="LocaleID" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="TranslatedTopicData_AUD" indexName="LocaleID">
+            <column name="LocaleID"/>
+        </createIndex>
+
+        <!-- Migrate the data to the new columns -->
+        <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateTranslatedTopicLocales"/>
+
+        <!-- Add the unique index -->
+        <dropIndex tableName="TranslatedTopicData" indexName="TranslatedTopicID"/>
+        <createIndex tableName="TranslatedTopicData" indexName="TranslatedTopicID" unique="true">
+            <column name="TranslatedTopicID"/>
+            <column name="LocaleID"/>
+        </createIndex>
+
+        <!-- Drop the old columns -->
+        <dropColumn tableName="TranslatedTopicData" columnName="TranslationLocale"/>
+        <dropColumn tableName="TranslatedTopicData_AUD" columnName="TranslationLocale"/>
+
+        <!-- Add the foreign key constraint -->
+        <addForeignKeyConstraint constraintName="FK_TranslatedTopicData_TO_Locale"
+                                 baseTableName="TranslatedTopicData"
+                                 baseColumnNames="LocaleID"
+                                 referencedTableName="Locale"
+                                 referencedColumnNames="LocaleID"/>
+    </changeSet>
+
+    <changeSet id="9" author="lnewson@redhat.com">
+        <preConditions>
+            <changeSetExecuted id="5" author="lnewson@redhat.com" changeLogFile="db/changelog/db.changelog-1.9.xml"/>
+        </preConditions>
+        <comment>Change the TranslatedCSNodeString table to use the new locale table</comment>
+        <!-- Create the new columns -->
+        <addColumn tableName="TranslatedCSNodeString">
+            <column name="LocaleID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="TranslatedCSNodeString_AUD">
+            <column name="LocaleID" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="TranslatedCSNodeString_AUD" indexName="LocaleID">
+            <column name="LocaleID"/>
+        </createIndex>
+
+        <!-- Migrate the data to the new columns -->
+        <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateTranslatedCSNodeStringLocales"/>
+
+        <!-- Drop the old columns -->
+        <dropColumn tableName="TranslatedCSNodeString" columnName="Locale"/>
+        <dropColumn tableName="TranslatedCSNodeString_AUD" columnName="Locale"/>
+
+        <!-- Add the foreign key constraint -->
+        <addForeignKeyConstraint constraintName="FK_TranslatedCSNodeString_TO_Locale"
+                                 baseTableName="TranslatedCSNodeString"
+                                 baseColumnNames="LocaleID"
+                                 referencedTableName="Locale"
+                                 referencedColumnNames="LocaleID"/>
+    </changeSet>
+
+    <changeSet id="10" author="lnewson@redhat.com">
+        <preConditions>
+            <changeSetExecuted id="5" author="lnewson@redhat.com" changeLogFile="db/changelog/db.changelog-1.9.xml"/>
+        </preConditions>
+        <comment>Change the LanguageFile table to use the new locale table</comment>
+        <!-- Create the new columns -->
+        <addColumn tableName="LanguageFile">
+            <column name="LocaleID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="LanguageFile_AUD">
+            <column name="LocaleID" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="LanguageFile_AUD" indexName="LocaleID">
+            <column name="LocaleID"/>
+        </createIndex>
+
+        <!-- Migrate the data to the new columns -->
+        <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateFileLocales"/>
+
+        <!-- Alter unique index -->
+        <createIndex tableName="LanguageFile" indexName="FileLocale" unique="true">
+            <column name="FileID"/>
+            <column name="LocaleID"/>
+        </createIndex>
+        <dropIndex tableName="LanguageFile" indexName="FileID" />
+
+        <!-- Drop the old columns -->
+        <dropColumn tableName="LanguageFile" columnName="Locale"/>
+        <dropColumn tableName="LanguageFile_AUD" columnName="Locale"/>
+
+        <!-- Add the foreign key constraint -->
+        <addForeignKeyConstraint constraintName="FK_LanguageFile_TO_Locale"
+                                 baseTableName="LanguageFile"
+                                 baseColumnNames="LocaleID"
+                                 referencedTableName="Locale"
+                                 referencedColumnNames="LocaleID"/>
+    </changeSet>
+
+    <changeSet id="11" author="lnewson@redhat.com">
+        <preConditions>
+            <changeSetExecuted id="5" author="lnewson@redhat.com" changeLogFile="db/changelog/db.changelog-1.9.xml"/>
+        </preConditions>
+        <comment>Change the LanguageImage table to use the new locale table</comment>
+        <!-- Create the new columns -->
+        <addColumn tableName="LanguageImage">
+            <column name="LocaleID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="LanguageImage_AUD">
+            <column name="LocaleID" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="LanguageImage_AUD" indexName="LocaleID">
+            <column name="LocaleID"/>
+        </createIndex>
+
+        <!-- Migrate the data to the new columns -->
+        <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateImageLocales"/>
+
+        <!-- Alter the unique index -->
+        <createIndex tableName="LanguageImage" indexName="ImageLocale" unique="true">
+            <column name="ImageFileID"/>
+            <column name="LocaleID"/>
+        </createIndex>
+        <dropIndex tableName="LanguageImage" indexName="FK15D2ACC3E0AD6B52"/>
+
+        <!-- Drop the old columns -->
+        <dropColumn tableName="LanguageImage" columnName="Locale"/>
+        <dropColumn tableName="LanguageImage_AUD" columnName="Locale"/>
+
+        <!-- Add the foreign key constraint -->
+        <addForeignKeyConstraint constraintName="FK_LanguageImage_TO_Locale"
+                                 baseTableName="LanguageImage"
+                                 baseColumnNames="LocaleID"
+                                 referencedTableName="Locale"
+                                 referencedColumnNames="LocaleID"/>
+    </changeSet>
 </databaseChangeLog>

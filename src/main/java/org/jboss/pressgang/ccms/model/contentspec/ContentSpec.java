@@ -33,6 +33,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.PrePersist;
@@ -60,15 +62,13 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.validator.constraints.NotBlank;
+import org.jboss.pressgang.ccms.model.Locale;
 import org.jboss.pressgang.ccms.model.Process;
 import org.jboss.pressgang.ccms.model.PropertyTag;
 import org.jboss.pressgang.ccms.model.Tag;
 import org.jboss.pressgang.ccms.model.TagToCategory;
 import org.jboss.pressgang.ccms.model.Topic;
-import org.jboss.pressgang.ccms.model.TopicToTag;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
-import org.jboss.pressgang.ccms.model.config.ApplicationConfig;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
 import org.jboss.pressgang.ccms.model.interfaces.HasCSNodes;
@@ -89,7 +89,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     private Integer contentSpecId = null;
     private Integer contentSpecType = CommonConstants.CS_BOOK;
-    private String locale = ApplicationConfig.getInstance().getDefaultLocale();
+    private Locale locale;
     private String condition = null;
     private Date lastPublished = null;
     private Date lastModified = null;
@@ -117,14 +117,14 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         this.contentSpecId = contentSpecId;
     }
 
-    @Column(name = "Locale", nullable = false, length = 255)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "LocaleID")
     @NotNull(message = "{contentspec.locale.notBlank}")
-    @NotBlank(message = "{contentspec.locale.notBlank}")
-    public String getLocale() {
-        return locale == null ? ApplicationConfig.getInstance().getDefaultLocale() : locale;
+    public Locale getLocale() {
+        return locale;
     }
 
-    public void setLocale(String locale) {
+    public void setLocale(Locale locale) {
         this.locale = locale;
     }
 

@@ -49,6 +49,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
+import org.jboss.pressgang.ccms.model.sort.LocaleValueComparator;
 
 @Entity
 @Audited
@@ -149,7 +150,7 @@ public class File extends AuditedEntity implements Serializable {
                 if (o1.getLocale() == null && o2.getLocale() == null) return 0;
                 if (o1.getLocale() == null) return -1;
                 if (o2.getLocale() == null) return 1;
-                return o1.getLocale().compareTo(o2.getLocale());
+                return new LocaleValueComparator().compare(o1.getLocale(), o2.getLocale());
             }
         });
 

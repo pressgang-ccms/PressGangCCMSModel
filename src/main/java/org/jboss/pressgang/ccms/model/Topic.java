@@ -35,6 +35,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
@@ -68,7 +69,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
-import org.jboss.pressgang.ccms.model.config.ApplicationConfig;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.CSInfoNode;
 import org.jboss.pressgang.ccms.model.contentspec.CSNode;
@@ -113,7 +113,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     private Set<MinHash> minHashes = new HashSet<MinHash>(0);
     private String topicXML;
     private TopicSecondOrderData topicSecondOrderData;
-    private String topicLocale = ApplicationConfig.getInstance().getDefaultLocale();
+    private Locale locale;
     private char[] topicContentHash;
 
     @Override
@@ -133,16 +133,15 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
         this.topicId = topicId;
     }
 
-    @Column(name = "TopicLocale", length = 45)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "LocaleID")
     @NotNull(message = "{topic.locale.notBlank}")
-    @NotBlank(message = "{topic.locale.notBlank}")
-    @Size(max = 45)
-    public String getTopicLocale() {
-        return topicLocale == null ? ApplicationConfig.getInstance().getDefaultLocale() : topicLocale;
+    public Locale getLocale() {
+        return locale;
     }
 
-    public void setTopicLocale(final String topicLocale) {
-        this.topicLocale = topicLocale;
+    public void setLocale(final Locale topicLocale) {
+        this.locale = topicLocale;
     }
 
     @Column(name = "TopicXMLFormat", nullable = false)

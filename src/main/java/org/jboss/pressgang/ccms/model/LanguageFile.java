@@ -39,12 +39,12 @@ import org.jboss.pressgang.ccms.utils.common.HashUtilities;
 @Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "LanguageFile", uniqueConstraints = @UniqueConstraint(columnNames = {"FileID", "Locale"}))
+@Table(name = "LanguageFile", uniqueConstraints = @UniqueConstraint(columnNames = {"FileID", "LocaleID"}))
 public class LanguageFile extends AuditedEntity implements Serializable {
     private static final long serialVersionUID = 6439345505628825355L;
 
     private Integer languageFileId = null;
-    private String locale;
+    private Locale locale;
     private String originalFileName = null;
     private byte[] fileData;
     private File file = null;
@@ -56,16 +56,6 @@ public class LanguageFile extends AuditedEntity implements Serializable {
         if (fileData != null) {
             fileContentHash = HashUtilities.generateSHA256(fileData).toCharArray();
         }
-    }
-
-    @Column(name = "FileContentHash", columnDefinition = "CHAR(64)")
-    @Size(max = 64, min = 64)
-    public char[] getFileContentHash() {
-        return fileContentHash;
-    }
-
-    public void setFileContentHash(final char[] fileContentHash) {
-        this.fileContentHash = fileContentHash;
     }
 
     @Transient
@@ -115,15 +105,24 @@ public class LanguageFile extends AuditedEntity implements Serializable {
         this.file = file;
     }
 
-    @Column(name = "Locale", nullable = false, length = 20)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "LocaleID")
     @NotNull(message = "{languagefile.locale.notBlank}")
-    @NotBlank(message = "{languagefile.locale.notBlank}")
-    @Size(max = 20)
-    public String getLocale() {
+    public Locale getLocale() {
         return locale;
     }
 
-    public void setLocale(String locale) {
+    public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    @Column(name = "FileContentHash", columnDefinition = "CHAR(64)")
+    @Size(max = 64, min = 64)
+    public char[] getFileContentHash() {
+        return fileContentHash;
+    }
+
+    public void setFileContentHash(final char[] fileContentHash) {
+        this.fileContentHash = fileContentHash;
     }
 }

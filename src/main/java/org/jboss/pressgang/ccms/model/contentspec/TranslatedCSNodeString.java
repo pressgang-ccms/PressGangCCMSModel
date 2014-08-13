@@ -38,7 +38,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotBlank;
+import org.jboss.pressgang.ccms.model.Locale;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
 
@@ -52,7 +52,7 @@ public class TranslatedCSNodeString extends AuditedEntity implements java.io.Ser
 
     private Integer translatedCSNodeStringId;
     private TranslatedCSNode translatedCSNode;
-    private String locale;
+    private Locale locale;
     private String translatedString;
     private Boolean fuzzyTranslation = false;
 
@@ -72,14 +72,14 @@ public class TranslatedCSNodeString extends AuditedEntity implements java.io.Ser
         this.translatedCSNodeStringId = translatedCSNodeStringId;
     }
 
-    @Column(name = "Locale", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "LocaleID")
     @NotNull(message = "{contentspec.translatedstring.locale.notBlank}")
-    @NotBlank(message = "{contentspec.translatedstring.locale.notBlank}")
-    public String getLocale() {
+    public Locale getLocale() {
         return locale;
     }
 
-    public void setLocale(String locale) {
+    public void setLocale(Locale locale) {
         this.locale = locale;
     }
 

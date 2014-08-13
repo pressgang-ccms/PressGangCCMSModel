@@ -53,6 +53,7 @@ import org.hibernate.envers.query.AuditQuery;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.contentspec.TranslatedCSNode;
+import org.jboss.pressgang.ccms.model.sort.LocaleValueComparator;
 
 /**
  * A TranslatedTopic represents a particular revision of a topic. This revision then holds the translated version of the
@@ -169,14 +170,14 @@ public class TranslatedTopic extends AuditedEntity implements java.io.Serializab
     }
 
     @Transient
-    public List<String> getTranslatedTopicDataLocales() {
-        List<String> locales = new ArrayList<String>();
+    public List<Locale> getTranslatedTopicDataLocales() {
+        List<Locale> locales = new ArrayList<Locale>();
         for (TranslatedTopicData translatedTopicData : translatedTopicDatas) {
-            locales.add(translatedTopicData.getTranslationLocale());
+            locales.add(translatedTopicData.getLocale());
         }
 
         /* Sort the locales into alphabetical order */
-        Collections.sort(locales);
+        Collections.sort(locales, new LocaleValueComparator());
 
         return locales;
     }

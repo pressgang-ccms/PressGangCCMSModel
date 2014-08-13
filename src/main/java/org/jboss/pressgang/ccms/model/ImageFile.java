@@ -46,6 +46,7 @@ import org.hibernate.envers.Audited;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
+import org.jboss.pressgang.ccms.model.sort.LocaleValueComparator;
 import org.jboss.pressgang.ccms.utils.common.FileUtilities;
 
 @Entity
@@ -158,7 +159,7 @@ public class ImageFile extends AuditedEntity implements java.io.Serializable {
                 if (o1.getLocale() == null && o2.getLocale() == null) return 0;
                 if (o1.getLocale() == null) return -1;
                 if (o2.getLocale() == null) return 1;
-                return o1.getLocale().compareTo(o2.getLocale());
+                return new LocaleValueComparator().compare(o1.getLocale(), o2.getLocale());
             }
         });
 

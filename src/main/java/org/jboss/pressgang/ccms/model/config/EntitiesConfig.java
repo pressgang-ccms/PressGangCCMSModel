@@ -164,6 +164,10 @@ public class EntitiesConfig extends AbstractConfiguration {
     private EntitiesConfig() {
     }
 
+    public void loadDefault() throws ConfigurationException {
+        load(new File(getPressGangConfigurationDirectory() + EntitiesConfig.FILENAME));
+    }
+
     @Override
     public void load(final File file) throws ConfigurationException {
         LOG.info("Loading the PressGang Entities Configuration");
@@ -173,7 +177,6 @@ public class EntitiesConfig extends AbstractConfiguration {
     /*
      * TAGS
      */
-
     public Integer getAbstractTagId() {
         return getConfiguration().getInteger(KEY_TAG_ABSTRACT, null);
     }

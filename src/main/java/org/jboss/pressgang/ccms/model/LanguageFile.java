@@ -30,6 +30,8 @@ import java.io.Serializable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.exceptions.CustomConstraintViolationException;
@@ -108,6 +110,7 @@ public class LanguageFile extends AuditedEntity implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "LocaleID")
     @NotNull(message = "{languagefile.locale.notBlank}")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public Locale getLocale() {
         return locale;
     }

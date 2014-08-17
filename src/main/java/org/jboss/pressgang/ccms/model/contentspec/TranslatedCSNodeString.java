@@ -38,6 +38,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.jboss.pressgang.ccms.model.Locale;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 
@@ -75,6 +77,7 @@ public class TranslatedCSNodeString extends AuditedEntity implements java.io.Ser
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "LocaleID")
     @NotNull(message = "{contentspec.translatedstring.locale.notBlank}")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public Locale getLocale() {
         return locale;
     }

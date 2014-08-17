@@ -19,14 +19,16 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
+import org.jboss.pressgang.ccms.model.base.PressGangEntity;
 
 @Entity
-@Audited
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "Locale", uniqueConstraints = @UniqueConstraint(columnNames = {"Value"}))
-public class Locale extends AuditedEntity implements Serializable {
+public class Locale implements Serializable, PressGangEntity {
+    public static final String SELECT_ALL_QUERY = "SELECT locale FROM Locale as locale";
     private static final long serialVersionUID = -5401627148294498239L;
 
     private Integer localeId;
@@ -53,7 +55,8 @@ public class Locale extends AuditedEntity implements Serializable {
 
     @NaturalId
     @Column(name = "Value", nullable = false, length = 40, unique = true)
-    @NotNull
+    @NotNull(message = "{locale.value.notBlank}")
+    @NotEmpty(message = "{locale.value.notBlank}")
     @Size(max = 40)
     public String getValue() {
         return value;

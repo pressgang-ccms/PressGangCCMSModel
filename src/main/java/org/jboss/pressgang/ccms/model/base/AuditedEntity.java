@@ -25,13 +25,14 @@ import java.util.Date;
 /**
  * This base class is used to provide consistent access to previous versions of an audited entity
  */
-public abstract class AuditedEntity {
+public abstract class AuditedEntity implements PressGangEntity {
     private Date lastModified;
     private Number revision;
 
     /**
      * @return The ID of the database entity
      */
+    @Override
     public abstract Integer getId();
 
     /**

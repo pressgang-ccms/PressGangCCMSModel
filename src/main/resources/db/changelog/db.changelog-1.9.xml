@@ -109,53 +109,36 @@ along with PressGang CCMS.  If not, see <http://www.gnu.org/licenses/>.
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addUniqueConstraint tableName="Locale" columnNames="Value"/>
     </changeSet>
 
-    <changeSet id="4" author="lnewson@redhat.com">
-        <comment>Create the locale revision table</comment>
-        <createTable tableName="Locale_AUD">
-            <column name="LocaleID" type="int">
-                <constraints nullable="true"/>
+    <changeSet author="lnewson@redhat.com" id="4">
+        <comment>Create the Translation Server table</comment>
+        <createTable tableName="TranslationServer">
+            <column name="TranslationServerID" autoIncrement="true" type="int">
+                <constraints primaryKey="true"/>
             </column>
-            <column name="REV" type="int">
+            <column name="Name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REVTYPE" type="tinyint">
-                <constraints nullable="true"/>
+            <column name="URL" type="varchar(1024)">
+                <constraints nullable="false"/>
             </column>
-            <column name="REVEND" type="int">
-                <constraints nullable="true"/>
+            <column name="Username" type="varchar(255)">
+                <constraints nullable="false"/>
             </column>
-            <column name="Value" type="varchar(40)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="TranslationValue" type="varchar(40)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="BuildValue" type="varchar(40)">
-                <constraints nullable="true"/>
+            <column name="ApiKey" type="varchar(255)">
+                <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="Locale_AUD" columnNames="LocaleID, REV"/>
-        <addForeignKeyConstraint constraintName="FK_REV_Locale"
-                                 baseTableName="Locale_AUD"
-                                 baseColumnNames="REV"
-                                 referencedTableName="REVINFO"
-                                 referencedColumnNames="REV"/>
-        <addForeignKeyConstraint constraintName="FK_REVEND_Locale"
-                                 baseTableName="Locale_AUD"
-                                 baseColumnNames="REVEND"
-                                 referencedTableName="REVINFO"
-                                 referencedColumnNames="REV"/>
     </changeSet>
 
     <changeSet id="5" author="lnewson@redhat.com">
         <preConditions>
             <changeSetExecuted id="3" author="lnewson@redhat.com" changeLogFile="db/changelog/db.changelog-1.9.xml"/>
         </preConditions>
-        <comment>Move the locales from the properties to the database</comment>
+        <comment>Move the locales and translation servers from the properties to the database</comment>
         <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateLocales"/>
+        <customChange class="org.jboss.pressgang.ccms.liquibase.MigrateTranslationServers"/>
     </changeSet>
 
     <changeSet id="6" author="lnewson@redhat.com">
@@ -387,5 +370,65 @@ along with PressGang CCMS.  If not, see <http://www.gnu.org/licenses/>.
                                  baseColumnNames="LocaleID"
                                  referencedTableName="Locale"
                                  referencedColumnNames="LocaleID"/>
+    </changeSet>
+
+
+    <changeSet id="12" author="lnewson@redhat.com">
+        <comment>Create the Content Spec Translation Detail table</comment>
+        <createTable tableName="ContentSpecTranslationDetail">
+            <column name="TranslationDetailID" autoIncrement="true" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="Enabled" type="bit">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Project" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ProjectVersion" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TranslationServerID" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ContentSpecID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_CSTranslationDetail_TO_ContentSpec"
+                                 baseTableName="ContentSpecTranslationDetail"
+                                 baseColumnNames="ContentSpecID"
+                                 referencedTableName="ContentSpec"
+                                 referencedColumnNames="ContentSpecID"/>
+        <addForeignKeyConstraint constraintName="FK_CSTranslationDetail_TO_TranslationServer"
+                                 baseTableName="ContentSpecTranslationDetail"
+                                 baseColumnNames="TranslationServerID"
+                                 referencedTableName="TranslationServer"
+                                 referencedColumnNames="TranslationServerID"/>
+    </changeSet>
+
+    <changeSet id="13" author="lnewson@redhat.com">
+        <comment>Create the Content Spec Translation Detail to Locale mapping table</comment>
+        <createTable tableName="CSTranslationDetailToLocale">
+            <column name="TranslationDetailToLocaleID" autoIncrement="true" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="TranslationDetailID" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LocaleID" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="FK_CSTDToLocale_TO_Locale"
+                                 baseTableName="CSTranslationDetailToLocale"
+                                 baseColumnNames="LocaleID"
+                                 referencedTableName="Locale"
+                                 referencedColumnNames="LocaleID"/>
+        <addForeignKeyConstraint constraintName="FK_CSTDToLocale_TO_CSTD"
+                                 baseTableName="CSTranslationDetailToLocale"
+                                 baseColumnNames="TranslationDetailID"
+                                 referencedTableName="ContentSpecTranslationDetail"
+                                 referencedColumnNames="TranslationDetailID"/>
     </changeSet>
 </databaseChangeLog>

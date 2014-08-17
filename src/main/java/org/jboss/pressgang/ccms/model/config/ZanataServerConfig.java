@@ -19,6 +19,7 @@
 
 package org.jboss.pressgang.ccms.model.config;
 
+@Deprecated
 public class ZanataServerConfig {
     private final String id;
     private String name;

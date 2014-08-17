@@ -35,7 +35,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -62,6 +64,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.jboss.pressgang.ccms.model.Locale;
 import org.jboss.pressgang.ccms.model.Process;
 import org.jboss.pressgang.ccms.model.PropertyTag;
@@ -99,6 +102,9 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     private Set<CSNode> csNodes = new HashSet<CSNode>(0);
     private Set<ContentSpecToTag> contentSpecToTags = new HashSet<ContentSpecToTag>(0);
     private Set<ContentSpecToProcess> contentSpecToProcesses = new HashSet<ContentSpecToProcess>(0);
+    private CSTranslationDetail translationDetails;
+    @Transient
+    private CSTranslationDetail translationDetailsTemp;
 
     @Override
     @Transient
@@ -120,6 +126,7 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "LocaleID")
     @NotNull(message = "{contentspec.locale.notBlank}")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public Locale getLocale() {
         return locale;
     }
@@ -231,6 +238,17 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
 
     public void setFailedContentSpec(String failedContentSpec) {
         this.failedContentSpec = failedContentSpec;
+    }
+
+    @OneToOne(mappedBy = "contentSpec", optional = true, orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    @NotAudited
+    public CSTranslationDetail getTranslationDetails() {
+        return translationDetails;
+    }
+
+    public void setTranslationDetails(CSTranslationDetail translationDetails) {
+        this.translationDetails = translationDetails;
     }
 
     @PrePersist
@@ -640,5 +658,29 @@ public class ContentSpec extends ParentToPropertyTag<ContentSpec, ContentSpecToP
         }
 
         return topics;
+    }
+
+    @Transient
+    public CSTranslationDetail getTranslationDetails(final EntityManager entityManager) {
+        if (getTranslationDetails() != null) {
+            return getTranslationDetails();
+        } else if (translationDetailsTemp == null) {
+            final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            final CriteriaQuery<CSTranslationDetail> query = criteriaBuilder.createQuery(CSTranslationDetail.class);
+            final Root<CSTranslationDetail> root = query.from(CSTranslationDetail.class);
+            query.select(root);
+
+            final Predicate contentSpecIdMatches = criteriaBuilder.equal(root.get("contentSpec").get("contentSpecId"), contentSpecId);
+            query.where(contentSpecIdMatches);
+
+            final List<CSTranslationDetail> results = entityManager.createQuery(query).getResultList();
+            if (results.size() == 1) {
+                translationDetailsTemp = results.get(0);
+            } else if (!results.isEmpty()) {
+                throw new NonUniqueResultException();
+            }
+        }
+
+        return translationDetailsTemp;
     }
 }

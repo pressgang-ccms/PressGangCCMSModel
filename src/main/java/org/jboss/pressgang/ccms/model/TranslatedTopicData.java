@@ -50,6 +50,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.jboss.pressgang.ccms.model.base.AuditedEntity;
 import org.jboss.pressgang.ccms.model.constants.Constants;
 import org.jboss.pressgang.ccms.model.interfaces.HasTranslatedStrings;
@@ -124,6 +126,7 @@ public class TranslatedTopicData extends AuditedEntity implements HasTranslatedS
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "LocaleID")
     @NotNull(message = "{translatedtopic.locale.notBlank}")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public Locale getLocale() {
         return locale;
     }

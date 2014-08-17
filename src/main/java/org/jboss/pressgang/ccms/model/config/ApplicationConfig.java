@@ -232,6 +232,7 @@ public class ApplicationConfig extends AbstractConfiguration {
         return undefinedProperties;
     }
 
+    @Deprecated
     public Map<String, ZanataServerConfig> getZanataServers() {
         final Map<String, ZanataServerConfig> configs = new HashMap<String, ZanataServerConfig>();
         final Iterator<String> keyIter = getConfiguration().getKeys(KEY_ZANATA_PREFIX);
@@ -284,14 +285,17 @@ public class ApplicationConfig extends AbstractConfiguration {
         return configs;
     }
 
+    @Deprecated
     public void addZanataServerSetting(final String id, final String key, final String value) {
         getConfiguration().setProperty(KEY_ZANATA_PREFIX_WITH_DOT + id + "." + key, value);
     }
 
+    @Deprecated
     public void removeZanataServerSetting(final String id, final String key) {
         getConfiguration().clearProperty(KEY_ZANATA_PREFIX_WITH_DOT + id + "." + key);
     }
 
+    @Deprecated
     public void removeZanataServer(final String id) {
         final Iterator<String> keyIter = getConfiguration().getKeys(KEY_ZANATA_PREFIX_WITH_DOT + id);
         while (keyIter.hasNext()) {
@@ -299,6 +303,7 @@ public class ApplicationConfig extends AbstractConfiguration {
         }
     }
 
+    @Deprecated
     public void addZanataServer(final ZanataServerConfig zanataServerConfig) {
         if (zanataServerConfig.getId() != null) {
             final String baseKeyName = KEY_ZANATA_PREFIX_WITH_DOT + zanataServerConfig.getId() + ".";
@@ -319,47 +324,6 @@ public class ApplicationConfig extends AbstractConfiguration {
 
     public boolean validate() {
         boolean valid = true;
-
-        if (!validateZanataSettings()) {
-            valid = false;
-        }
-
-        return valid;
-    }
-
-    protected boolean validateZanataSettings() {
-        boolean valid = true;
-
-        boolean foundOneServer = false;
-        final Iterator<String> keyIter = getConfiguration().getKeys(KEY_ZANATA_PREFIX);
-        while (keyIter.hasNext()) {
-            final String key = keyIter.next();
-            final String[] split = key.replace(KEY_ZANATA_PREFIX_WITH_DOT, "").split("\\.", 2);
-
-            // Make sure we have the minimum amount
-            if (split.length < 2) {
-                LOG.error("Invalid zanata server key (" + key + "). A zanata server key should be in the format \"" +
-                        KEY_ZANATA_PREFIX_WITH_DOT + "<ID>.<KEY>=<VALUE>\". eg: \"" + KEY_ZANATA_PREFIX_WITH_DOT + "local.name=Local\"");
-                valid = false;
-                continue;
-            } else {
-                // Make sure we have a value
-                final String value = getConfiguration().getString(key);
-                if (isNullOrEmpty(value)) {
-                    LOG.error("\"" + key + "\" has no value.");
-                    valid = false;
-                    continue;
-                }
-
-                foundOneServer = true;
-            }
-        }
-
-        if (!foundOneServer) {
-            LOG.error("No Zanata servers configured. At least one server must be configured. eg: " + KEY_ZANATA_PREFIX_WITH_DOT + "local" +
-                    ".url=http://localhost/zanata/");
-            valid = false;
-        }
 
         return valid;
     }

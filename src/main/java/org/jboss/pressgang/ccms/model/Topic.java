@@ -67,6 +67,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.pressgang.ccms.model.base.ParentToPropertyTag;
 import org.jboss.pressgang.ccms.model.constants.Constants;
@@ -136,6 +137,7 @@ public class Topic extends ParentToPropertyTag<Topic, TopicToPropertyTag> implem
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "LocaleID")
     @NotNull(message = "{topic.locale.notBlank}")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public Locale getLocale() {
         return locale;
     }

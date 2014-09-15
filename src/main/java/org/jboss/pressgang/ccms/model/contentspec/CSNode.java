@@ -613,6 +613,20 @@ public class CSNode extends ParentToPropertyTag<CSNode, CSNodeToPropertyTag> imp
 
     @PreRemove
     protected void preRemove() {
+        if (next != null && previous != null) {
+            next.previous = previous;
+            previous.next = next;
+
+            next = null;
+            previous = null;
+        } else if (next != null) {
+            next.previous = null;
+            next = null;
+        } else if (previous != null) {
+            previous.next = null;
+            previous = null;
+        }
+
         for (final CSNodeToCSNode mapping : new HashSet<CSNodeToCSNode>(relatedFromNodes)) {
             removeRelationshipFrom(mapping);
         }

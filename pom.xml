@@ -9,7 +9,7 @@
 
     <groupId>org.jboss.pressgang.ccms</groupId>
     <artifactId>pressgang-ccms-model</artifactId>
-    <version>1.9</version>
+    <version>1.9.1-SNAPSHOT</version>
     <name>PressGang CCMS Model</name>
 
     <scm>
